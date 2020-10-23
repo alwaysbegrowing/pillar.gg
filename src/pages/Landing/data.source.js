@@ -1,4 +1,5 @@
 import React from 'react';
+
 export const Banner50DataSource = {
   wrapper: { className: 'home-page-wrapper banner5 kf7inkgja5s-editor_css' },
   page: { className: 'home-page banner5-page kf7hwxzvj8m-editor_css' },
@@ -60,7 +61,7 @@ export const Banner50DataSource = {
           type: 'primary',
           children: (
             <span>
-              <p>Join Waitlist</p>
+              <p>Connect With Twitch</p>
             </span>
           ),
           target: '_blank',
@@ -159,7 +160,7 @@ export const Content00DataSource = {
                 <span>
                   <span>
                     <span>
-                      <p>Don't waste time manually making clips from your videos.&nbsp;</p>
+                      <p>Don&apos;t waste time manually making clips from your videos</p>
                     </span>
                   </span>
                 </span>
