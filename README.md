@@ -46,7 +46,7 @@ You can also use script to auto fix some lint error:
 npm run lint:fix
 ```
 
-### Test code
+### Test code - 
 
 ```bash
 npm test
