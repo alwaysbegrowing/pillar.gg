@@ -16,21 +16,25 @@ class Banner5 extends React.PureComponent {
   }
 
   componentDidMount() {
-    window.onmessage = function(event) {
+    window.onmessage = function (event) {
       if (event.data.success) {
         // TODO: Do something with event.data.access_token
+        console.log(event.data.access_token);
       }
     };
   }
 
   toggleAuthPortal() {
-    this.setState({
-      openTwitchAuthPortal: true,
-    }, ()=> {
-      this.setState({
-        openTwitchAuthPortal: false,
-      });
-    })
+    this.setState(
+      {
+        openTwitchAuthPortal: true,
+      },
+      () => {
+        this.setState({
+          openTwitchAuthPortal: false,
+        });
+      },
+    );
   }
 
   render() {

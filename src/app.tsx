@@ -18,12 +18,12 @@ export async function getInitialState(): Promise<{
       const currentUser = await queryCurrent();
       return currentUser;
     } catch (error) {
-      history.push('/user/login');
+      history.push('/');
     }
     return undefined;
   };
   // 如果是登录页面，不执行
-  if (history.location.pathname !== '/user/login') {
+  if (history.location.pathname !== '/' || history.location.pathname !== '/TwitchAuth') {
     const currentUser = await fetchUserInfo();
     return {
       fetchUserInfo,
@@ -50,8 +50,11 @@ export const layout = ({
       const { currentUser } = initialState;
       const { location } = history;
       // 如果没有登录，重定向到 login
-      if (!currentUser && location.pathname !== '/user/login') {
-        history.push('/user/login');
+      if (
+        (!currentUser && location.pathname !== '/') ||
+        history.location.pathname !== '/TwitchAuth'
+      ) {
+        history.push('/');
       }
     },
     menuHeaderRender: undefined,
