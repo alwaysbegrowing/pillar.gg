@@ -2,7 +2,7 @@ import React from 'react';
 import QueueAnim from 'rc-queue-anim';
 import TweenOne from 'rc-tween-one';
 import { getChildrenToRender } from './utils';
-import TwitchAuthPortal from '../../components/TwitchAuthPortal/TwitchAuthPortal';
+import TwitchAuthPortal from '../../components/TwitchAuthPortal/TwithAuthPortal';
 
 // This class contains the "Connect With Twitch" button that triggers Twitch OAuth
 
@@ -15,10 +15,22 @@ class Banner5 extends React.PureComponent {
     this.toggleAuthPortal = this.toggleAuthPortal.bind(this);
   }
 
+  componentDidMount() {
+    window.onmessage = function(event) {
+      if (event.data.success) {
+        // TODO: Do something with event.data.access_token
+      }
+    };
+  }
+
   toggleAuthPortal() {
     this.setState({
       openTwitchAuthPortal: true,
-    });
+    }, ()=> {
+      this.setState({
+        openTwitchAuthPortal: false,
+      });
+    })
   }
 
   render() {

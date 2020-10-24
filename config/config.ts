@@ -78,6 +78,11 @@ export default defineConfig({
       component: './Landing',
     },
     {
+      path: '/TwitchAuth',
+      layout: false,
+      component: './TwitchAuth',
+    },
+    {
       component: './404',
     },
   ],
