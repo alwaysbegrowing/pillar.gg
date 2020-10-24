@@ -1,4 +1,4 @@
-Remyx
+Remyx 
 
 This project is initialized with [Ant Design Pro](https://pro.ant.design). Follow is the quick guide for how to use.
 
@@ -46,7 +46,7 @@ You can also use script to auto fix some lint error:
 npm run lint:fix
 ```
 
-### Test code
+### Test code - 
 
 ```bash
 npm test
