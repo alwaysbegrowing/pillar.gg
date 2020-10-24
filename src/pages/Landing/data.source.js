@@ -56,7 +56,6 @@ export const Banner50DataSource = {
         name: 'button',
         className: 'banner5-button-wrapper',
         children: {
-          href: 'https://forms.gle/dxBhVBnCw5rJ9H3r8',
           className: 'banner5-button kf7hyvamyj-editor_css',
           type: 'primary',
           children: (
