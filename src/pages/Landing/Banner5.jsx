@@ -16,10 +16,14 @@ class Banner5 extends React.PureComponent {
   }
 
   componentDidMount() {
-    window.onmessage = function (event) {
+    window.onmessage = (event) => {
       if (event.data.success) {
         // TODO: Do something with event.data.access_token
-        console.log(event.data.access_token);
+        fetch('/api/login', {
+          method: 'POST',
+          body: event.data.access_token,
+        });
+        // .then(res => console.log(JSON.stringify(res)));
       }
     };
   }
