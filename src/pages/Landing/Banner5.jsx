@@ -18,6 +18,7 @@ class Banner5 extends React.PureComponent {
   componentDidMount() {
     window.onmessage = (event) => {
       if (event.data.success) {
+        // console.log(event.data.access_token);
         // TODO: Do something with event.data.access_token
         fetch('/api/login', {
           method: 'POST',
