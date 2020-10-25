@@ -8,6 +8,9 @@ const login = async (req: NowRequest, res: NowResponse) => {
   try {
     // retrieve access token from req.body
     const access_token = req.body;
+    if (access_token === null || access_token === undefined || access_token === '') {
+      res.status(401).send('ERROR: NO ACCESS TOKEN RECEIVED');
+    }
     // connect to database
     const db = await connectToDatabase();
     // check to see user exists exists
