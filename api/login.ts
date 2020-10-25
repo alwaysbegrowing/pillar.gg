@@ -2,7 +2,7 @@ import { NowRequest, NowResponse } from '@vercel/node';
 
 const connectToDatabase = require('./_connectToDatabase');
 const addUser = require('./_addUser');
-const getTwitchEmail = require('./_getTwitchEmail');
+const getTwitchCredentials = require('./_getTwitchCredentials');
 
 const login = async (req: NowRequest, res: NowResponse) => {
   try {
@@ -11,22 +11,57 @@ const login = async (req: NowRequest, res: NowResponse) => {
     if (access_token === null || access_token === undefined || access_token === '') {
       res.status(401).send('ERROR: NO ACCESS TOKEN RECEIVED');
     }
+
+    // get credentials
+    const twitchCredentials = await getTwitchCredentials(access_token);
+    // validate credentials
+    let username;
+    let email;
+    let twitch_id;
+    if(twitchCredentials !== null) {
+      username = twitchCredentials.name;
+      email = twitchCredentials.email;
+      twitch_id = twitchCredentials.twitch_id;
+    }
+    else{
+      res.status(401).send('Error retrieving twitch credentials');
+    }
     // connect to database
     const db = await connectToDatabase();
-    // check to see user exists exists
+
     const results = await db
       .collection('users')
-      .find({ twitch_access_token: access_token })
+      .find({ twitch_id: twitch_id })
       .toArray();
+
 
     if (results.length !== 0) {
       // lookup and return id
-      // res.send(results[0]._id)
+
       // eslint-disable-next-line
-      res.status(200).json({ user_id: results[0]._id });
-    } else {
-      // get email from twitch
-      const email = getTwitchEmail(access_token);
+      const mongoID = results[0]._id;
+
+      // TODO: Update results on each login
+      // const updatedResult = await db
+      // .collection('users')
+      // .updateOne(
+      //   { _id: mongoID },
+      //   { 'twitch_access_token': access_token, 'email': email, 'twitch_username': username },
+      //   (err: any, res: any) => {
+      //     if(err){
+      //       console.log("failed to update credentials")
+      //       res.status(401).send("Failed to update twitch credentials in database");
+      //       throw (err);
+      //     }
+      //     else{
+      //       console.log("properly updated credentials in db");
+      //     }
+      //   }
+      // );
+      // eslint-disable-next-line
+      res.status(200).json({ user_id: mongoID });
+    }
+    else {
 
       // get registration timestamp
       const timestamp = Date.now();
@@ -39,7 +74,7 @@ const login = async (req: NowRequest, res: NowResponse) => {
       const plan = 'basic';
 
       // add user to database
-      await addUser(email, access_token, youtube_token, timestamp, plan);
+      await addUser(email, twitch_id, username, access_token, youtube_token, timestamp, plan);
 
       // receive userid generated from mongo
       const user_results = await db
