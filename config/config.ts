@@ -83,6 +83,11 @@ export default defineConfig({
       component: './TwitchAuth',
     },
     {
+      path: '/PrivacyPolicy',
+      layout: false,
+      component: './PrivacyPolicy',
+    },
+    {
       component: './404',
     },
   ],
