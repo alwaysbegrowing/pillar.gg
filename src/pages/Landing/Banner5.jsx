@@ -1,12 +1,67 @@
 import React from 'react';
 import QueueAnim from 'rc-queue-anim';
 import TweenOne from 'rc-tween-one';
+import { history } from 'umi';
 import { getChildrenToRender } from './utils';
+import TwitchAuthPortal from '../../components/TwitchAuthPortal/TwithAuthPortal';
+
+// This class contains the "Connect With Twitch" button that triggers Twitch OAuth
 
 class Banner5 extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      openTwitchAuthPortal: false,
+    };
+    this.toggleAuthPortal = this.toggleAuthPortal.bind(this);
+  }
+
+  componentDidMount() {
+    if (localStorage.getItem('user_id')) {
+      history.push('/home');
+    }
+    window.onmessage = (event) => {
+      if (event.data.success) {
+        // console.log(event.data.access_token);
+        // TODO: Do something with event.data.access_token
+        fetch('/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+          body: event.data.access_token,
+          redirect: 'follow',
+        })
+          .then((response) => response.text())
+          .then((result) => {
+            const response = JSON.parse(result);
+            const { user_id } = response;
+            if (user_id) {
+              localStorage.setItem('user_id', user_id);
+              history.push('/home');
+            }
+          });
+      }
+    };
+  }
+
+  toggleAuthPortal() {
+    this.setState(
+      {
+        openTwitchAuthPortal: true,
+      },
+      () => {
+        this.setState({
+          openTwitchAuthPortal: false,
+        });
+      },
+    );
+  }
+
   render() {
     const { ...tagProps } = this.props;
     const { dataSource } = tagProps;
+
     delete tagProps.dataSource;
     delete tagProps.isMobile;
     const animType = {
@@ -18,8 +73,10 @@ class Banner5 extends React.PureComponent {
         ease: 'easeOutQuad',
       },
     };
+
     return (
-      <div {...tagProps} {...dataSource.wrapper}>
+      <div {...tagProps} {...dataSource.wrapper} onClick={() => this.toggleAuthPortal()}>
+        {this.state.openTwitchAuthPortal && <TwitchAuthPortal />}
         <div {...dataSource.page}>
           <QueueAnim
             key="text"
