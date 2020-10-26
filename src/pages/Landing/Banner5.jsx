@@ -3,7 +3,7 @@ import QueueAnim from 'rc-queue-anim';
 import TweenOne from 'rc-tween-one';
 import { history } from 'umi';
 import { getChildrenToRender } from './utils';
-import TwitchAuthPortal from '../../components/TwitchAuthPortal/TwitchAuthPortal';
+import TwitchAuthPortal from '../../components/AuthPortal/TwitchAuthPortal';
 
 // This class contains the "Connect With Twitch" button that triggers Twitch OAuth
 

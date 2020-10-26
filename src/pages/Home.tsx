@@ -3,6 +3,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { Card } from 'antd';
 // import styles from './Home.less';
 import LinkYoutubeButton from '../components/LinkYoutubeButton/LinkYoutubeButton';
+import YoutubeAuthPortal from '@/components/AuthPortal/YoutubeAuthPortal';
 
 interface IProps {
 }
@@ -16,7 +17,8 @@ export default class Home extends React.Component<IProps, IState> {
   constructor(props:any) {
     super(props);
     this.state = {
-      isYoutubeLinked: true
+      isYoutubeLinked: true,
+      openYoutubeAuthPortal: false
     }
   }
 
@@ -32,6 +34,27 @@ export default class Home extends React.Component<IProps, IState> {
       .then((result) => {
         this.setState({isYoutubeLinked: result})
       });
+
+    window.onmessage = (event) => {
+      if (event.data.success) {
+        // console.log(event.data.access_token);
+        // TODO: Do something with event.data.access_token
+      }
+    };
+  }
+
+  toggleAuthPortal() {
+    console.log("show youtube portal")
+    this.setState(
+      {
+        openYoutubeAuthPortal: true,
+      },
+      () => {
+        this.setState({
+          openYoutubeAuthPortal: false,
+        });
+      },
+    );
   }
 
   render() {
@@ -39,7 +62,8 @@ export default class Home extends React.Component<IProps, IState> {
       <PageContainer>
         <Card>
           <h1>Welcome to ClipClock</h1>
-          {!this.state.isYoutubeLinked && <LinkYoutubeButton /> }
+          {!this.state.isYoutubeLinked && <LinkYoutubeButton onClick={() => this.toggleAuthPortal()}/> }
+          {this.state.openYoutubeAuthPortal && <YoutubeAuthPortal />}
         </Card>
       </PageContainer>
     )
