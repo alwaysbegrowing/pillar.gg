@@ -1,6 +1,7 @@
 import React from 'react';
 import QueueAnim from 'rc-queue-anim';
 import TweenOne from 'rc-tween-one';
+import { history } from 'umi';
 import { getChildrenToRender } from './utils';
 import TwitchAuthPortal from '../../components/TwitchAuthPortal/TwithAuthPortal';
 
@@ -16,15 +17,30 @@ class Banner5 extends React.PureComponent {
   }
 
   componentDidMount() {
+    if (localStorage.getItem('user_id')) {
+      history.push('/home');
+    }
     window.onmessage = (event) => {
       if (event.data.success) {
         // console.log(event.data.access_token);
         // TODO: Do something with event.data.access_token
         fetch('/api/login', {
           method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain',
+          },
           body: event.data.access_token,
-        });
-        // .then(res => console.log(JSON.stringify(res)));
+          redirect: 'follow',
+        })
+          .then((response) => response.text())
+          .then((result) => {
+            const response = JSON.parse(result);
+            const { user_id } = response;
+            if (user_id) {
+              localStorage.setItem('user_id', user_id);
+              history.push('/home');
+            }
+          });
       }
     };
   }
