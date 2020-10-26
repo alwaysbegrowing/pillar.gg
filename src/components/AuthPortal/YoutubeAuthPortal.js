@@ -11,13 +11,13 @@ export default function YoutubeAuthPortal() {
         : 'https://dev.clipclock.stream/YoutubeAuth';
     console.log(redirectURI);
     window.open(
-      `https://accounts.google.com/o/oauth2/v2/auth?
-      scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.upload&
-      include_granted_scopes=true&
-      state=state_parameter_passthrough_value&
-      redirect_uri=${redirectURI}&
-      response_type=token&
-      client_id=${clientID}`,
+      `https://accounts.google.com/o/oauth2/v2/auth?` +
+        `scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.upload&` +
+        `include_granted_scopes=true&` +
+        `state=state_parameter_passthrough_value&` +
+        `redirect_uri=${redirectURI}&` +
+        `response_type=token&` +
+        `client_id=${clientID}`,
       'Login to Youtube',
       'width=600px, height=400px, left=200px, top=200px',
     );
