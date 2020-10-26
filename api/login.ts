@@ -4,6 +4,8 @@ const connectToDatabase = require('./_connectToDatabase');
 const addUser = require('./_addUser');
 const getTwitchCredentials = require('./_getTwitchCredentials');
 
+// const ObjectId = require('mongodb').ObjectId
+
 const login = async (req: NowRequest, res: NowResponse) => {
   try {
     // retrieve access token from req.body
@@ -45,7 +47,7 @@ const login = async (req: NowRequest, res: NowResponse) => {
       // const updatedResult = await db
       // .collection('users')
       // .updateOne(
-      //   { _id: mongoID },
+      //   { _id: ObjectId(mongoID) },
       //   { 'twitch_access_token': access_token, 'email': email, 'twitch_username': username },
       //   (err: any, res: any) => {
       //     if(err){
