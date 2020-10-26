@@ -24,7 +24,7 @@ const getTwitchCredentials = async (access_token) => {
   .then((resp => resp.json()))
   .then((json => {
     // eslint-disable-next-line
-    return({email: json.email, name: json.name, twitch_id: json._id});
+    return({email: json.email, name: json.name, twitch_id: json._id, twitch_profile_picture: json.logo});
   }))
   .catch(() => {
     return null;

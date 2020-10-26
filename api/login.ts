@@ -20,10 +20,12 @@ const login = async (req: NowRequest, res: NowResponse) => {
     let username;
     let email;
     let twitch_id;
+    let twitch_profile_picture;
     if(twitchCredentials !== null) {
       username = twitchCredentials.name;
       email = twitchCredentials.email;
       twitch_id = twitchCredentials.twitch_id;
+      twitch_profile_picture = twitchCredentials.twitch_profile_picture;
     }
     else{
       res.status(401).send('Error retrieving twitch credentials');
@@ -76,7 +78,7 @@ const login = async (req: NowRequest, res: NowResponse) => {
       const plan = 'basic';
 
       // add user to database
-      await addUser(email, twitch_id, username, access_token, youtube_token, timestamp, plan);
+      await addUser(email, twitch_id, username, twitch_profile_picture, access_token, youtube_token, timestamp, plan);
 
       // receive userid generated from mongo
       const user_results = await db

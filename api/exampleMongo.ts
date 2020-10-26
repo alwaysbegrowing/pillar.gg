@@ -4,7 +4,7 @@ const connectToDatabase = require('./_connectToDatabase');
 
 const example = async (req: NowRequest, res: NowResponse) => {
   const db = await connectToDatabase();
-  const results = await db.collection('streams').find({}).toArray();
+  const results = await db.collection('users').find({}).toArray();
   res.json({ results });
 };
 

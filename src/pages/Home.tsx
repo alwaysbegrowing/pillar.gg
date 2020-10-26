@@ -1,48 +1,56 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Alert, Typography } from 'antd';
-import styles from './Home.less';
+import { Card } from 'antd';
+// import styles from './Home.less';
+import LinkYoutubeButton from '../components/LinkYoutubeButton/LinkYoutubeButton';
 
-const CodePreview: React.FC<{}> = ({ children }) => (
-  <pre className={styles.pre}>
-    <code>
-      <Typography.Text copyable>{children}</Typography.Text>
-    </code>
-  </pre>
-);
+interface IProps {
+}
 
-export default (): React.ReactNode => (
-  <PageContainer>
-    <Card>
-      <Alert
-        message="Home"
-        type="success"
-        showIcon
-        banner
-        style={{
-          margin: -12,
-          marginBottom: 24,
-        }}
-      />
-      <Typography.Text strong>
-        高级表格{' '}
-        <a href="https://protable.ant.design/" rel="noopener noreferrer" target="__blank">
-          欢迎使用
-        </a>
-      </Typography.Text>
-      <CodePreview>yarn add @ant-design/pro-table</CodePreview>
-      <Typography.Text
-        strong
-        style={{
-          marginBottom: 12,
-        }}
-      >
-        高级布局{' '}
-        <a href="https://prolayout.ant.design/" rel="noopener noreferrer" target="__blank">
-          欢迎使用
-        </a>
-      </Typography.Text>
-      <CodePreview>yarn add @ant-design/pro-layout</CodePreview>
-    </Card>
-  </PageContainer>
-);
+interface IState {
+  isYoutubeLinked:boolean
+}
+
+export default class Home extends React.Component<IProps, IState> {
+
+  constructor(props:any) {
+    super(props);
+    this.state = {
+      isYoutubeLinked: true
+    }
+  }
+
+  componentDidMount() {
+    fetch('/api/getYoutubeSyncStatus', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({user_id: localStorage.getItem('user_id')})
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        this.setState({isYoutubeLinked: result})
+      });
+  }
+
+  render() {
+    return (
+      <PageContainer>
+        <Card>
+          <h1>Welcome to ClipClock</h1>
+          {!this.state.isYoutubeLinked && <LinkYoutubeButton /> }
+        </Card>
+      </PageContainer>
+    )
+  }
+}
+
+// export default (): React.ReactNode => (
+//   const
+//   <PageContainer>
+//     <Card>
+//       <h1>Welcome to ClipClock</h1>
+//     </Card>
+//   </PageContainer>
+// );
