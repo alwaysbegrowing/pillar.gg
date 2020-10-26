@@ -2,7 +2,7 @@ const { MongoClient } = require('mongodb');
 
 // Create cached connection variable
 
-let cachedDb = null;
+let cachedDb: any = null;
 
 // A function for connecting to MongoDB,
 // taking a single parameter of the connection string
