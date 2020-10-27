@@ -24,7 +24,7 @@ const getUserYTToken = async (req: NowRequest, res: NowResponse) => {
           // return their yt_token
           // eslint-disable-next-line
           const refresh_token = user_results[0]['youtube_credentials']['refresh_token'];
-          const refreshedYoutubeCredentials = refreshYTAccessToken(refresh_token);
+          const refreshedYoutubeCredentials = await refreshYTAccessToken(refresh_token);
 
           // filter
         const filter = { twitch_username: req.body.twitch_username };
