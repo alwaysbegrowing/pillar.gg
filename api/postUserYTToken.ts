@@ -16,8 +16,6 @@ const postUserYTVideo = async (req: NowRequest, res: NowResponse) => {
     res.status(401).send('ERROR: NO youtube_token RECEIVED');
   } else {
     try {
-      console.log(req.body.user_id);
-      console.log(req.body.youtube_token);
       // get user token from user table
       const db = await connectToDatabase();
       const user_results = await db

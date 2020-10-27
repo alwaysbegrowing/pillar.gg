@@ -36,8 +36,16 @@ export default class Home extends React.Component<IProps, IState> {
 
     window.onmessage = (event: any) => {
       if (event.data.success) {
-        // console.log(event.data.access_token);
-        // TODO: Do something with event.data.access_token
+        fetch('/api/postUserYTToken', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: localStorage.getItem('user_id'),
+            youtube_token: event.data.access_token,
+          }),
+        });
       }
     };
   }
