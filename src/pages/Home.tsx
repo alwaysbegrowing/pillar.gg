@@ -72,9 +72,10 @@ export default class Home extends React.Component<IProps, IState> {
       <PageContainer>
         <Card>
           <h1>Welcome to ClipClock</h1>
-          {this.state.shouldShowYoutubeLinkButton && (
+          {
+            // this.state.shouldShowYoutubeLinkButton &&
             <LinkYoutubeButton onClick={() => this.toggleAuthPortal()} />
-          )}
+          }
           {this.state.openYoutubeAuthPortal && <YoutubeAuthPortal />}
         </Card>
       </PageContainer>
