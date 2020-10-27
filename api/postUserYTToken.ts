@@ -4,18 +4,23 @@ import { NowRequest, NowResponse } from '@vercel/node';
 const ObjectId = require('mongodb').ObjectId;
 
 const connectToDatabase = require('./_connectToDatabase');
+const getUserYTCredentials = require('./_getUserYTCredentials');
 
 const postUserYTVideo = async (req: NowRequest, res: NowResponse) => {
+
   if (req.body.user_id === null || req.body.user_id === undefined || req.body.user_id === '') {
     res.status(401).send('ERROR: NO user_id RECEIVED');
   } else if (
-    req.body.youtube_token === null ||
-    req.body.youtube_token === undefined ||
-    req.body.youtube_token === ''
+      req.body.code === null ||
+      req.body.code === undefined ||
+      req.body.code === ''
   ) {
-    res.status(401).send('ERROR: NO youtube_token RECEIVED');
+    res.status(401).send('ERROR: No code RECEIVED');
   } else {
     try {
+      // get data from youtube using code
+      const youtubeResults = await getUserYTCredentials(req.body.code);
+
       // get user token from user table
       const db = await connectToDatabase();
       const user_results = await db
@@ -33,12 +38,17 @@ const postUserYTVideo = async (req: NowRequest, res: NowResponse) => {
         // updatedoc
         const updatedoc = {
           $set: {
-            youtube_token: req.body.youtube_token,
+            youtube_credentials: {
+              acces_token: youtubeResults.access_token,
+              refresh_token: youtubeResults.refresh_token,
+              scope: youtubeResults.scope,
+              token_type: youtubeResults.token_type,
+              expires_in: youtubeResults.expires_in
+            }
           },
         };
 
         db.collection('users').updateOne(filter, updatedoc, options);
-        console.log('updated!');
         res.status(200).send('success');
       } else {
         res.status(401).send('invalid user_id');

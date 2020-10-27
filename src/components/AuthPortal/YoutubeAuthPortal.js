@@ -14,21 +14,15 @@ export default function YoutubeAuthPortal() {
       `https://accounts.google.com/o/oauth2/v2/auth?` +
         `scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.upload&` +
         `include_granted_scopes=true&` +
+        `approval_prompt=force&`+
+        `access_type=offline&`+
         `state=state_parameter_passthrough_value&` +
         `redirect_uri=${redirectURI}&` +
-        `response_type=token&` +
+        `response_type=code&` +
         `client_id=${clientID}`,
       'Login to Youtube',
       'width=600px, height=400px, left=200px, top=200px',
     );
-
-    console.log(`https://accounts.google.com/o/oauth2/v2/auth?
-    scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.upload&
-    include_granted_scopes=true&
-    state=state_parameter_passthrough_value&
-    redirect_uri=${redirectURI}&
-    response_type=token&
-    client_id=${clientID}`);
   });
   return null;
 }

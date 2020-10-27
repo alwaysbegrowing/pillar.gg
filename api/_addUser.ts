@@ -6,7 +6,7 @@ const connectToDatabase = require('./_connectToDatabase');
 //    res.json({results})
 // }
 
-const addUser = async (email_in: any, twitch_id_in: any, username_in: any, twitch_profile_picture_in: any, access_token: any, youtube_token_in: any, timestamp_in: any, plan_in: any) => {
+const addUser = async (email_in: any, twitch_id_in: any, username_in: any, twitch_profile_picture_in: any, access_token: any, timestamp_in: any, plan_in: any) => {
   // connect to db
   const db = await connectToDatabase();
 
@@ -14,12 +14,11 @@ const addUser = async (email_in: any, twitch_id_in: any, username_in: any, twitc
   const myobj = {
     email: email_in,
     twitch_access_token: access_token,
-    youtube_token: youtube_token_in,
     timestamp: timestamp_in,
     plan: plan_in,
     twitch_username: username_in,
     twitch_id: twitch_id_in,
-    twitch_profile_picture: twitch_profile_picture_in
+    twitch_profile_picture: twitch_profile_picture_in,
   };
 
   db.collection('users').insertOne(myobj);

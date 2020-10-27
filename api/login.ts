@@ -70,15 +70,12 @@ const login = async (req: NowRequest, res: NowResponse) => {
       // get registration timestamp
       const timestamp = Date.now();
 
-      // register user with null youtube token
-      const youtube_token = null;
-
       // Set default stripe plan to basic
       // When Payment is integrated, the stripe connection would go here
       const plan = 'basic';
 
       // add user to database
-      await addUser(email, twitch_id, username, twitch_profile_picture, access_token, youtube_token, timestamp, plan);
+      await addUser(email, twitch_id, username, twitch_profile_picture, access_token, timestamp, plan);
 
       // receive userid generated from mongo
       const user_results = await db

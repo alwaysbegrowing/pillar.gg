@@ -45,31 +45,31 @@ export default defineConfig({
     {
       path: '/home',
       name: 'home',
-      icon: 'smile',
+      icon: 'HomeOutlined',
       component: './Home',
     },
     {
       path: '/videos',
       name: 'videos',
-      icon: 'smile',
+      icon: 'VideoCameraOutlined',
       component: './Videos',
     },
     {
       path: '/analysis',
       name: 'analysis',
-      icon: 'smile',
+      icon: 'LineChartOutlined',
       component: './Analysis',
     },
     {
       path: '/settings',
       name: 'settings',
-      icon: 'smile',
+      icon: 'SettingOutlined',
       component: './Settings',
     },
     {
       path: '/feedback',
       name: 'feedback',
-      icon: 'smile',
+      icon: 'MessageOutlined',
       component: './Feedback',
     },
     {

@@ -43,15 +43,13 @@ export default class Home extends React.Component<IProps, IState> {
           },
           body: JSON.stringify({
             user_id: localStorage.getItem('user_id'),
-            youtube_token: event.data.access_token,
+            code: event.data.code,
           }),
         });
       }
     };
   }
-
   toggleAuthPortal() {
-    console.log('show youtube portal');
     this.setState(
       {
         openYoutubeAuthPortal: true,
@@ -79,11 +77,3 @@ export default class Home extends React.Component<IProps, IState> {
   }
 }
 
-// export default (): React.ReactNode => (
-//   const
-//   <PageContainer>
-//     <Card>
-//       <h1>Welcome to ClipClock</h1>
-//     </Card>
-//   </PageContainer>
-// );

@@ -22,7 +22,7 @@ const getUserYTToken = async (req: NowRequest, res: NowResponse) => {
         if (user_results.length !== 0) {
           // return their yt_token
           // eslint-disable-next-line
-          res.status(200).json(user_results[0]['youtube_token']);
+          res.status(200).json(user_results[0]['youtube_credentials']);
         } else {
           res.status(401).send('twitch_username does not exist');
         }
