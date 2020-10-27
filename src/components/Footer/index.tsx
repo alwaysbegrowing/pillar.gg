@@ -8,7 +8,7 @@ export default () => (
       {
         key: 'Privacy Policy',
         title: 'Privacy Policy',
-        href: 'http://localhost:8000/PrivacyPolicy',
+        href: 'https://dev.clipclock.stream/PrivacyPolicy',
         blankTarget: true,
       },
     ]}
