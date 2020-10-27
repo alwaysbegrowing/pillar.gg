@@ -32,6 +32,7 @@ const getUserYTToken = async (req: NowRequest, res: NowResponse) => {
           debugList.push("user results > 0" + user_results.length.toString())
           const refresh_token = user_results[0]['youtube_credentials']['refresh_token'];
           debugList.push("awaiting refresh YT Access Token" + refresh_token.toString())
+          debugList.push("environment clientID: " + process.env.YOUTUBE_CLIENT_ID + " secret: " + process.env.YOUTUBE_CLIENT_SECRET)
           const refreshedYoutubeCredentials = await refreshYTAccessToken(refresh_token);
           debugList.push("received refreshedYoutubeCredentials" + refreshedYoutubeCredentials.toString())
 
