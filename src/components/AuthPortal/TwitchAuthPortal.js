@@ -7,7 +7,6 @@ export default function TwitchAuthPortal() {
     // determine host and use correct redirect
     // const redirectURI = (window.location.hostname === "localhost") ? "http://localhost:8000/TwitchAuth" : 'https://dev.clipclock.stream/TwitchAuth';
     const redirectURI = 'https://dev.clipclock.stream/TwitchAuth';
-
     window.open(
       `https://id.twitch.tv/oauth2/authorize?client_id=${clientID}&redirect_uri=${redirectURI}&response_type=token&scope=user_read`,
       'Login to Twitch',

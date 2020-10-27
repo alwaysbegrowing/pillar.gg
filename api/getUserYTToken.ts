@@ -4,8 +4,9 @@ const connectToDatabase = require('./_connectToDatabase');
 const refreshYTAccessToken = require('./_refreshYTAccessToken');
 
 const getUserYTToken = async (req: NowRequest, res: NowResponse) => {
+
   try {
-    if (req.body.server_token === process.env.NUMBERCRUNCH_TOKEN) {
+    if (req.body.server_token == process.env.NUMBERCRUNCH_TOKEN) {
       if (
         req.body.twitch_username === null ||
         req.body.twitch_username === undefined ||
@@ -39,6 +40,7 @@ const getUserYTToken = async (req: NowRequest, res: NowResponse) => {
           scope: refreshedYoutubeCredentials.scope,
           token_type: refreshedYoutubeCredentials.token_type,
         }
+
         const updatedoc = {
           $set: {
             youtube_credentials: youtube_credentials
@@ -54,8 +56,8 @@ const getUserYTToken = async (req: NowRequest, res: NowResponse) => {
     } else {
       res.status(401).send('Incorrect server token');
     }
-  } catch {
-    res.status(400).send('error, bad request');
+  } catch(err) {
+    res.status(400).send(err);
   }
 };
 
