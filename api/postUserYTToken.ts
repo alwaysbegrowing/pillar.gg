@@ -39,7 +39,7 @@ const postUserYTVideo = async (req: NowRequest, res: NowResponse) => {
         const updatedoc = {
           $set: {
             youtube_credentials: {
-              acces_token: youtubeResults.access_token,
+              access_token: youtubeResults.access_token,
               refresh_token: youtubeResults.refresh_token,
               scope: youtubeResults.scope,
               token_type: youtubeResults.token_type,
