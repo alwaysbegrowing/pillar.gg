@@ -3,7 +3,7 @@ import { NowRequest, NowResponse } from '@vercel/node';
 const connectToDatabase = require('./_connectToDatabase');
 const addUser = require('./_addUser');
 const getTwitchCredentials = require('./_getTwitchCredentials');
-
+const postNewStripeCustomer = require('./_postNewStripeCustomer');
 // const ObjectId = require('mongodb').ObjectId
 
 const login = async (req: NowRequest, res: NowResponse) => {
@@ -72,22 +72,34 @@ const login = async (req: NowRequest, res: NowResponse) => {
 
       // Set default stripe plan to basic
       // When Payment is integrated, the stripe connection would go here
-      const plan = 'basic';
+      const plan = 'none';
 
-      // add user to database
-      await addUser(email, twitch_id, username, twitch_profile_picture, access_token, timestamp, plan);
 
-      // receive userid generated from mongo
-      const user_results = await db
-        .collection('users')
-        .find({ twitch_access_token: access_token })
-        .toArray();
+      const stripeCustomerID = await postNewStripeCustomer(email, username);
+      // stripe customer could not be created
+      if(stripeCustomerID === null) {
+        res.status(502).send("Request failed because a stripe account wasn't created.")
+      }
+      // stripe account has been created and all above information is valid
+      else {
+        // add user to database
+        await addUser(email, twitch_id, username, twitch_profile_picture, stripeCustomerID, access_token, timestamp, plan);
 
-      // send client success status and user_id for client side authentication
-      // res.send(user_results[0]._id)
+        // receive userid generated from mongo
+        const user_results = await db
+          .collection('users')
+          .find({ twitch_access_token: access_token })
+          .toArray();
 
-      // eslint-disable-next-line
-      res.status(200).json({ user_id: user_results[0]._id });
+        // send client success status and user_id for client side authentication
+        // res.send(user_results[0]._id)
+
+        // make a stripe customer account for the new user
+
+        // eslint-disable-next-line
+        res.status(200).json({ user_id: user_results[0]._id });
+      }
+
     }
   } catch (err) {
     res.status(400).json({ error: err });
