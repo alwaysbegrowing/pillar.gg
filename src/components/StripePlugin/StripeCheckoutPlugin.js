@@ -1,41 +1,10 @@
-// import React, {useState} from 'react'
-// import {Elements} from '@stripe/react-stripe-js';
-// import {loadStripe} from '@stripe/stripe-js';
-// import CheckoutForm from './CheckoutForm';
-// import SubscriptionSelector from './SubscriptionSelector';
-// const stripePromise = loadStripe("pk_test_51HfUdOIBb5qVQA8voGWeVdgUChW4KUxmmAJp3CfxQjYdC6nsTesN4KycZX2KUgRCkl2k2KpDqArPTAXILvEebRl200LQ9tCwXH");
-
-// export default function StripePlugin() {
-
-//   // selectedPlan is assigned the value of the
-//   // plan that the user will be paying for
-//   // options: 'free', 'basic', or 'pro'
-//   const [selectedPlan, togglePlan] = useState('free');
-
-//   // reads selected button value from SubscriptionSelector
-//   // and assigns value to selectedPlan
-//   function changePlan(e) {
-//     togglePlan(e.currentTarget.value);
-//   }
-
-//   return (
-//     <div>
-//       <SubscriptionSelector selectPlan={changePlan} plan={selectedPlan}/>
-
-//       <Elements stripe={stripePromise}>
-//         <CheckoutForm />
-//       </Elements>
-//     </div>
-//   )
-// }
-
 import React, {useState} from 'react'
 import { loadStripe } from '@stripe/stripe-js';
 import SubscriptionSelector from './SubscriptionSelector';
 
 const stripePromise = loadStripe('pk_test_51HfUdOIBb5qVQA8voGWeVdgUChW4KUxmmAJp3CfxQjYdC6nsTesN4KycZX2KUgRCkl2k2KpDqArPTAXILvEebRl200LQ9tCwXH');
 
-export default function StripePlugin() {
+export default function StripeCheckoutPlugin() {
 
   // selectedPlan is assigned the value of the
   // plan that the user will be paying for

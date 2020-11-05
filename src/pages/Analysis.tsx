@@ -1,7 +1,7 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { Card } from 'antd';
-import StripePlugin from '../components/StripePlugin/StripePlugin';
+import StripeCheckoutPlugin from '../components/StripePlugin/StripeCheckoutPlugin';
 // import styles from './Analysis.less';
 
 interface IProps {}
@@ -25,7 +25,7 @@ export default class Analysis extends React.Component<IProps, IState> {
       <PageContainer>
         <Card>
           <div>Coming soon!</div>
-          <StripePlugin />
+          <StripeCheckoutPlugin />
         </Card>
       </PageContainer>
     );
