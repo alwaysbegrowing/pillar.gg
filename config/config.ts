@@ -12,7 +12,7 @@ export default defineConfig({
     hmr: true,
   },
   layout: {
-    name: 'ClipClock',
+    name: 'Pillar',
     locale: true,
     ...defaultSettings,
   },
