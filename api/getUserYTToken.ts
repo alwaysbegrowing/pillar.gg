@@ -15,14 +15,13 @@ const getUserYTToken = async (req: NowRequest, res: NowResponse) => {
       } else {
         // have a good server token and twitch username
         const db = await connectToDatabase();
-        const user_results = await db
+        const user_result = await db
           .collection('users')
-          .find({ twitch_username: req.body.twitch_username })
-          .toArray();
-        if (user_results.length !== 0) {
+          .findOne({ twitch_username: req.body.twitch_username });
+        if (user_result) {
           // return their yt_token
           // eslint-disable-next-line
-          const refresh_token = user_results[0]['youtube_credentials']['refresh_token'];
+          const refresh_token = user_result['youtube_credentials']['refresh_token'];
           const refreshedYoutubeCredentials = await refreshYTAccessToken(refresh_token);
           // filter
           const filter = { twitch_username: req.body.twitch_username };
@@ -32,7 +31,7 @@ const getUserYTToken = async (req: NowRequest, res: NowResponse) => {
 
           const youtube_credentials = {
             access_token: refreshedYoutubeCredentials.access_token,
-            refresh_token: user_results[0].youtube_credentials.refresh_token,
+            refresh_token: user_result.youtube_credentials.refresh_token,
             expires_in: refreshedYoutubeCredentials.expires_in,
             scope: refreshedYoutubeCredentials.scope,
             token_type: refreshedYoutubeCredentials.token_type,
