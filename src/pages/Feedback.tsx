@@ -3,30 +3,14 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { Card } from 'antd';
 // import styles from './Feedback.less';
 
-interface IProps {}
-
-interface IState {}
-
-export default class Feedback extends React.Component<IProps, IState> {
-
-  constructor(props: any) {
-    super(props);
-    this.state = {
-    };
-  }
-
-  componentDidMount() {
-
-  }
-
-  render() {
+const Feedback = () => {
     return (
       <PageContainer>
         <Card>
-          <div></div>
+          <h1>Coming Soon</h1>
         </Card>
       </PageContainer>
     );
   }
-}
 
+export default Feedback;

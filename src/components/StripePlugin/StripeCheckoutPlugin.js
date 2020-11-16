@@ -1,10 +1,12 @@
 import React, {useState} from 'react'
+import { useModel } from 'umi';
 import { loadStripe } from '@stripe/stripe-js';
 import SubscriptionSelector from './SubscriptionSelector';
 
 const stripePromise = loadStripe('pk_test_51HfUdOIBb5qVQA8voGWeVdgUChW4KUxmmAJp3CfxQjYdC6nsTesN4KycZX2KUgRCkl2k2KpDqArPTAXILvEebRl200LQ9tCwXH');
 
 export default function StripeCheckoutPlugin() {
+  const { initialState } = useModel('@@initialState');
 
   // selectedPlan is assigned the value of the
   // plan that the user will be paying for
@@ -17,15 +19,15 @@ export default function StripeCheckoutPlugin() {
     togglePlan(e.currentTarget.value);
   }
 
-  const handleClick = async (event) => {
+  const handleClick = async (/* event */) => {
     // Get Stripe.js instance
     const stripe = await stripePromise;
 
-    // Call your backend to create the Checkout Session
-    const response = await fetch('/api/createStripeCheckoutSession.js', {
+    // Call backend to create the Checkout Session
+    const response = await fetch('/api/stripe/createStripeCheckoutSession', {
       method: 'POST',
       body: JSON.stringify({
-        user_id: localStorage.getItem('user_id'),
+        user_id: initialState.currentUser.user_id,
         plan: selectedPlan
       }),
     });
@@ -38,8 +40,8 @@ export default function StripeCheckoutPlugin() {
     });
 
     if (result.error) {
-      console.log(result.error);
-      // If `redirectToCheckout` fails due to a browser or network
+      // console.log(result.error);
+      // TODO: If `redirectToCheckout` fails due to a browser or network
       // error, display the localized error message to your customer
       // using `result.error.message`.
     }
@@ -47,7 +49,7 @@ export default function StripeCheckoutPlugin() {
   return (
     <div>
       <SubscriptionSelector changePlan={changePlan} plan={selectedPlan}/>
-      <button role="link" onClick={handleClick}>
+      <button type="button" role="link" onClick={handleClick}>
         Checkout
       </button>
     </div>

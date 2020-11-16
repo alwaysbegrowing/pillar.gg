@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 
 // This function takes in the access token and returns
 // the username and email associated with the account in an object
-const getTwitchCredentials = async (access_token) => {
+const getTwitchUserData = async (access_token) => {
   const url = `https://api.twitch.tv/kraken/user`;
   const client_id = process.env.TWITCH_CLIENT_ID;
 
@@ -32,4 +32,4 @@ const getTwitchCredentials = async (access_token) => {
   return data;
 };
 
-module.exports = getTwitchCredentials;
+module.exports = getTwitchUserData;

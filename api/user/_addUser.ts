@@ -1,4 +1,4 @@
-const connectToDatabase = require('./_connectToDatabase');
+const connectToDatabase = require('../_connectToDatabase');
 
 // const example = async (req: NowRequest, res: NowResponse) => {
 //    const db = await connectToDatabase()
@@ -6,14 +6,14 @@ const connectToDatabase = require('./_connectToDatabase');
 //    res.json({results})
 // }
 
-const addUser = async (email_in: any, twitch_id_in: any, username_in: any, twitch_profile_picture_in: any, stripeCustomerID_in: any, access_token: any, timestamp_in: any, plan_in: any) => {
+const addUser = async (email_in: any, twitch_id_in: any, username_in: any, twitch_profile_picture_in: any, stripeCustomerID_in: any, twitch_credentials_in: any, timestamp_in: any, plan_in: any) => {
   // connect to db
   const db = await connectToDatabase();
 
   // add user
   const myobj = {
     email: email_in,
-    twitch_access_token: access_token,
+    twitch_credentials: twitch_credentials_in,
     timestamp: timestamp_in,
     plan: plan_in,
     twitch_username: username_in,

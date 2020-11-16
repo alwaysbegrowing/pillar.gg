@@ -4,22 +4,12 @@ import { Card, List, Divider } from 'antd';
 import StripeCustomerPortalPlugin from '../components/StripePlugin/StripeCustomerPortalPlugin';
 // import styles from './Settings.less';
 
-const data:any = [
-  <StripeCustomerPortalPlugin />
-]
-interface IProps {}
 
-interface IState {}
+const Settings = () => {
+  const data:any = [
+    <StripeCustomerPortalPlugin />
+  ]
 
-export default class Settings extends React.Component<IProps, IState> {
-
-  constructor(props: any) {
-    super(props);
-    this.state = {
-    };
-  }
-
-  render() {
     return (
       <PageContainer>
         <Card>
@@ -34,5 +24,7 @@ export default class Settings extends React.Component<IProps, IState> {
       </PageContainer>
     );
   }
-}
+
+export default Settings;
+
 

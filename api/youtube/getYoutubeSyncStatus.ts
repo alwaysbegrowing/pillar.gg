@@ -3,7 +3,7 @@ import { NowRequest, NowResponse } from '@vercel/node';
 // eslint-disable-next-line
 const ObjectId = require('mongodb').ObjectId;
 
-const connectToDatabase = require('./_connectToDatabase');
+const connectToDatabase = require('../_connectToDatabase');
 
 const getYoutubeSyncStatus = async (req: NowRequest, res: NowResponse) => {
   try {
@@ -11,14 +11,13 @@ const getYoutubeSyncStatus = async (req: NowRequest, res: NowResponse) => {
     const db = await connectToDatabase();
     // look up user
     // eslint-disable-next-line
-    const user_results = await db
+    const user_result = await db
       .collection('users')
-      .find({ _id: ObjectId(req.body.user_id) })
-      .toArray();
+      .findOne({ _id: ObjectId(req.body.user_id) });
 
-    if (user_results.length === 0) {
+    if (!user_result) {
       res.status(401).send('invalid user_id');
-    } else if (!user_results[0].youtube_credentials.access_token) {
+    } else if (!user_result.youtube_credentials.access_token) {
       res.status(200).send(false);
     } else {
       res.status(200).send(true);

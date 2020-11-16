@@ -3,11 +3,10 @@ import { NowRequest, NowResponse } from '@vercel/node';
 // eslint-disable-next-line
 const ObjectId = require('mongodb').ObjectId;
 
-const connectToDatabase = require('./_connectToDatabase');
+const connectToDatabase = require('../_connectToDatabase');
 const getUserYTCredentials = require('./_getUserYTCredentials');
 
-const postUserYTVideo = async (req: NowRequest, res: NowResponse) => {
-
+const postUserYTToken = async (req: NowRequest, res: NowResponse) => {
   if (req.body.user_id === null || req.body.user_id === undefined || req.body.user_id === '') {
     res.status(401).send('ERROR: NO user_id RECEIVED');
   } else if (
@@ -16,17 +15,17 @@ const postUserYTVideo = async (req: NowRequest, res: NowResponse) => {
       req.body.code === ''
   ) {
     res.status(401).send('ERROR: No code RECEIVED');
-  } else {
+  }
+  else {
     try {
+
       // get data from youtube using code
       const youtubeResults = await getUserYTCredentials(req.body.code);
-
       // get user token from user table
       const db = await connectToDatabase();
       const user_results = await db
         .collection('users')
-        .find({ _id: ObjectId(req.body.user_id) })
-        .toArray();
+        .find({ _id: ObjectId(req.body.user_id) });
 
       if (user_results.length !== 0) {
         // filter
@@ -47,7 +46,6 @@ const postUserYTVideo = async (req: NowRequest, res: NowResponse) => {
             }
           },
         };
-
         db.collection('users').updateOne(filter, updatedoc, options);
         res.status(200).send('success');
       } else {
@@ -59,4 +57,4 @@ const postUserYTVideo = async (req: NowRequest, res: NowResponse) => {
   }
 };
 
-module.exports = postUserYTVideo;
+module.exports = postUserYTToken;

@@ -81,6 +81,7 @@ export default defineConfig({
       path: '/TwitchAuth',
       layout: false,
       component: './TwitchAuth',
+
     },
     {
       path: '/YoutubeAuth',

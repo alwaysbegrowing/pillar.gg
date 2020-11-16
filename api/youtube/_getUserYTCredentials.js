@@ -7,7 +7,8 @@ const getUserYTCredentials = async (code) => {
               `code=${code}&`+
               `client_id=${process.env.YOUTUBE_CLIENT_ID}&`+
               `client_secret=${process.env.YOUTUBE_CLIENT_SECRET}&`+
-              `redirect_uri=https://dev.clipclock.stream/YoutubeAuth&`+
+              // `redirect_uri=https://dev.clipclock.stream/YoutubeAuth&`+
+              `redirect_uri=http://localhost:8000/YoutubeAuth&`+
               `grant_type=authorization_code`;
 
   const data = await fetch(url, {

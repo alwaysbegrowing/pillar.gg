@@ -1,102 +1,91 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import QueueAnim from 'rc-queue-anim';
 import TweenOne from 'rc-tween-one';
-import { history } from 'umi';
+import { history, useModel } from 'umi';
 import { getChildrenToRender } from './utils';
 import TwitchAuthPortal from '../../components/AuthPortal/TwitchAuthPortal';
 
 // This class contains the "Connect With Twitch" button that triggers Twitch OAuth
+const Banner5 = (props) => {
 
-class Banner5 extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      openTwitchAuthPortal: false,
-    };
-    this.toggleAuthPortal = this.toggleAuthPortal.bind(this);
+  const { initialState, setInitialState } = useModel('@@initialState');
+  const [ openTwitchAuthPortal, setPortalStatus ] = useState(false);
+
+  function toggleAuthPortal() {
+     setPortalStatus(true);
   }
 
-  componentDidMount() {
-    if (localStorage.getItem('user_id')) {
+  useEffect(() => {
+    if (initialState.currentUser) {
       history.push('/home');
     }
     window.onmessage = (event) => {
       if (event.data.success) {
-        // console.log(event.data.access_token);
-        // TODO: Do something with event.data.access_token
-        fetch('/api/login', {
+        fetch('/api/user/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'text/plain',
           },
-          body: event.data.access_token,
+          body: event.data.code,
           redirect: 'follow',
         })
-          .then((response) => response.text())
-          .then((result) => {
-            const response = JSON.parse(result);
-            const { user_id } = response;
-            if (user_id) {
-              localStorage.setItem('user_id', user_id);
-              history.push('/home');
+        .then((res) => res.json())
+        .then((result) => {
+          if (result) {
+            const currentUser = {
+              avatar: result.avatar,
+              name: result.name,
+              user_id: result.user_id,
+              access: result.access,
+              youtubeLinked: result.youtubeLinked
             }
-          });
+            localStorage.setItem('twitch_access_token', result.twitch_access_token);
+            setInitialState({...initialState, currentUser});
+            history.push('/home');
+          }
+        });
       }
     };
-  }
+  })
 
-  toggleAuthPortal() {
-    this.setState(
-      {
-        openTwitchAuthPortal: true,
-      },
-      () => {
-        this.setState({
-          openTwitchAuthPortal: false,
-        });
-      },
-    );
-  }
+  const { ...tagProps } = props;
+  const { dataSource } = tagProps;
 
-  render() {
-    const { ...tagProps } = this.props;
-    const { dataSource } = tagProps;
+  delete tagProps.dataSource;
+  delete tagProps.isMobile;
+  const animType = {
+    queue: 'bottom',
+    one: {
+      y: '+=30',
+      opacity: 0,
+      type: 'from',
+      ease: 'easeOutQuad',
+    },
+  };
 
-    delete tagProps.dataSource;
-    delete tagProps.isMobile;
-    const animType = {
-      queue: 'bottom',
-      one: {
-        y: '+=30',
-        opacity: 0,
-        type: 'from',
-        ease: 'easeOutQuad',
-      },
-    };
-
-    return (
-      <div {...tagProps} {...dataSource.wrapper} onClick={() => this.toggleAuthPortal()}>
-        {this.state.openTwitchAuthPortal && <TwitchAuthPortal />}
-        <div {...dataSource.page}>
-          <QueueAnim
-            key="text"
-            type={animType.queue}
-            leaveReverse
-            ease={['easeOutQuad', 'easeInQuad']}
-            {...dataSource.childWrapper}
-            componentProps={{
-              md: dataSource.childWrapper.md,
-              xs: dataSource.childWrapper.xs,
-            }}
-          >
-            {dataSource.childWrapper.children.map(getChildrenToRender)}
-          </QueueAnim>
-          <TweenOne animation={animType.one} key="title" {...dataSource.image}>
-            <img src={dataSource.image.children} width="100%" alt="img" />
-          </TweenOne>
-        </div>
+  return (
+    <div {...tagProps} {...dataSource.wrapper} onClick={() => toggleAuthPortal()}>
+      {openTwitchAuthPortal && <TwitchAuthPortal />}
+      <div {...dataSource.page}>
+        <QueueAnim
+          key="text"
+          type={animType.queue}
+          leaveReverse
+          ease={['easeOutQuad', 'easeInQuad']}
+          {...dataSource.childWrapper}
+          componentProps={{
+            md: dataSource.childWrapper.md,
+            xs: dataSource.childWrapper.xs,
+          }}
+        >
+          {dataSource.childWrapper.children.map(getChildrenToRender)}
+        </QueueAnim>
+        <TweenOne animation={animType.one} key="title" {...dataSource.image}>
+          <img src={dataSource.image.children} width="100%" alt="img" />
+        </TweenOne>
       </div>
-    );
-  }
+    </div>
+  );
 }
+
 export default Banner5;

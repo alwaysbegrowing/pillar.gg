@@ -4,31 +4,15 @@ import { Card } from 'antd';
 import StripeCheckoutPlugin from '../components/StripePlugin/StripeCheckoutPlugin';
 // import styles from './Analysis.less';
 
-interface IProps {}
-
-interface IState {}
-
-export default class Analysis extends React.Component<IProps, IState> {
-
-  constructor(props: any) {
-    super(props);
-    this.state = {
-    };
-  }
-
-  componentDidMount() {
-
-  }
-
-  render() {
+const Analysis = () => {
     return (
       <PageContainer>
         <Card>
-          <div>Coming soon!</div>
+          <h1>Coming Soon</h1>
           <StripeCheckoutPlugin />
         </Card>
       </PageContainer>
     );
   }
-}
 
+export default Analysis;

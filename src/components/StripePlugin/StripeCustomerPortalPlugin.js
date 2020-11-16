@@ -1,23 +1,22 @@
-import React, {useState} from 'react'
-import { loadStripe } from '@stripe/stripe-js';
-import SubscriptionSelector from './SubscriptionSelector';
+import React from 'react'
+import { useModel } from 'umi';
+// import { loadStripe } from '@stripe/stripe-js';
 
-const stripePromise = loadStripe('pk_test_51HfUdOIBb5qVQA8voGWeVdgUChW4KUxmmAJp3CfxQjYdC6nsTesN4KycZX2KUgRCkl2k2KpDqArPTAXILvEebRl200LQ9tCwXH');
+// const stripePromise = loadStripe('pk_test_51HfUdOIBb5qVQA8voGWeVdgUChW4KUxmmAJp3CfxQjYdC6nsTesN4KycZX2KUgRCkl2k2KpDqArPTAXILvEebRl200LQ9tCwXH');
 
 export default function StripeCustomerPortalPlugin() {
-
-  const handleClick = async (event) => {
+  const { initialState } = useModel('@@initialState');
+  const handleClick = async () => {
 
     // Call backend to create Customer Portal Session
-    const response = await fetch('/api/createStripeCustomerPortalSession.js', {
+    const response = await fetch('/api/stripe/createStripeCustomerPortalSession', {
       method: 'POST',
       body: JSON.stringify({
-        user_id: localStorage.getItem('user_id')
+        user_id: initialState.currentUser.user_id
       }),
     });
 
     const session = await response.json();
-    console.log(session.url);
     if(response.status === 200) {
       window.location.href = session.url;
     }

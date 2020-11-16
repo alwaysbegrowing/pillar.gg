@@ -8,7 +8,6 @@ const refreshYTAccessToken = async (refreshToken) => {
               `client_id=${process.env.YOUTUBE_CLIENT_ID}&`+
               `client_secret=${process.env.YOUTUBE_CLIENT_SECRET}&`+
               `grant_type=refresh_token`;
-
   const data = await fetch(url, {
     mode: "no-cors",
     method: "POST",
@@ -24,7 +23,6 @@ const refreshYTAccessToken = async (refreshToken) => {
   }))
   .then((resp => resp.json()))
   .then((json => {
-
     // eslint-disable-next-line
     return({access_token: json.access_token, expires_in: json.expires_in, scope: json.scope, token_type: json.token_type});
   }))

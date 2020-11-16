@@ -5,7 +5,19 @@ export async function query() {
 }
 
 export async function queryCurrent() {
-  return request<API.CurrentUser>('/api/currentUser');
+  const twitch_access_code = localStorage.getItem('twitch_access_token');
+  if(twitch_access_code) {
+    return request<API.CurrentUser>('/api/user/getUserAccessInfo', {
+      method: 'post',
+      data: {
+        twitch_access_token: twitch_access_code
+      }
+    });
+  }
+  else {
+    return(undefined);
+  }
+
 }
 
 export async function queryNotices(): Promise<any> {

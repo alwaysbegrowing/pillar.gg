@@ -19,7 +19,9 @@ const createStripeSubscription = async (req, res) => {
   }
 
   const stripeCustomerID = await getStripeID(request.user_id);
-
+  if(!stripeCustomerID) {
+    res.status(400).send('Invalid user_id')
+  }
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     line_items: [

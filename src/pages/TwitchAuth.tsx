@@ -3,36 +3,30 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { Card, Typography } from 'antd';
 
 class TwitchAuth extends React.PureComponent {
-    componentDidMount() {
-        this.authenticateTwitch();
-    }
-
-    // TODO: Add this to a utils module or something... Matt
-    getHashValue(key: string) {
-        const matches = window.location.hash.match(new RegExp(`${key}=([^&]*)`));
-        return matches ? matches[1] : null;
-    }
-
-    authenticateTwitch() {
-        const accessToken = this.getHashValue('access_token');
-        if (accessToken != null) {
-            window.opener?.parent?.postMessage({ success: true, access_token: accessToken }, "*");
-        } else {
-            window.opener?.parent?.postMessage({ success: false }, "*");
-        }
-        window.close();
-    }
-
-    render() {
-        return (
-            <PageContainer>
-                <Card>
-                    <Typography.Text>
-                        Authenticating Twitch...
-                    </Typography.Text>
-                </Card>
-            </PageContainer>
-        )
-    }
+  componentDidMount() {
+      this.authenticateTwitch();
   }
+
+  authenticateTwitch() {
+    const code = new URLSearchParams(window.location.search).get('code');
+    if (code != null) {
+        window.opener?.parent?.postMessage({ success: true, code }, "*");
+    } else {
+        window.opener?.parent?.postMessage({ success: false }, "*");
+    }
+    window.close();
+  }
+
+  render() {
+    return (
+      <PageContainer>
+        <Card>
+          <Typography.Text>
+            Authenticating Twitch...
+          </Typography.Text>
+        </Card>
+      </PageContainer>
+    )
+  }
+}
   export default TwitchAuth;

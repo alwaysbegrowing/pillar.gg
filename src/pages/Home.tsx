@@ -1,84 +1,73 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { Card } from 'antd';
+import {useModel } from 'umi';
 // import styles from './Home.less';
+import YoutubeAuthPortal from '../components/AuthPortal/YoutubeAuthPortal';
 import LinkYoutubeButton from '../components/LinkYoutubeButton/LinkYoutubeButton';
-import YoutubeAuthPortal from '@/components/AuthPortal/YoutubeAuthPortal';
 
-interface IProps {}
+const Home = () => {
 
-interface IState {
-  shouldShowYoutubeLinkButton: boolean;
-  openYoutubeAuthPortal: boolean;
-}
+  const [openYoutubeAuthPortal, toggleYoutubeAuthPortal] = useState(false);
+  const [shouldShowLinkButton, toggleLinkButton] = useState(true);
+  const { initialState, setInitialState } = useModel('@@initialState');
 
-export default class Home extends React.Component<IProps, IState> {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      shouldShowYoutubeLinkButton: false,
-      openYoutubeAuthPortal: false,
-    };
-  }
-
-  componentDidMount() {
-    this.getYoutubeSyncStatus();
-
+  useEffect(() => {
+    getYoutubeSyncStatus();
     window.onmessage = (event: any) => {
       if (event.data.success) {
-        fetch('/api/postUserYTToken', {
+        fetch('/api/youtube/postUserYTToken', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            user_id: localStorage.getItem('user_id'),
+            user_id: initialState!.currentUser!.user_id,
             code: event.data.code,
           }),
-        }).then(() => this.getYoutubeSyncStatus());
+        })
+        .then((res) => {
+          if(res.status === 200) {
+            let currentUser = initialState?.currentUser;
+            if(currentUser?.youtubeLinked === false) {
+              currentUser.youtubeLinked = true;
+              // non-null assertation operator is appropriate because
+              // this page can't be reached without initial state being set
+              setInitialState({...initialState!, currentUser});
+            }
+          }
+        });
       }
     };
+  })
+
+  useEffect(() => {
+    toggleYoutubeAuthPortal(false);
+  }, [openYoutubeAuthPortal])
+
+  function getYoutubeSyncStatus() {
+    // button will not show if current user has youtube account linked
+    if(initialState?.currentUser?.youtubeLinked) {
+      toggleLinkButton(false);
+    }
+    else {
+      toggleLinkButton(true);
+    }
   }
 
-  getYoutubeSyncStatus() {
-    fetch('/api/getYoutubeSyncStatus', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ user_id: localStorage.getItem('user_id') }),
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        this.setState({ shouldShowYoutubeLinkButton: !result });
-      });
+  function toggleAuthPortal() {
+    toggleYoutubeAuthPortal(true);
   }
 
-  toggleAuthPortal() {
-    this.setState(
-      {
-        openYoutubeAuthPortal: true,
-      },
-      () => {
-        this.setState({
-          openYoutubeAuthPortal: false,
-        });
-      },
-    );
-  }
-
-  render() {
     return (
       <PageContainer>
         <Card>
           <h1>Welcome to ClipClock</h1>
-          {
-            // this.state.shouldShowYoutubeLinkButton &&
-            <LinkYoutubeButton onClick={() => this.toggleAuthPortal()} />
-          }
-          {this.state.openYoutubeAuthPortal && <YoutubeAuthPortal />}
+            { shouldShowLinkButton && <LinkYoutubeButton onClick={() => toggleAuthPortal()} /> }
+          {openYoutubeAuthPortal && <YoutubeAuthPortal />}
         </Card>
       </PageContainer>
     );
   }
-}
+
+export default Home;

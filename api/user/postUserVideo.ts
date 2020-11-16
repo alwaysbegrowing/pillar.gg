@@ -1,6 +1,6 @@
 import { NowRequest, NowResponse } from '@vercel/node';
 
-const connectToDatabase = require('./_connectToDatabase');
+const connectToDatabase = require('../_connectToDatabase');
 
 const postUserVideo = async (req: NowRequest, res: NowResponse) => {
   try {
@@ -8,11 +8,11 @@ const postUserVideo = async (req: NowRequest, res: NowResponse) => {
 
         // get user token from user table
         const db = await connectToDatabase();
-        const results = await db.collection('users').find({twitch_username: req.body.twitch_username }).toArray();
+        const result = await db.collection('users').findOne({twitch_username: req.body.twitch_username });
 
-        if (results.length !== 0) {
+        if (result) {
             // eslint-disable-next-line
-            const user_id = results[0]._id;
+            const user_id = result._id;
 
             // add video
             const myobj = {
