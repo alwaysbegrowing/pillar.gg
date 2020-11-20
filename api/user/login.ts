@@ -20,7 +20,6 @@ const login = async (req: NowRequest, res: NowResponse) => {
     const twitch_access_info = await getUserTwitchCredentials(auth_token);
     // get credentials
     const twitchUserData = await getTwitchUserData(twitch_access_info.access_token);
-
     // set twitch credentials to be updated
     let username;
     let email;

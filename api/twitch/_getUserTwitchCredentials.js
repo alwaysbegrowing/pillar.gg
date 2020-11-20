@@ -7,7 +7,8 @@ const getUserTwitchCredentials = async (code) => {
               `code=${code}&`+
               `client_id=${process.env.TWITCH_CLIENT_ID}&`+
               `client_secret=${process.env.TWITCH_CLIENT_SECRET}&`+
-              `redirect_uri=http://localhost:8000/TwitchAuth&`+
+              // `redirect_uri=http://localhost:8000/TwitchAuth&`+
+              `redirect_uri=https://dev.clipclock.stream/TwitchAuth&`+
               `grant_type=authorization_code`;
 
   const data = await fetch(url, {
@@ -25,7 +26,6 @@ const getUserTwitchCredentials = async (code) => {
   }))
   .then((resp => resp.json()))
   .then((json => {
-
     // eslint-disable-next-line
     return({access_token: json.access_token, refresh_token: json.refresh_token, scope: json.scope, token_type: json.token_type, expires_in: json.expires_in});
   }))
