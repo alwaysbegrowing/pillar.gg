@@ -1,6 +1,6 @@
-Remyx 
+Remyx
 
-This project is initialized with [Ant Design Pro](https://pro.ant.design) and [Vercel](https://vercel.com). Follow is the quick guide for how to use.
+This project is initialized with [Ant Design Pro](https://pro.ant.design) and [Vercel](https://vercel.com). Follow is the quick guide for how to use..
 
 ## Environment Prepare
 
@@ -32,7 +32,7 @@ Scripts provided in `package.json`. It's safe to modify or add additional script
 
 Run vercel on port 8000 to comply with twitch authentication route.
 
-### Test code - 
+### Test code -
 
 ```bash
 vercel dev --listen 8000
