@@ -34,7 +34,7 @@ const createStripeSubscription = async (req, res) => {
     cancel_url: 'https://dev.pillar.gg/cancel',
   //   success_url: 'http://localhost:8000/subscription_success',
   //   cancel_url: 'http://localhost:8000/subscription_cancel',
-  // });
+  });
 
   res.json({ id: session.id });
 
