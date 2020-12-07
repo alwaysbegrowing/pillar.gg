@@ -15,7 +15,7 @@ const createStripeCustomerPortalSession = async (req, res) => {
   const session = await stripe.billingPortal.sessions.create({
     customer: stripeCustomerID,
     // return_url: 'http://localhost:8000/home'
-    return_url: 'https://dev.clipclock.stream/home'
+    return_url: 'https://dev.pillar.gg/home'
   });
 
   res.json({ url: session.url });

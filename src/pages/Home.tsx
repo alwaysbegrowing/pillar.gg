@@ -13,6 +13,7 @@ const Home = () => {
   const { initialState, setInitialState } = useModel('@@initialState');
 
   useEffect(() => {
+    console.log(initialState?.currentUser);
     getYoutubeSyncStatus();
     window.onmessage = (event: any) => {
       if (event.data.success) {

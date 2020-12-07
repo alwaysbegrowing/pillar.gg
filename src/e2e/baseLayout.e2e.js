@@ -2,7 +2,7 @@ const { uniq } = require('lodash');
 const RouterConfig = require('../../config/config').default.routes;
 
 // const BASE_URL = `http://localhost:${process.env.PORT || 8000}`;
-const BASE_URL = `https://dev.clipclock.stream`;
+const BASE_URL = `https://dev.pillar.gg`;
 
 function formatter(routes, parentPath = '') {
   const fixedParentPath = parentPath.replace(/\/{1,}/g, '/');

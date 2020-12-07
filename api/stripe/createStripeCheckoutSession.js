@@ -30,11 +30,11 @@ const createStripeSubscription = async (req, res) => {
     customer: stripeCustomerID,
     mode: 'subscription',
     billing_address_collection: 'required',
-    success_url: 'https://dev.clipclock.stream/success',
-    cancel_url: 'https://dev.clipclock.stream/cancel',
-    // success_url: 'http://localhost:8000/subscription_success',
-    // cancel_url: 'http://localhost:8000/subscription_cancel',
-  });
+    success_url: 'https://dev.pillar.gg/success',
+    cancel_url: 'https://dev.pillar.gg/cancel',
+  //   success_url: 'http://localhost:8000/subscription_success',
+  //   cancel_url: 'http://localhost:8000/subscription_cancel',
+  // });
 
   res.json({ id: session.id });
 

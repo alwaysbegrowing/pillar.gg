@@ -12,7 +12,7 @@ const getStreamsToPoll = async (req: NowRequest, res: NowResponse) => {
         .collection('users')
         .find({
           twitch_username: {
-            $in: ['ludwig', 'shroud', 'sykkuno', 'tommyinnit', 'rocketleague'],
+            $in: ['ludwig', 'shroud', 'sykkuno', 'tommyinnit', 'rocketleague', 'im_baguette'],
           },
         })
         .toArray();

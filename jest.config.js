@@ -1,5 +1,5 @@
 module.exports = {
-  testURL: 'https://dev.clipclock.stream',
+  testURL: 'https://dev.pillar.gg',
   testEnvironment: './tests/PuppeteerEnvironment',
   verbose: false,
   globals: {

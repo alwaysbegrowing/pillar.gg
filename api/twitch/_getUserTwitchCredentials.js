@@ -8,7 +8,7 @@ const getUserTwitchCredentials = async (code) => {
               `client_id=${process.env.TWITCH_CLIENT_ID}&`+
               `client_secret=${process.env.TWITCH_CLIENT_SECRET}&`+
               // `redirect_uri=http://localhost:8000/TwitchAuth&`+
-              `redirect_uri=https://dev.clipclock.stream/TwitchAuth&`+
+              `redirect_uri=https://dev.pillar.gg/TwitchAuth&`+
               `grant_type=authorization_code`;
 
   const data = await fetch(url, {

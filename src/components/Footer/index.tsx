@@ -8,7 +8,7 @@ export default () => (
       {
         key: 'Privacy Policy',
         title: 'Privacy Policy',
-        href: 'https://dev.clipclock.stream/PrivacyPolicy',
+        href: 'https://dev.pillar.gg/PrivacyPolicy',
         blankTarget: true,
       },
     ]}

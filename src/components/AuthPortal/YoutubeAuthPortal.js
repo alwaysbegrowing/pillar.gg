@@ -2,13 +2,13 @@ import { useEffect } from 'react';
 
 export default function YoutubeAuthPortal() {
   useEffect(() => {
-    const clientID = '47075416327-4j0j5kmn9efc6un8qca6v5snqt21fj7d.apps.googleusercontent.com';
+    const clientID = '281280164372-c6locid4b35mq4oc8h54920uej754l39.apps.googleusercontent.com';
 
     // determine host and use correct redirect
     const redirectURI =
       window.location.hostname === 'localhost'
         ? 'http://localhost:8000/YoutubeAuth'
-        : 'https://dev.clipclock.stream/YoutubeAuth';
+        : 'https://dev.pillar.gg/YoutubeAuth';
 
     window.open(
       `https://accounts.google.com/o/oauth2/v2/auth?` +
