@@ -6,7 +6,7 @@ const fetch = require('node-fetch');
 const connectToDatabase = require('../_connectToDatabase');
 
 /**
- *
+ * This is
  * @param req body contains userID of user in MongoDB Users Table
  * @param res
  */
@@ -25,7 +25,8 @@ const getVodList = async (req: NowRequest, res: NowResponse) => {
     //extract channel_id
     const channel_id = user_result.twitch_id;
 
-    console.log(channel_id);
+    // Requests the 10 most recent videos (of any broadcast type) from channel
+    // https://dev.twitch.tv/docs/v5/reference/channels/#get-channel-videos
     const url = `https://api.twitch.tv/kraken/channels/${channel_id}/videos`;
     const client_id = process.env.TWITCH_CLIENT_ID;
 
@@ -40,8 +41,10 @@ const getVodList = async (req: NowRequest, res: NowResponse) => {
     .catch(err => {
       console.log(err);
     })
+    // TODO: trim the data and only send what is needed
     res.status(200).json(data);
   }
+  // TODO: Add beter error handling
   catch(e) {
     res.status(500).json({"Error": e.message})
   }

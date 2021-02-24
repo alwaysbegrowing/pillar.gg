@@ -20,7 +20,7 @@ const getUserYTToken = async (req: NowRequest, res: NowResponse) => {
           .collection('users')
           .findOne({ twitch_username: req.body.twitch_username });
 
-        if (user_result) {
+          if (user_result) {
           // return their yt_token
           // eslint-disable-next-line
           const refresh_token = user_result.youtube_credentials.refresh_token;
