@@ -8,7 +8,7 @@ const connectToDatabase = require('../_connectToDatabase');
 /**
  * This is
  * @param req body contains userID of user in MongoDB Users Table
- * @param res
+ * @param res status of pass or fail and the vod list
  */
 const getVodList = async (req: NowRequest, res: NowResponse) => {
   try {
