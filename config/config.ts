@@ -17,7 +17,7 @@ export default defineConfig({
     ...defaultSettings,
   },
   locale: {
-    // default zh-CN
+    // default zh-en
     default: 'en',
     antd: true,
     // default true, when it is true, will use `navigator.language` overwrite default
@@ -43,36 +43,55 @@ export default defineConfig({
       ],
     },
     {
-      path: '/welcome',
-      name: 'welcome',
-      icon: 'smile',
-      component: './Welcome',
+      path: '/home',
+      name: 'home',
+      icon: 'HomeOutlined',
+      component: './Home',
     },
     {
-      path: '/admin',
-      name: 'admin',
-      icon: 'crown',
-      access: 'canAdmin',
-      component: './Admin',
-      routes: [
-        {
-          path: '/admin/sub-page',
-          name: 'sub-page',
-          icon: 'smile',
-          component: './Welcome',
-        },
-      ],
+      path: '/videos',
+      name: 'videos',
+      icon: 'VideoCameraOutlined',
+      component: './Videos',
     },
     {
-      name: 'list.table-list',
-      icon: 'table',
-      path: '/list',
-      component: './ListTableList',
+      path: '/analysis',
+      name: 'analysis',
+      icon: 'LineChartOutlined',
+      component: './Analysis',
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      icon: 'SettingOutlined',
+      component: './Settings',
+    },
+    {
+      path: '/feedback',
+      name: 'feedback',
+      icon: 'MessageOutlined',
+      component: './Feedback',
     },
     {
       path: '/',
       layout: false,
       component: './Landing',
+    },
+    {
+      path: '/TwitchAuth',
+      layout: false,
+      component: './TwitchAuth',
+
+    },
+    {
+      path: '/YoutubeAuth',
+      layout: false,
+      component: './YoutubeAuth',
+    },
+    {
+      path: '/PrivacyPolicy',
+      layout: false,
+      component: './PrivacyPolicy',
     },
     {
       component: './404',
