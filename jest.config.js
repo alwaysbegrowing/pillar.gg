@@ -1,5 +1,5 @@
 module.exports = {
-  testURL: 'https://dev.pillar.gg',
+  testURL: 'http://localhost:8000',
   testEnvironment: './tests/PuppeteerEnvironment',
   verbose: false,
   globals: {

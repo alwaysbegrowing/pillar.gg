@@ -2,9 +2,16 @@ declare namespace API {
   export interface CurrentUser {
     avatar?: string;
     name?: string;
-    user_id: string;
-    access?: 'none' | 'free' | 'basic' | 'pro';
-    youtubeLinked?: true | false;
+    title?: string;
+    group?: string;
+    signature?: string;
+    tags?: {
+      key: string;
+      label: string;
+    }[];
+    userid?: string;
+    access?: 'user' | 'guest' | 'admin';
+    unreadCount?: number;
   }
 
   export interface LoginStateType {

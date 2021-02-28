@@ -1,10 +1,9 @@
 import React, { useCallback } from 'react';
-// import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { LogoutOutlined } from '@ant-design/icons';
+import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
 import { history, useModel } from 'umi';
-// import { outLogin } from '@/services/login';
-// import { stringify } from 'querystring';
+import { outLogin } from '@/services/login';
+import { stringify } from 'querystring';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 
@@ -15,24 +14,22 @@ export interface GlobalHeaderRightProps {
 /**
  * 退出登录，并且将当前的 url 保存
  */
-// const loginOut = async () => {
-//   await outLogin();
-//   const { query, pathname } = history.location;
-//   const { redirect } = query;
-//   // Note: There may be security issues, please note
-//   // if (window.location.pathname !== '/user/login' && !redirect) {
-//   if (window.location.pathname !== '/' && !redirect) {
-//     history.replace({
-//       pathname: '/',
-//       // pathname: '/user/login',
-//       search: stringify({
-//         redirect: pathname,
-//       }),
-//     });
-//   }
-// };
+const loginOut = async () => {
+  await outLogin();
+  const { query, pathname } = history.location;
+  const { redirect } = query;
+  // Note: There may be security issues, please note
+  if (window.location.pathname !== '/user/login' && !redirect) {
+    history.replace({
+      pathname: '/user/login',
+      search: stringify({
+        redirect: pathname,
+      }),
+    });
+  }
+};
 
-const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ }) => {
+const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const { initialState, setInitialState } = useModel('@@initialState');
 
   const onMenuClick = useCallback(
@@ -45,9 +42,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ }) => {
       const { key } = event;
       if (key === 'logout' && initialState) {
         setInitialState({ ...initialState, currentUser: undefined });
-        localStorage.removeItem('twitch_access_token');
-        history.push(`/`);
-        // loginOut();
+        loginOut();
         return;
       }
       history.push(`/account/${key}`);
@@ -79,7 +74,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ }) => {
 
   const menuHeaderDropdown = (
     <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
-      {/* {menu && (
+      {menu && (
         <Menu.Item key="center">
           <UserOutlined />
           个人中心
@@ -91,11 +86,11 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ }) => {
           个人设置
         </Menu.Item>
       )}
-      {menu && <Menu.Divider />} */}
+      {menu && <Menu.Divider />}
 
       <Menu.Item key="logout">
         <LogoutOutlined />
-        Sign Out
+        退出登录
       </Menu.Item>
     </Menu>
   );

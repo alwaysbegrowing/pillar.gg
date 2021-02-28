@@ -2,6 +2,7 @@ import { Settings as LayoutSettings } from '@ant-design/pro-layout';
 
 export default {
   navTheme: 'light',
+  // 拂晓蓝
   primaryColor: '#722ed1',
   layout: 'mix',
   contentWidth: 'Fluid',
