@@ -15,7 +15,12 @@ export async function getInitialState(): Promise<{
 }> {
   const fetchUserInfo = async () => {
     try {
-      const currentUser = await queryCurrent();
+      const currentUser = {
+        name: 'Sample',
+        avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
+        userid: '00000001',
+        email: 'example@deephire.com',
+      };
       return currentUser;
     } catch (error) {
       history.push('/');
@@ -47,12 +52,13 @@ export const layout = ({
     disableContentMargin: false,
     footerRender: () => <Footer />,
     onPageChange: () => {
-      const { currentUser } = initialState;
-      const { location } = history;
+      // const { currentUser } = initialState;
+      // const { location } = history;
       // 如果没有登录，重定向到 login
       if (!currentUser && location.pathname !== '/' && location.pathname !== '/TwitchAuth') {
         history.push('/');
       }
+
     },
     menuHeaderRender: undefined,
     ...initialState?.settings,

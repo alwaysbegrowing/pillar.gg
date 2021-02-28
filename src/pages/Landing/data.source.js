@@ -56,6 +56,7 @@ export const Banner50DataSource = {
         name: 'button',
         className: 'banner5-button-wrapper',
         children: {
+          href: 'https://steven054167.typeform.com/to/Aeg2sz5s',
           className: 'banner5-button kf7hyvamyj-editor_css',
           type: 'primary',
           children: (
@@ -328,7 +329,7 @@ export const Content110DataSource = {
     children: {
       a: {
         className: 'button kf7jxsabvlh-editor_css',
-        href: 'https://forms.gle/dxBhVBnCw5rJ9H3r8',
+        href: 'https://steven054167.typeform.com/to/Aeg2sz5s',
         children: (
           <span>
             <span>
@@ -352,7 +353,7 @@ export const Footer00DataSource = {
       <span>
         <span>
           <span>
-            <span>©2020 ClipClock All Rights Reserved</span>
+            <span>©2020 Pillar All Rights Reserved</span>
           </span>
         </span>
       </span>
