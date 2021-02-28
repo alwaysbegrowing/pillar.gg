@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Menu, Dropdown } from 'antd';
+import { Card, Menu, Dropdown, Button } from 'antd';
 // import {useModel } from 'umi';
 import { DownOutlined } from '@ant-design/icons';
 
@@ -41,20 +41,48 @@ const Home = () => {
         console.log(err.message)
       });
   }, []);
+
+  const submitVod = () => {
+    // make post request
+    fetch('/api/service/submitVodToQueue', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(selectedVod),
+    })
+      .then(res =>
+        res.json()
+      )
+      .then(json => {
+        console.log(json)
+      })
+      .catch(err => {
+        console.log(err.message)
+      });
+
+
+
+  }
+
   const onClick = ({ key }) => {
     console.log(`Click on item. ` + key);
+
+    // create queue object
     let results = titleList.filter(obj => { return obj.broadcast_id == key; });
-    let queue_obj = {"streamer": results[0].channel.name, "url": results[0].url}
+    let queue_obj = { "streamer": results[0].channel.name, "url": results[0].url }
     console.log(queue_obj);
-    setDropdownText(results[0].title); 
-    setSelectedVod(results[0])
+    setSelectedVod(queue_obj)
+
+    // update text in Dropdown menu
+    setDropdownText(results[0].title);
   };
 
   function setMenu() {
     let submenu = titleList.map((vod_obj) =>
-        <Menu.Item key={vod_obj.broadcast_id}> 
-          {vod_obj.title}
-        </Menu.Item>
+      <Menu.Item key={vod_obj.broadcast_id}>
+        {vod_obj.title}
+      </Menu.Item>
     );
     let menu = <Menu onClick={onClick}>{submenu}</Menu>
     return (menu);
@@ -68,6 +96,8 @@ const Home = () => {
             {dropdownText} <DownOutlined />
           </a>
         </Dropdown>
+        <p> </p>
+        <Button onClick={submitVod} type="primary">Get Clips</Button>
       </Card>
     </PageContainer>
   );
