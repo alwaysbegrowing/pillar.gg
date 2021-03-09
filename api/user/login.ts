@@ -18,7 +18,8 @@ const login = async (req: NowRequest, res: NowResponse) => {
 
     // get access token from auth token
     const twitch_access_info = await getUserTwitchCredentials(auth_token);
-    console.log('twitch credentials received');
+    console.log("auth token: ", auth_token)
+    console.log('twitch credentials received', twitch_access_info);
     // get credentials
     const twitchUserData = await getTwitchUserData(twitch_access_info.access_token);
     // set twitch credentials to be updated

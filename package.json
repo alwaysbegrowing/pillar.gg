@@ -74,6 +74,8 @@
     "react-helmet-async": "^1.0.4",
     "react-sublime-video": "^0.2.5",
     "stripe": "^8.119.0",
+    "twitch": "^4.4.13",
+    "twitch-webhooks": "^4.4.13",
     "umi": "^3.2.14",
     "umi-request": "^1.0.8",
     "use-merge-value": "^1.0.1",

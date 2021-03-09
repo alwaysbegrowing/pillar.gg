@@ -12,9 +12,10 @@ class TwitchAuth extends React.PureComponent {
     if (code != null) {
         window.opener?.parent?.postMessage({ success: true, code }, "*");
     } else {
-        window.opener?.parent?.postMessage({ success: false }, "*");
+        window.opener?.parent?.postMessage({ success: false }, "*")
+        console.log(code);
     }
-    window.close();
+    // window.close();
   }
 
   render() {

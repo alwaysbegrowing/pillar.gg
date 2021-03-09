@@ -15,7 +15,7 @@ const getVodList = async (req: NowRequest, res: NowResponse) => {
     // set userID
     const userID = req.body.user_id;
 
-    // esetablish connection to mongo
+    // establish connection to mongo
     const db = await connectToDatabase();
     // get info from user
     const user_result = await db
