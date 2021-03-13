@@ -92,6 +92,7 @@ const Home = () => {
     };
     console.log(queue_obj);
     setSelectedVod(queue_obj);
+    setClipProcessingState({status: "NONE"})
 
     // update text in Dropdown menu
     setDropdownText(results[0].title);
@@ -108,7 +109,7 @@ const Home = () => {
                 {'Download'}
               </a>
             }
-            style={{ width: 340 }}
+            style={{ width: 340, padding: 15 }}
             title={'loremIpsum'}
           >
             <video controls width="320" height="240">
@@ -157,7 +158,12 @@ const Home = () => {
           </div>
         )}
         {clipProcessingState.status === 'CLIP_IS_PROCESSING' && (
-          <h2>Clips are processing. ETA: 10 minutes</h2>
+          <div>
+            <h2>Clips are processing. ETA: 10 minutes</h2>
+            <Button onClick={checkVod} type="primary">
+              Check Again
+            </Button>
+          </div>
         )}
       </Card>
     </PageContainer>
