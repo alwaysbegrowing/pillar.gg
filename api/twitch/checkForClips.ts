@@ -2,6 +2,11 @@ import type { NowRequest, NowResponse } from '@vercel/node';
 
 const connectToDatabase = require('../_connectToDatabase');
 
+enum Status {
+  Missing = 'DOES_NOT_EXIST',
+  Processing = 'CLIP_IS_PROCESSING',
+}
+
 const checkForClips = async (req: NowRequest, res: NowResponse) => {
   try {
     const platformVideoId = req.body.platform_video_id;
@@ -11,7 +16,7 @@ const checkForClips = async (req: NowRequest, res: NowResponse) => {
       .collection('streams')
       .findOne({ platform_video_id: String(platformVideoId) });
     if (!stream_result) {
-      res.status(200).json({ status: 'DOES_NOT_EXIST' });
+      res.status(200).json({ status: Status.Missing });
     } else {
       const clips_result = await db
         .collection('clips')
@@ -22,9 +27,9 @@ const checkForClips = async (req: NowRequest, res: NowResponse) => {
 
       if (isClipProcessing) {
         // TODO: count up how many clips are processing, and tell the user how many clips are left to process (and give them an ETA in minutes)
-        res.status(200).json({ status: 'CLIP_IS_PROCESSING' });
+        res.status(200).json({ status: Status.Processing });
       } else {
-        res.status(200).json({ status: 'FINISHED', data: clips_result });
+        res.status(200).json({ status: Status.Processing, data: clips_result });
       }
     }
   } catch (e) {
