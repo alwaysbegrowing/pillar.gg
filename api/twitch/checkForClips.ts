@@ -5,36 +5,41 @@ const connectToDatabase = require('../_connectToDatabase');
 enum Status {
   Missing = 'DOES_NOT_EXIST',
   Processing = 'CLIP_IS_PROCESSING',
+  Finished = 'FINISHED',
 }
 
-const checkForClips = async (req: VercelRequest, res: VercelResponse) => {
-  const { platform_video_id: platformVideoId } = req.body;
+const db = await connectToDatabase();
+
+const findClips = async (platformVideoId: string) => {
+  const clips_result = await db
+    .collection('clips')
+    .find({ 'original_video.platform_video_id': platformVideoId })
+    .toArray();
+
+  const isClipProcessing = clips_result.find((val: any) => val.s3_url != null);
+  return [isClipProcessing, clips_result];
+};
+
+const checkClipMakingStatus = async (req: VercelRequest, res: VercelResponse) => {
   try {
-    const db = await connectToDatabase();
+    const { platform_video_id } = req.body;
+    const platformVideoId = String(platform_video_id);
 
-    const stream_result = await db
-      .collection('streams')
-      .findOne({ platform_video_id: String(platformVideoId) });
-    if (!stream_result) {
-      res.status(200).json({ status: Status.Missing });
-    } else {
-      const clips_result = await db
-        .collection('clips')
-        .find({ 'original_video.platform_video_id': String(platformVideoId) })
-        .toArray();
-
-      const isClipProcessing = clips_result.map((val: any) => val.s3_url === null).includes(true);
-
-      if (isClipProcessing) {
-        // TODO: count up how many clips are processing, and tell the user how many clips are left to process (and give them an ETA in minutes)
-        res.status(200).json({ status: Status.Processing });
-      } else {
-        res.status(200).json({ status: Status.Processing, data: clips_result });
-      }
+    const isStreamMissing =
+      (await db.collection('streams').find({ platform_video_id }).count()) === 0;
+    if (isStreamMissing) {
+      return res.status(200).json({ status: Status.Missing });
     }
-  } catch (e) {
-    res.status(500).json({ Error: e.message });
+
+    const [isClipProcessing, data] = await findClips(platformVideoId);
+    if (isClipProcessing) {
+      // TODO: count up how many clips are processing, and tell the user how many clips are left to process (and give them an ETA in minutes)
+      return res.status(200).json({ status: Status.Processing });
+    }
+    return res.status(200).json({ status: Status.Finished, data });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
   }
 };
 
-module.exports = checkForClips;
+module.exports = checkClipMakingStatus;
