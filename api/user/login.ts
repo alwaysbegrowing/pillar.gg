@@ -13,7 +13,7 @@ const login = async (req: NowRequest, res: NowResponse) => {
     // retrieve auth token token from req.body
     const auth_token = req.body;
     // validate auth token exists
-    if (auth_token === null || auth_token === undefined || auth_token === '') {
+    if (!auth_token) {
       res.status(401).send('ERROR: NO ACCESS TOKEN RECEIVED');
     }
 
