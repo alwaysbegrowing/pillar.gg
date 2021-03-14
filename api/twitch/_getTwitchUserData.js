@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 const getTwitchUserData = async (accessToken) => {
   const url = `https://api.twitch.tv/kraken/user`;
@@ -23,4 +23,4 @@ const getTwitchUserData = async (accessToken) => {
   }
 };
 
-module.exports = getTwitchUserData;
+export default getTwitchUserData;

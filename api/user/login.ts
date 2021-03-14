@@ -1,9 +1,10 @@
-import { NowRequest, NowResponse } from '@vercel/node';
+import type { NowRequest, NowResponse } from '@vercel/node';
+import getTwitchUserData from '../twitch/_getTwitchUserData';
 
 const connectToDatabase = require('../_connectToDatabase');
 const addUser = require('./_addUser');
 const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
-const getTwitchUserData = require('../twitch/_getTwitchUserData');
+
 const postNewStripeCustomer = require('../stripe/_postNewStripeCustomer');
 // const ObjectId = require('mongodb').ObjectId
 
@@ -18,7 +19,7 @@ const login = async (req: NowRequest, res: NowResponse) => {
 
     // get access token from auth token
     const twitch_access_info = await getUserTwitchCredentials(auth_token);
-    console.log("auth token: ", auth_token)
+    console.log('auth token: ', auth_token);
     console.log('twitch credentials received', twitch_access_info);
     // get credentials
     const twitchUserData = await getTwitchUserData(twitch_access_info.access_token);
@@ -47,7 +48,7 @@ const login = async (req: NowRequest, res: NowResponse) => {
     // connect to database and check for user by twitch id
     const db = await connectToDatabase();
 
-    const result = await db.collection('users').findOne({ twitch_id: twitch_id });
+    const result = await db.collection('users').findOne({ twitch_id });
 
     // if user exists in database
     if (result) {
@@ -68,7 +69,7 @@ const login = async (req: NowRequest, res: NowResponse) => {
 
       db.collection('users').updateOne(filter, updatedoc, options);
 
-      const isYoutubeLinked = result.youtube_credentials ? true : false;
+      const isYoutubeLinked = !!result.youtube_credentials;
 
       const userInfo = {
         avatar: twitch_profile_picture,
