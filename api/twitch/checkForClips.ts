@@ -1,8 +1,5 @@
 import { NowRequest, NowResponse } from '@vercel/node';
 
-// eslint-disable-next-line
-const ObjectId = require('mongodb').ObjectId;
-const fetch = require('node-fetch');
 const connectToDatabase = require('../_connectToDatabase');
 
 /**
