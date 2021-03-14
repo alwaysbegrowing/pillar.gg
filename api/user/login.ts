@@ -1,4 +1,4 @@
-import type { NowRequest, NowResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import getTwitchUserData from '../twitch/_getTwitchUserData';
 
 const connectToDatabase = require('../_connectToDatabase');
@@ -8,7 +8,7 @@ const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
 const postNewStripeCustomer = require('../stripe/_postNewStripeCustomer');
 // const ObjectId = require('mongodb').ObjectId
 
-const login = async (req: NowRequest, res: NowResponse) => {
+const login = async (req: VercelRequest, res: VercelResponse) => {
   try {
     // retrieve auth token token from req.body
     const auth_token = req.body;
@@ -19,8 +19,6 @@ const login = async (req: NowRequest, res: NowResponse) => {
 
     // get access token from auth token
     const twitch_access_info = await getUserTwitchCredentials(auth_token);
-    console.log('auth token: ', auth_token);
-    console.log('twitch credentials received', twitch_access_info);
     // get credentials
     const twitchUserData = await getTwitchUserData(twitch_access_info.access_token);
     // set twitch credentials to be updated

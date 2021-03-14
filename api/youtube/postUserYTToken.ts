@@ -1,11 +1,11 @@
-import type { NowRequest, NowResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 const { ObjectId } = require('mongodb');
 
 const connectToDatabase = require('../_connectToDatabase');
 const getUserYTCredentials = require('./_getUserYTCredentials');
 
-const postUserYTToken = async (req: NowRequest, res: NowResponse) => {
+const postUserYTToken = async (req: VercelRequest, res: VercelResponse) => {
   const { code, user_id } = req.body;
   if (!user_id || !code) {
     return res.status(401).send(`ERROR: missing ${!user_id || !code}`);

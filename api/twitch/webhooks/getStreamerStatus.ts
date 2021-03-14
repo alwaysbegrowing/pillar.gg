@@ -1,7 +1,8 @@
-import { NowRequest, NowResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+
 const fetch = require('node-fetch');
 
-const getStreamerStatus = async (req: NowRequest, res: NowResponse) => {
+const getStreamerStatus = async (req: VercelRequest, res: VercelResponse) => {
         res.status(200).json({"msg": "success"});
 };
 

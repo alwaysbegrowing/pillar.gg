@@ -1,4 +1,4 @@
-import type { NowRequest, NowResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 const connectToDatabase = require('../_connectToDatabase');
 
@@ -7,9 +7,9 @@ enum Status {
   Processing = 'CLIP_IS_PROCESSING',
 }
 
-const checkForClips = async (req: NowRequest, res: NowResponse) => {
+const checkForClips = async (req: VercelRequest, res: VercelResponse) => {
+  const { platform_video_id: platformVideoId } = req.body;
   try {
-    const platformVideoId = req.body.platform_video_id;
     const db = await connectToDatabase();
 
     const stream_result = await db

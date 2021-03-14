@@ -1,4 +1,4 @@
-import { NowRequest, NowResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // eslint-disable-next-line
 const ObjectId = require('mongodb').ObjectId
@@ -10,7 +10,7 @@ const connectToDatabase = require('../_connectToDatabase');
  * @param req body contains userID of user in MongoDB Users Table
  * @param res status of pass or fail and the vod list
  */
-const getVodList = async (req: NowRequest, res: NowResponse) => {
+const getVodList = async (req: VercelRequest, res: VercelResponse) => {
   try {
     // set userID
     const userID = req.body.user_id;
@@ -22,7 +22,7 @@ const getVodList = async (req: NowRequest, res: NowResponse) => {
       .collection('users')
       .findOne({ _id: ObjectId(userID) });
 
-    //extract channel_id
+    // extract channel_id
     const channel_id = user_result.twitch_id;
 
     // Requests the 10 most recent videos (of any broadcast type) from channel
