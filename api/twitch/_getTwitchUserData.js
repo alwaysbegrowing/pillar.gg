@@ -1,8 +1,8 @@
 const fetch = require('node-fetch');
 
-const getTwitchUserData = async (access_token) => {
+const getTwitchUserData = async (accessToken) => {
   const url = `https://api.twitch.tv/kraken/user`;
-  const client_id = process.env.TWITCH_CLIENT_ID;
+  const clientId = process.env.TWITCH_CLIENT_ID;
 
   try {
     const data = await fetch(url, {
@@ -10,8 +10,8 @@ const getTwitchUserData = async (access_token) => {
       method: 'GET',
       headers: {
         Accept: 'application/vnd.twitchtv.v5+json',
-        Authorization: `OAuth ${access_token}`,
-        'Client-ID': client_id,
+        Authorization: `OAuth ${accessToken}`,
+        'Client-ID': clientId,
       },
     });
     if (!data.ok) return null;
