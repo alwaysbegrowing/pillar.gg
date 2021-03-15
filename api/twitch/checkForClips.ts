@@ -8,6 +8,14 @@ enum Status {
   Finished = 'FINISHED',
 }
 
+interface Clip {
+  s3_url?: string;
+}
+
+interface ReqBody {
+  platform_video_id: number;
+}
+
 const db = await connectToDatabase();
 
 const findClips = async (platformVideoId: string) => {
@@ -16,13 +24,13 @@ const findClips = async (platformVideoId: string) => {
     .find({ 'original_video.platform_video_id': platformVideoId })
     .toArray();
 
-  const isClipProcessing = clips_result.find((val: any) => val.s3_url != null);
+  const isClipProcessing = clips_result.find((val: Clip) => val.s3_url != null);
   return [isClipProcessing, clips_result];
 };
 
 const checkClipMakingStatus = async (req: VercelRequest, res: VercelResponse) => {
   try {
-    const { platform_video_id } = req.body;
+    const { platform_video_id } = req.body as ReqBody;
     const platformVideoId = String(platform_video_id);
 
     const isStreamMissing =
