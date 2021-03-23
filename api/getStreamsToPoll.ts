@@ -1,7 +1,5 @@
 import { NowRequest, NowResponse } from '@vercel/node';
 
-const connectToDatabase = require('./_connectToDatabase');
-
 const getStreamsToPoll = async (req: NowRequest, res: NowResponse) => {
   try {
     if (req.body.server_token === process.env.NUMBERCRUNCH_TOKEN) {

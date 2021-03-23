@@ -96,46 +96,37 @@ const login = async (req: NowRequest, res: NowResponse) => {
       }
       // stripe account has been created and all above information is valid
       else {
-        // initialize webhook to listen for streamer to go offline
-        let isSubscribed = createSubscription(twitch_id, true);
+        // add user to database
+        await addUser(
+          email,
+          twitch_id,
+          username,
+          twitch_profile_picture,
+          stripeCustomerID,
+          twitch_credentials,
+          timestamp,
+          plan,
+        );
 
-        // TODO: Let user log in even if webhook failed once we have better way to handle a retry
-        if(isSubscribed) {
-          // add user to database
-          await addUser(
-            email,
-            twitch_id,
-            username,
-            twitch_profile_picture,
-            stripeCustomerID,
-            twitch_credentials,
-            timestamp,
-            plan,
-          );
+        // receive userid generated from mongo
+        const user_result = await db.collection('users').findOne({ twitch_id });
 
-          // receive userid generated from mongo
-          const user_result = await db.collection('users').findOne({ twitch_id });
+        // send client success status and user_id for client side authentication
 
-          // send client success status and user_id for client side authentication
+        // make a stripe customer account for the new user
 
-          // make a stripe customer account for the new user
-
+        // eslint-disable-next-line
+        const isYoutubeLinked = user_result.youtube_credentials ? true : false;
+        const userInfo = {
+          avatar: user_result.twitch_profile_picture,
+          name: user_result.twitch_username,
           // eslint-disable-next-line
-          const isYoutubeLinked = user_result.youtube_credentials ? true : false;
-          const userInfo = {
-            avatar: user_result.twitch_profile_picture,
-            name: user_result.twitch_username,
-            // eslint-disable-next-line
-            user_id: user_result._id,
-            access: user_result.plan,
-            youtubeLinked: isYoutubeLinked,
-            twitch_access_token: user_result.twitch_credentials.access_token,
-          };
-          res.status(200).json(userInfo);
-        }
-        else {
-          res.status(500).json({"error": "Failed to create webhook subscription"})
-        }
+          user_id: user_result._id,
+          access: user_result.plan,
+          youtubeLinked: isYoutubeLinked,
+          twitch_access_token: user_result.twitch_credentials.access_token,
+        };
+        res.status(200).json(userInfo);
       }
     }
   } catch (err) {
