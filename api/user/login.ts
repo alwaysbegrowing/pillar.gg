@@ -5,7 +5,7 @@ const addUser = require('./_addUser');
 const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
 const getTwitchUserData = require('../twitch/_getTwitchUserData');
 const postNewStripeCustomer = require('../stripe/_postNewStripeCustomer');
-const createSubscription = require('../twitch/webhooks/_createSubscription');
+
 // const ObjectId = require('mongodb').ObjectId
 
 const login = async (req: NowRequest, res: NowResponse) => {
