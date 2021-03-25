@@ -1,13 +1,10 @@
-
-var AWS = require('aws-sdk');
 import {v4 as uuidv4} from 'uuid';
-const fetch = require('node-fetch');
+const AWS = require('aws-sdk');
 
 AWS.config.update({ accessKeyId: process.env.PILLAR_AWS_ACCESS_KEY_ID, secretAccessKey: process.env.PILLAR_AWS_SECRET_ACCESS_KEY, region: process.env.PILLAR_AWS_DEFAULT_REGION });
 
 const insertVodToQueue = async (video:any) => {
   try {
-    console.log(video);
     // add message to the queue
     const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
     const myuuid = uuidv4();
@@ -36,4 +33,4 @@ const insertVodToQueue = async (video:any) => {
   }
 }
 
-module.exports = insertVodToQueue;
+export default insertVodToQueue;

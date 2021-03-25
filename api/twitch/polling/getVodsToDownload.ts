@@ -1,21 +1,26 @@
-import { NowRequest, NowResponse } from '@vercel/node';
-const fetch = require('node-fetch');
-const getUsersToPoll = require('./_getUsersToPoll');
-const getAppToken = require('../_getAppToken');
-const insertVideoDetails = require('./_insertVideoDetails');
-const insertVodToQueue = require('./_insertVodToQueue');
-const getVodsToDownload = async (req: NowRequest, res: NowResponse) => {
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import fetch from 'node-fetch';
+import getUsersToPoll from './_getUsersToPoll';
+import getAppToken from '../_getAppToken';
+import insertVideoDetails from './_insertVideoDetails';
+import insertVodToQueue from './_insertVodToQueue';
+
+enum Status {
+  Success = "SUCCESS",
+  Failure = "FAILED"
+}
+
+const getVodsToDownload = async (req: VercelRequest, res: VercelResponse) => {
 
   try {
+    // receive list of Pillar users that have { isMonitoring: true }
     const usersToPoll: string[] = await getUsersToPoll();
     const appToken = await getAppToken();
-    const clientId = process.env.TWITCH_CLIENT_ID;
     let urls: string[] = [];
-    // let videosToSearch: any[] = [];
 
     // Loop through user id's to build an array of urls to fetch
-    usersToPoll.forEach(twitch_id => {
-      urls.push(`https://api.twitch.tv/helix/videos?user_id=${twitch_id}&type=archive&period=day&first=1`);
+    usersToPoll.forEach(twitchId => {
+      urls.push(`https://api.twitch.tv/helix/videos?user_id=${twitchId}&type=archive&period=day&first=1`);
     });
 
     // aggregates response from Twitch API containing details of last VOD for each user
@@ -23,10 +28,9 @@ const getVodsToDownload = async (req: NowRequest, res: NowResponse) => {
     const newestVideoDetails:any[] = urls.map(async url => {
       const newestVideo = await fetch(url, {
         method: "GET",
-        mode: "no-cors",
         headers: {
           'Authorization': `Bearer ${appToken}`,
-          'Client-ID': clientId,
+          'Client-ID': process.env.TWITCH_CLIENT_ID,
         }
       })
       return newestVideo.json();
@@ -37,26 +41,26 @@ const getVodsToDownload = async (req: NowRequest, res: NowResponse) => {
       return videoDetails.data[0];
     });
 
+    // hand list of videos to mongo and wait for array containing videos that need to be added to queue
     const videosToQueue:any[] = await insertVideoDetails(videosToSearch);
 
+    // add videos to queue and await for the promise
     const videoAddedStatusPromise:Promise<boolean>[] = videosToQueue.map(async video => {
       const response:boolean = await insertVodToQueue(video);
       return(response);
     })
 
+    // resolve promises and create a boolean array with status of each vod
     const videoAddedStatus = (await Promise.all(videoAddedStatusPromise)).map(videoStatus => {
-      console.log('in videoAddedStatus');
-      console.log(videoStatus);
       return videoStatus;
     });
 
-    console.log(videoAddedStatus);
     if(!videoAddedStatus.includes(false)){
-      res.status(200).send('all vods successfully inserted to queue');
+      res.status(200).send(Status.Success);
     }
     else {
       // TODO: implement error handling for failed queue inserts
-      res.status(500).send('failed to insert at least one video to the queue');
+      res.status(500).send(Status.Failure);
     }
   }
   catch(e:any){
@@ -65,4 +69,4 @@ const getVodsToDownload = async (req: NowRequest, res: NowResponse) => {
   }
 };
 
-module.exports = getVodsToDownload;
+export default getVodsToDownload;

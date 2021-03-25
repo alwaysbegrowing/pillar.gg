@@ -1,5 +1,5 @@
 /**
- * This function queries the users collection in Mongo for accounts that should have their VODs downloaded.
+ * This function queries the users collection in MongoDB for accounts that should have their VODs downloaded.
  * @return string array of the twitch_ids of Pillar users who have the isMonitoring flag set to true
  */
 
@@ -20,8 +20,9 @@
    }
    // TODO: Add better error handling
    catch(e: any) {
+     console.error(e);
      return([]);
    }
  };
 
- module.exports = getUsersToPoll;
+export default getUsersToPoll;

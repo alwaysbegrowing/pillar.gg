@@ -23,4 +23,4 @@ const insertVideoDetails = async (videos:any[]) => {
   return(videosToQueue);
 }
 
-module.exports = insertVideoDetails;
+export default insertVideoDetails;
