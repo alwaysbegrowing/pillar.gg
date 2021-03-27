@@ -6,6 +6,7 @@ const addUser = require('./_addUser');
 const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
 
 const postNewStripeCustomer = require('../stripe/_postNewStripeCustomer');
+
 // const ObjectId = require('mongodb').ObjectId
 
 const login = async (req: VercelRequest, res: VercelResponse) => {
@@ -128,7 +129,7 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
       }
     }
   } catch (err) {
-    res.status(400).json({ error: err });
+    res.status(400).json({ "error": err.message });
   }
 };
 

@@ -19,7 +19,8 @@ const addUser = async (email_in: any, twitch_id_in: any, username_in: any, twitc
     twitch_username: username_in,
     twitch_id: twitch_id_in,
     twitch_profile_picture: twitch_profile_picture_in,
-    stripeCustomerID: stripeCustomerID_in
+    stripeCustomerID: stripeCustomerID_in,
+    isMonitoring: true
   };
 
   db.collection('users').insertOne(myobj);
