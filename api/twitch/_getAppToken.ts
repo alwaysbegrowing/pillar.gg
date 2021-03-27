@@ -20,12 +20,7 @@ async function isAccessTokenValid() {
       'Authorization': `OAuth ${cachedAccessToken}`
     }
   })
-  const json = await isValid.json();
-  // read "status" from response containing an HTTP code: 200=OK, 401=invalid
-  if(json.status === 200){
-    return(true);
-  }
-  return(false);
+return isValid.ok
 }
 
 /**
