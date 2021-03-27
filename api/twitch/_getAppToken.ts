@@ -44,6 +44,7 @@ async function connectCached() {
     const resp = await tokenData.json();
     return(resp.access_token);
   } catch(e) {
+    console.error(e)
     return null;
   };
 };
