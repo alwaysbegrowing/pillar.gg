@@ -1,26 +1,34 @@
-
 const connectToDatabase = require('../../_connectToDatabase');
 
 const insertVideoDetails = async (videos:any[]) => {
-  const db = await connectToDatabase();
+  try{
+    const listOfIds = videos.map(video => {
+      return video.id;
+    })
+    let videosToInsert = videos;
 
-  // checks if video is in mongo, if not, add it and supply newVideos with details
-  const newVideos = videos.map(async video => {
-    const res = await db.collection('downloadedVods').findOne({id: video.id})
-    if(!res) {
-      // insert to mongo
-      await db.collection('downloadedVods').insertOne(video);
-      return(video);
+    const db = await connectToDatabase();
+    const existingVods = await db.collection('downloadedVods').find({ id: { $in: listOfIds } }).toArray();
+
+    // splice existing videos from full list to just get videos we want to insert to Mongo
+    existingVods.forEach(vod => {
+      videosToInsert.splice(videosToInsert.findIndex(item => item.id === vod.id), 1)
+    });
+
+    let videosToQueue;
+    if(videosToInsert.length > 0) {
+      const insertResponse = await db.collection('downloadedVods').insertMany(videosToInsert);
+      videosToQueue = insertResponse.ops;
     }
-  });
-
-  // newVideos still contains null elements from videos that have entries in mongo so remove them
-  const videosToQueue = (await Promise.all(newVideos)).filter(videoDetails => {
-    return videoDetails != null;
-  });
-
-  // return list of videos that should be added to queue
-  return(videosToQueue);
+    else {
+      videosToQueue = [];
+    }
+    return(videosToQueue);
+  }
+  catch (e) {
+    console.error(e);
+    return(e);
+  }
 }
 
 export default insertVideoDetails;
