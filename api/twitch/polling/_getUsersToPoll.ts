@@ -21,7 +21,7 @@
    // TODO: Add better error handling
    catch(e: any) {
      console.error(e);
-     return([]);
+     return(e);
    }
  };
 
