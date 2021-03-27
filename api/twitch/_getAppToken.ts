@@ -47,6 +47,7 @@ async function connectCached() {
       method: "POST"
     });
     const resp = await tokenData.json();
+    cachedAccessToken = resp.access_token;
     return(resp.access_token);
   } catch(e) {
     return null;
