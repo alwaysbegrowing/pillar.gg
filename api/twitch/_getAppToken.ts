@@ -20,12 +20,7 @@ async function isAccessTokenValid() {
       'Authorization': `OAuth ${cachedAccessToken}`
     }
   })
-  const json = await isValid.json();
-  // read "status" from response containing an HTTP code: 200=OK, 401=invalid
-  if(json.status === 200){
-    return(true);
-  }
-  return(false);
+return isValid.ok
 }
 
 /**
@@ -50,6 +45,7 @@ async function connectCached() {
     cachedAccessToken = resp.access_token;
     return(resp.access_token);
   } catch(e) {
+    console.error(e)
     return null;
   };
 };
