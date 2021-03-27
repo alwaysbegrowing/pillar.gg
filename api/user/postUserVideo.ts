@@ -1,8 +1,8 @@
-import { NowRequest, NowResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 const connectToDatabase = require('../_connectToDatabase');
 
-const postUserVideo = async (req: NowRequest, res: NowResponse) => {
+const postUserVideo = async (req: VercelRequest, res: VercelResponse) => {
   try {
     if (req.body.server_token === process.env.NUMBERCRUNCH_TOKEN) {
 

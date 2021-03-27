@@ -1,11 +1,11 @@
-import { NowRequest, NowResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // eslint-disable-next-line
 const ObjectId = require('mongodb').ObjectId
 
 const connectToDatabase = require('../_connectToDatabase');
 
-const getUserVideo = async (req: NowRequest, res: NowResponse) => {
+const getUserVideo = async (req: VercelRequest, res: VercelResponse) => {
 
     try {
     // check if userid is valid

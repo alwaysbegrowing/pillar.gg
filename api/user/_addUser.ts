@@ -1,6 +1,6 @@
 const connectToDatabase = require('../_connectToDatabase');
 
-// const example = async (req: NowRequest, res: NowResponse) => {
+// const example = async (req: VercelRequest, res: VercelResponse) => {
 //    const db = await connectToDatabase()
 //    const results = await db.collection('streams').find({}).toArray()
 //    res.json({results})

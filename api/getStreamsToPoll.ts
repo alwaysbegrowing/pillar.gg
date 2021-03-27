@@ -1,8 +1,8 @@
-import { NowRequest, NowResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 const connectToDatabase = require('./_connectToDatabase');
 
-const getStreamsToPoll = async (req: NowRequest, res: NowResponse) => {
+const getStreamsToPoll = async (req: VercelRequest, res: VercelResponse) => {
   try {
     if (req.body.server_token === process.env.NUMBERCRUNCH_TOKEN) {
       const db = await connectToDatabase();
