@@ -1,26 +1,25 @@
-import { NowRequest, NowResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import getTwitchUserData from '../twitch/_getTwitchUserData';
 
 const connectToDatabase = require('../_connectToDatabase');
 const addUser = require('./_addUser');
 const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
-const getTwitchUserData = require('../twitch/_getTwitchUserData');
+
 const postNewStripeCustomer = require('../stripe/_postNewStripeCustomer');
 
 // const ObjectId = require('mongodb').ObjectId
 
-const login = async (req: NowRequest, res: NowResponse) => {
+const login = async (req: VercelRequest, res: VercelResponse) => {
   try {
     // retrieve auth token token from req.body
     const auth_token = req.body;
     // validate auth token exists
-    if (auth_token === null || auth_token === undefined || auth_token === '') {
+    if (!auth_token) {
       res.status(401).send('ERROR: NO ACCESS TOKEN RECEIVED');
     }
 
     // get access token from auth token
     const twitch_access_info = await getUserTwitchCredentials(auth_token);
-    console.log("auth token: ", auth_token)
-    console.log('twitch credentials received', twitch_access_info);
     // get credentials
     const twitchUserData = await getTwitchUserData(twitch_access_info.access_token);
     // set twitch credentials to be updated
@@ -48,7 +47,7 @@ const login = async (req: NowRequest, res: NowResponse) => {
     // connect to database and check for user by twitch id
     const db = await connectToDatabase();
 
-    const result = await db.collection('users').findOne({ twitch_id: twitch_id });
+    const result = await db.collection('users').findOne({ twitch_id });
 
     // if user exists in database
     if (result) {
@@ -69,7 +68,7 @@ const login = async (req: NowRequest, res: NowResponse) => {
 
       db.collection('users').updateOne(filter, updatedoc, options);
 
-      const isYoutubeLinked = result.youtube_credentials ? true : false;
+      const isYoutubeLinked = !!result.youtube_credentials;
 
       const userInfo = {
         avatar: twitch_profile_picture,

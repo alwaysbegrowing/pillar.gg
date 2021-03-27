@@ -33,8 +33,8 @@
     ".stylelintrc.js",
     ".prettierrc.js",
     "jest.config.js",
-    "api/*",
-    "mock/**/*", "api/youtube/postUserYTToken.ts", "api/youtube/getYoutubeSyncStatus.ts", "api/user/postUserVideo.ts", "api/user/login.ts", "api/youtube/getUserYTToken.ts", "api/user/getUserVideos.ts", "api/stripe/_postNewStripeCustomer.js", "api/user/getUserAccessInfo.ts", "api/youtube/_refreshYTAccessToken.js", "api/youtube/_getUserYTCredentials.js", "api/twitch/_getUserTwitchCredentials.js", "api/twitch/getTwitchLogo.ts", "api/twitch/_getTwitchUserData.js", "api/stripe/createStripeCustomerPortalSession.js", "api/stripe/createStripeCheckoutSession.js", "api/stripe/_getStripeID.js", "api/user/_addUser.ts", "api/_addUser.ts", "api/login.ts"
+    "api/**/*",
+    "mock/**/*"
   ],
   "exclude": ["node_modules", "build", "dist", "scripts", "src/.umi/*", "webpack", "jest"]
 }

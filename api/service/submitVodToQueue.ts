@@ -1,6 +1,7 @@
-import { NowRequest, NowResponse } from '@vercel/node';
-var AWS = require('aws-sdk');
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import {v4 as uuidv4} from 'uuid';
+
+const AWS = require('aws-sdk');
 // eslint-disable-next-line
 const fetch = require('node-fetch');
 
@@ -10,14 +11,14 @@ AWS.config.update({ accessKeyId: process.env.PILLAR_AWS_ACCESS_KEY_ID, secretAcc
  * @param req body contains userID of user in MongoDB Users Table
  * @param res status of pass or fail and the vod list
  */
-const submitVodToQueue = async (req: NowRequest, res: NowResponse) => {
+const submitVodToQueue = async (req: VercelRequest, res: VercelResponse) => {
   try {
     // add message to the queue
-    var sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
+    const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
     var params = {
       QueueName: "video_downloader.fifo"
     };
-    let myuuid = uuidv4();
+    const myuuid = uuidv4();
 
     var params = {
       MessageAttributes: {},

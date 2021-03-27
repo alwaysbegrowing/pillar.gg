@@ -16,13 +16,13 @@ youtubeLinked: true | false
 */
 
 
-import { NowRequest, NowResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // eslint-disable-next-line
 
 const connectToDatabase = require('../_connectToDatabase');
 
-const getUserAccessInfo = async (req: NowRequest, res: NowResponse) => {
+const getUserAccessInfo = async (req: VercelRequest, res: VercelResponse) => {
   try {
     const db = await connectToDatabase();
 
@@ -34,7 +34,7 @@ const getUserAccessInfo = async (req: NowRequest, res: NowResponse) => {
       res.status(401).send('invalid twitch_access_token')
     }
     else {
-      const isYoutubeLinked = user_result.youtube_credentials ? true : false
+      const isYoutubeLinked = !!user_result.youtube_credentials
       const userInfo = {
         avatar: user_result.twitch_profile_picture,
         name: user_result.twitch_username,
