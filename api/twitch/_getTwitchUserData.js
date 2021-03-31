@@ -6,10 +6,8 @@ const getTwitchUserData = async (accessToken) => {
 
   try {
     const data = await fetch(url, {
-      mode: 'no-cors',
       method: 'GET',
       headers: {
-        Accept: 'application/vnd.twitchtv.v5+json',
         Authorization: `OAuth ${accessToken}`,
         'Client-ID': clientId,
       },
@@ -19,6 +17,7 @@ const getTwitchUserData = async (accessToken) => {
     const { email, name, _id: twitch_id, logo: twitch_profile_picture } = resp;
     return { email, name, twitch_id, twitch_profile_picture };
   } catch (e) {
+    console.error(e);
     return e;
   }
 };
