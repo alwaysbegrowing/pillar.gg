@@ -12,7 +12,7 @@ export default defineConfig({
     hmr: true,
   },
   layout: {
-    name: 'ClipClock',
+    name: 'Pillar',
     locale: true,
     ...defaultSettings,
   },
@@ -81,7 +81,6 @@ export default defineConfig({
       path: '/TwitchAuth',
       layout: false,
       component: './TwitchAuth',
-
     },
     {
       path: '/YoutubeAuth',

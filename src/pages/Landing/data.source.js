@@ -352,7 +352,7 @@ export const Footer00DataSource = {
       <span>
         <span>
           <span>
-            <span>©2020 ClipClock All Rights Reserved</span>
+            <span>©2020 Pillar All Rights Reserved</span>
           </span>
         </span>
       </span>

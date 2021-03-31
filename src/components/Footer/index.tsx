@@ -3,7 +3,7 @@ import { DefaultFooter } from '@ant-design/pro-layout';
 
 export default () => (
   <DefaultFooter
-    copyright="by Remyx"
+    copyright="by Pillar"
     links={[
       {
         key: 'Privacy Policy',
