@@ -18,22 +18,16 @@ export async function getInitialState(): Promise<{
       const currentUser = await queryCurrent();
       return currentUser;
     } catch (error) {
+      console.log(error);
       history.push('/');
     }
-    return undefined;
+    return null;
   };
-  // 如果是登录页面，不执行
-  if (history.location.pathname !== '/' && history.location.pathname !== '/TwitchAuth') {
-    console.log('hmm');
-    const currentUser = await fetchUserInfo();
-    return {
-      fetchUserInfo,
-      currentUser,
-      settings: defaultSettings,
-    };
-  }
+  // if (history.location.pathname !== '/' && history.location.pathname !=='/TwitchAuth') {
+  const currentUser = await fetchUserInfo();
   return {
     fetchUserInfo,
+    currentUser,
     settings: defaultSettings,
   };
 }
@@ -50,9 +44,8 @@ export const layout = ({
     onPageChange: () => {
       const { currentUser } = initialState;
       const { location } = history;
-      // 如果没有登录，重定向到 login
       if (!currentUser && location.pathname !== '/' && location.pathname !== '/TwitchAuth') {
-        // history.push('/');
+        history.push('/');
       }
     },
     menuHeaderRender: undefined,

@@ -22,12 +22,10 @@ const getTwitchUserData = async (accessToken: string) => {
   }
 };
 export async function queryCurrent() {
-  console.log('gooo');
   const access_token = localStorage.getItem('access_token');
+  console.log(access_token);
   if (access_token) {
-    console.log('access token found');
-    const resp = await getTwitchUserData(access_token);
-    return resp.json();
+    return getTwitchUserData(access_token);
   }
   return null;
 }
