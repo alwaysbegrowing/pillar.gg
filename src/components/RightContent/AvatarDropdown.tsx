@@ -32,7 +32,7 @@ export interface GlobalHeaderRightProps {
 //   }
 // };
 
-const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ }) => {
+const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
   const { initialState, setInitialState } = useModel('@@initialState');
 
   const onMenuClick = useCallback(
@@ -45,7 +45,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ }) => {
       const { key } = event;
       if (key === 'logout' && initialState) {
         setInitialState({ ...initialState, currentUser: undefined });
-        localStorage.removeItem('twitch_access_token');
+        localStorage.removeItem('access_token');
         history.push(`/`);
         // loginOut();
         return;
@@ -73,7 +73,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ }) => {
 
   const { currentUser } = initialState;
 
-  if (!currentUser || !currentUser.name) {
+  if (!currentUser || !currentUser.display_name) {
     return loading;
   }
 
@@ -102,8 +102,13 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ }) => {
   return (
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>
-        <Avatar size="small" className={styles.avatar} src={currentUser.avatar} alt="avatar" />
-        <span className={`${styles.name} anticon`}>{currentUser.name}</span>
+        <Avatar
+          size="small"
+          className={styles.avatar}
+          src={currentUser.profile_image_url}
+          alt="avatar"
+        />
+        <span className={`${styles.name} anticon`}>{currentUser.display_name}</span>
       </span>
     </HeaderDropdown>
   );

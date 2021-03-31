@@ -1,25 +1,28 @@
-import { request } from 'umi';
+const twitchClientId = '2nakqoqdxka9v5oekyo6742bmnxt2o';
 
-export async function query() {
-  return request<API.CurrentUser[]>('/api/users');
-}
+const getTwitchUserData = async () => {
+  const url = `https://api.twitch.tv/helix/users`;
 
-export async function queryCurrent() {
-  const twitch_access_code = localStorage.getItem('twitch_access_token');
-  if(twitch_access_code) {
-    return request<API.CurrentUser>('/api/user/getUserAccessInfo', {
-      method: 'post',
-      data: {
-        twitch_access_token: twitch_access_code
-      }
+  const accessToken = localStorage.getItem('access_token');
+
+  if (!accessToken) return null;
+
+  try {
+    const resp = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Client-ID': twitchClientId,
+      },
     });
+    const result = await resp.json();
+    if (resp.ok) {
+      const [userData] = result.data;
+      return userData;
+    }
+    return result;
+  } catch (e) {
+    console.error(e);
+    return e;
   }
-  else {
-    return(undefined);
-  }
-
-}
-
-export async function queryNotices(): Promise<any> {
-  return request<{ data: API.NoticeIconData[] }>('/api/notices');
-}
+};
+export { getTwitchUserData };

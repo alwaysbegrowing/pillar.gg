@@ -54,18 +54,18 @@ export default defineConfig({
       icon: 'VideoCameraOutlined',
       component: './Videos',
     },
-    {
-      path: '/analysis',
-      name: 'analysis',
-      icon: 'LineChartOutlined',
-      component: './Analysis',
-    },
-    {
-      path: '/settings',
-      name: 'settings',
-      icon: 'SettingOutlined',
-      component: './Settings',
-    },
+    // {
+    //   path: '/analysis',
+    //   name: 'analysis',
+    //   icon: 'LineChartOutlined',
+    //   component: './Analysis',
+    // },
+    // {
+    //   path: '/settings',
+    //   name: 'settings',
+    //   icon: 'SettingOutlined',
+    //   component: './Settings',
+    // },
     {
       path: '/feedback',
       name: 'feedback',

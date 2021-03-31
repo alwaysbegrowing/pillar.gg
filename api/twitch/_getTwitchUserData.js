@@ -1,24 +1,25 @@
 import fetch from 'node-fetch';
 
+const { TWITCH_CLIENT_ID } = process.env;
+
 const getTwitchUserData = async (accessToken) => {
-  const url = `https://api.twitch.tv/kraken/user`;
-  const clientId = process.env.TWITCH_CLIENT_ID;
+  const url = `https://api.twitch.tv/helix/users`;
 
   try {
-    const data = await fetch(url, {
-      mode: 'no-cors',
-      method: 'GET',
+    const resp = await fetch(url, {
       headers: {
-        Accept: 'application/vnd.twitchtv.v5+json',
-        Authorization: `OAuth ${accessToken}`,
-        'Client-ID': clientId,
+        Authorization: `Bearer ${accessToken}`,
+        'Client-ID': TWITCH_CLIENT_ID,
       },
     });
-    if (!data.ok) return null;
-    const resp = await data.json();
-    const { email, name, _id: twitch_id, logo: twitch_profile_picture } = resp;
-    return { email, name, twitch_id, twitch_profile_picture };
+    const result = await resp.json();
+    if (resp.ok) {
+      const [userData] = result.data;
+      return userData;
+    }
+    return result;
   } catch (e) {
+    console.error(e);
     return e;
   }
 };

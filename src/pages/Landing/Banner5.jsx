@@ -1,53 +1,25 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import QueueAnim from 'rc-queue-anim';
 import TweenOne from 'rc-tween-one';
-import { history, useModel } from 'umi';
 import { getChildrenToRender } from './utils';
-import TwitchAuthPortal from '../../components/AuthPortal/TwitchAuthPortal';
+import { Button } from 'antd';
+import { useModel } from 'umi';
 
-// This class contains the "Connect With Twitch" button that triggers Twitch OAuth
+const twitchClientId = '2nakqoqdxka9v5oekyo6742bmnxt2o';
+const redirectURI = `${window.location.origin}/TwitchAuth`;
+
 const Banner5 = (props) => {
+  const { initialState } = useModel('@@initialState');
+  const { currentUser } = initialState;
+  const { display_name } = currentUser;
+  const buttonText = display_name ? `Log in as ${display_name}` : 'Log in with Twitch';
 
-  const { initialState, setInitialState } = useModel('@@initialState');
-  const [ openTwitchAuthPortal, setPortalStatus ] = useState(false);
-
-  function toggleAuthPortal() {
-     setPortalStatus(true);
-  }
-
-  useEffect(() => {
-    if (initialState.currentUser) {
-      history.push('/home');
-    }
-    window.onmessage = (event) => {
-      if (event.data.success) {
-        fetch('/api/user/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'text/plain',
-          },
-          body: event.data.code,
-          redirect: 'follow',
-        })
-        .then((res) => res.json())
-        .then((result) => {
-          if (result) {
-            const currentUser = {
-              avatar: result.avatar,
-              name: result.name,
-              user_id: result.user_id,
-              access: result.access,
-              youtubeLinked: result.youtubeLinked
-            }
-            localStorage.setItem('twitch_access_token', result.twitch_access_token);
-            setInitialState({...initialState, currentUser});
-            history.push('/home');
-          }
-        });
-      }
-    };
-  })
-
+  const twitchAuth = () => {
+    window.open(
+      `https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${redirectURI}&response_type=code&scope=user_read`,
+      '_self',
+    );
+  };
   const { ...tagProps } = props;
   const { dataSource } = tagProps;
 
@@ -64,8 +36,7 @@ const Banner5 = (props) => {
   };
 
   return (
-    <div {...tagProps} {...dataSource.wrapper} onClick={() => toggleAuthPortal()}>
-      {openTwitchAuthPortal && <TwitchAuthPortal />}
+    <div {...tagProps} {...dataSource.wrapper}>
       <div {...dataSource.page}>
         <QueueAnim
           key="text"
@@ -79,6 +50,9 @@ const Banner5 = (props) => {
           }}
         >
           {dataSource.childWrapper.children.map(getChildrenToRender)}
+          <Button block size="large" type="primary" onClick={twitchAuth}>
+            {buttonText}
+          </Button>
         </QueueAnim>
         <TweenOne animation={animType.one} key="title" {...dataSource.image}>
           <img src={dataSource.image.children} width="100%" alt="img" />
@@ -86,6 +60,6 @@ const Banner5 = (props) => {
       </div>
     </div>
   );
-}
+};
 
 export default Banner5;
