@@ -2,10 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import getTwitchUserData from '../twitch/_getTwitchUserData';
 
 const connectToDatabase = require('../_connectToDatabase');
-// const addUser = require('./_addUser');
 const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
-
-// const postNewStripeCustomer = require('../stripe/_postNewStripeCustomer');
 
 const login = async (req: VercelRequest, res: VercelResponse) => {
   try {
