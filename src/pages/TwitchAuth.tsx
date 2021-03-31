@@ -1,33 +1,17 @@
-import React from 'react';
-import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Typography } from 'antd';
+import { useEffect } from 'react';
+import { history } from 'umi';
 
-class TwitchAuth extends React.PureComponent {
-  componentDidMount() {
-      this.authenticateTwitch();
-  }
+export default () => {
+  useEffect(() => {
+    const login = async () => {
+      const code = new URLSearchParams(window.location.search).get('code') || '';
+      const resp = await fetch(`/api/user/login?code=${code}`);
+      const result = await resp.json();
+      localStorage.setItem('access_token', result.access_token);
+      history.push('/home');
+    };
+    login();
+  }, []);
 
-  authenticateTwitch() {
-    const code = new URLSearchParams(window.location.search).get('code');
-    if (code != null) {
-        window.opener?.parent?.postMessage({ success: true, code }, "*");
-    } else {
-        window.opener?.parent?.postMessage({ success: false }, "*")
-        console.log(code);
-    }
-    // window.close();
-  }
-
-  render() {
-    return (
-      <PageContainer>
-        <Card>
-          <Typography.Text>
-            Authenticating Twitch...
-          </Typography.Text>
-        </Card>
-      </PageContainer>
-    )
-  }
-}
-  export default TwitchAuth;
+  return 'loading...';
+};
