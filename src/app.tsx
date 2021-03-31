@@ -6,7 +6,7 @@ import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import { ResponseError } from 'umi-request';
 import defaultSettings from '../config/defaultSettings';
-import { queryCurrent } from './services/user';
+import { getTwitchUserData } from './services/user';
 
 export async function getInitialState(): Promise<{
   settings?: LayoutSettings;
@@ -15,8 +15,7 @@ export async function getInitialState(): Promise<{
 }> {
   const fetchUserInfo = async () => {
     try {
-      const currentUser = await queryCurrent();
-      return currentUser;
+      return getTwitchUserData();
     } catch (error) {
       console.log(error);
       history.push('/');

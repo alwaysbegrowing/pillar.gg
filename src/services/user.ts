@@ -1,7 +1,11 @@
 const twitchClientId = '2nakqoqdxka9v5oekyo6742bmnxt2o';
 
-const getTwitchUserData = async (accessToken: string) => {
+const getTwitchUserData = async () => {
   const url = `https://api.twitch.tv/helix/users`;
+
+  const accessToken = localStorage.getItem('access_token');
+
+  if (!accessToken) return null;
 
   try {
     const resp = await fetch(url, {
@@ -21,11 +25,4 @@ const getTwitchUserData = async (accessToken: string) => {
     return e;
   }
 };
-export async function queryCurrent() {
-  const access_token = localStorage.getItem('access_token');
-  console.log(access_token);
-  if (access_token) {
-    return getTwitchUserData(access_token);
-  }
-  return null;
-}
+export { getTwitchUserData };

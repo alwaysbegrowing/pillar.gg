@@ -52,20 +52,20 @@ export const Banner50DataSource = {
           </span>
         ),
       },
-      {
-        name: 'button',
-        className: 'banner5-button-wrapper',
-        children: {
-          className: 'banner5-button kf7hyvamyj-editor_css',
-          type: 'primary',
-          children: (
-            <span>
-              <p>Connect With Twitch</p>
-            </span>
-          ),
-          target: '_blank',
-        },
-      },
+      // {
+      //   name: 'button',
+      //   className: 'banner5-button-wrapper',
+      //   children: {
+      //     className: 'banner5-button kf7hyvamyj-editor_css',
+      //     type: 'primary',
+      //     children: (
+      //       <span>
+      //         <p>Log in with Twitch</p>
+      //       </span>
+      //     ),
+      //     target: '_blank',
+      //   },
+      // },
     ],
   },
   image: {
