@@ -2,7 +2,8 @@ import React, { useCallback } from 'react';
 // import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { LogoutOutlined } from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
-import { history, useModel } from 'umi';
+import { history } from 'umi';
+import { useUser } from '../../services/hooks/user';
 // import { outLogin } from '@/services/login';
 // import { stringify } from 'querystring';
 import HeaderDropdown from '../HeaderDropdown';
@@ -33,7 +34,7 @@ export interface GlobalHeaderRightProps {
 // };
 
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
-  const { initialState, setInitialState } = useModel('@@initialState');
+  const { data: userData, isLoading } = useUser();
 
   const onMenuClick = useCallback(
     (event: {
@@ -43,8 +44,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
       domEvent: React.MouseEvent<HTMLElement>;
     }) => {
       const { key } = event;
-      if (key === 'logout' && initialState) {
-        setInitialState({ ...initialState, currentUser: undefined });
+      if (key === 'logout') {
         localStorage.removeItem('access_token');
         history.push(`/`);
         // loginOut();
@@ -67,13 +67,11 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
     </span>
   );
 
-  if (!initialState) {
+  if (isLoading) {
     return loading;
   }
 
-  const { currentUser } = initialState;
-
-  if (!currentUser || !currentUser.display_name) {
+  if (!userData || !userData.display_name) {
     return loading;
   }
 
@@ -105,10 +103,10 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
         <Avatar
           size="small"
           className={styles.avatar}
-          src={currentUser.profile_image_url}
+          src={userData.profile_image_url}
           alt="avatar"
         />
-        <span className={`${styles.name} anticon`}>{currentUser.display_name}</span>
+        <span className={`${styles.name} anticon`}>{userData.display_name}</span>
       </span>
     </HeaderDropdown>
   );

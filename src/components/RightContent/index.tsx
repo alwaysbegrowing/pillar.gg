@@ -2,7 +2,7 @@
 import { Tag, Space } from 'antd';
 // import { QuestionCircleOutlined } from '@ant-design/icons';
 import React from 'react';
-import { useModel, SelectLang } from 'umi';
+import { SelectLang } from 'umi';
 import Avatar from './AvatarDropdown';
 // import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
@@ -15,19 +15,20 @@ const ENVTagColor = {
   pre: '#87d068',
 };
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 const GlobalHeaderRight: React.FC<{}> = () => {
-  const { initialState } = useModel('@@initialState');
+  // const { initialState } = useModel('@@initialState');
 
-  if (!initialState || !initialState.settings) {
-    return null;
-  }
+  // if (!initialState || !initialState.settings) {
+  //   return null;
+  // }
 
-  const { navTheme, layout } = initialState.settings;
-  let className = styles.right;
+  // const { navTheme, layout } = initialState.settings;
+  const className = styles.right;
 
-  if ((navTheme === 'dark' && layout === 'top') || layout === 'mix') {
-    className = `${styles.right}  ${styles.dark}`;
-  }
+  // if ((navTheme === 'dark' && layout === 'top') || layout === 'mix') {
+  //   className = `${styles.right}  ${styles.dark}`;
+  // }
   return (
     <Space className={className}>
       {/* <HeaderSearch
