@@ -11,7 +11,7 @@ const redirectURI = `${window.location.origin}/TwitchAuth`;
 const Banner5 = (props) => {
   const { initialState } = useModel('@@initialState');
   const { currentUser } = initialState;
-  const { display_name } = currentUser;
+  const { display_name } = currentUser || {};
   const buttonText = display_name ? `Log in as ${display_name}` : 'Log in with Twitch';
 
   const twitchAuth = () => {
