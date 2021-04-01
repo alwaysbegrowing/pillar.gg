@@ -3,15 +3,15 @@ import QueueAnim from 'rc-queue-anim';
 import TweenOne from 'rc-tween-one';
 import { getChildrenToRender } from './utils';
 import { Button } from 'antd';
-import { useModel } from 'umi';
+import { useUser } from '../../services/hooks/user';
 
 const twitchClientId = '2nakqoqdxka9v5oekyo6742bmnxt2o';
 const redirectURI = `${window.location.origin}/TwitchAuth`;
 
 const Banner5 = (props) => {
-  const { initialState } = useModel('@@initialState');
-  const { currentUser } = initialState;
-  const { display_name } = currentUser;
+  const { data: userData } = useUser();
+
+  const { display_name } = userData || {};
   const buttonText = display_name ? `Log in as ${display_name}` : 'Log in with Twitch';
 
   const twitchAuth = () => {
