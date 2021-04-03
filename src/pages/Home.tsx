@@ -4,6 +4,8 @@ import { useClips } from '../services/hooks/api';
 import { List, Button, Row } from 'antd';
 import { Progress } from 'antd';
 
+import { useParams } from 'umi';
+
 interface ProgressProps {
   played: number;
   playedSeconds: number;
@@ -12,22 +14,23 @@ interface ProgressProps {
 }
 
 interface ClipProps {
-  id: number
-  startTime: number
-  endTime: number
+  id: number;
+  startTime: number;
+  endTime: number;
 }
 
 // HARDCODED BUT WILL BE VARIBALE SOON
-const videoId = 955629991
+// const videoId = 955629991;
 
 export default () => {
-  const {data, isLoading} = useClips(videoId)
+  const { id } = useParams();
+
+  const { data, isLoading } = useClips(id);
   const videoRef = useRef(null);
   const [playing, setPlaying] = useState<boolean>(true);
   const [progress, setProgress] = useState<number>(0);
   const [selectedClip, setSelectedClip] = useState<ClipProps>();
 
-  
   const onProgress = ({ playedSeconds }: ProgressProps) => {
     const { startTime, endTime } = selectedClip;
     console.log({ startTime, endTime });
@@ -41,7 +44,7 @@ export default () => {
       setPlaying(false);
     }
   };
-  if (isLoading) return 'loading...'
+  if (isLoading) return 'loading...';
   return (
     <Row>
       <List
@@ -73,7 +76,7 @@ export default () => {
             onProgress={onProgress}
             ref={videoRef}
             key={selectedClip.videoId + selectedClip.startTime}
-            url={`https://twitch.tv/videos/${selectedClip.videoId}`}
+            url={`https://twitch.tv/videos/${id}`}
           />
           <Progress percent={progress} />
         </div>
@@ -81,4 +84,3 @@ export default () => {
     </Row>
   );
 };
-

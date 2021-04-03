@@ -8,7 +8,6 @@ export default async (req: VercelRequest, res: VercelResponse) => {
   } = req;
 
   const lim = parseInt(limit as string, 10);
-  const input = parseInt(videoId as string, 10);
   // throw 400 error here if input is not an int
 
   const db = await connectToDatabase();
@@ -20,7 +19,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
       clips3: { $slice: lim },
     },
   };
-  const result = await db.collection('timestamps').findOne({ videoId: input }, options);
+  const result = await db.collection('timestamps').findOne({ videoId }, options);
   if (!result) {
     res.status(404).end();
     return;

@@ -2,15 +2,18 @@ import { useEffect } from 'react';
 import useSWR from 'swr';
 import { fetcher } from '../fetcher';
 
+
+// gorc id 108268890
+// liihs id 73626243
 const initialData = {
   data: [
     {
       broadcaster_type: '',
       created_at: '2016-07-05T19:34:03.369972Z',
       description: 'Check out pillar.gg for automatic stream compilations ',
-      display_name: 'test_lii',
+      display_name: 'gorc_test',
       email: 'rratcliffe57@gmail.com',
-      id: '73626243',
+      id: '108268890',
       login: 'lii',
       offline_image_url: '',
       profile_image_url:
