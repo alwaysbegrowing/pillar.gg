@@ -21,7 +21,7 @@ async function connectCached() {
 
   // Select the database through the connection,
   // using the database path of the connection string
-  const db = await client.db('TwitchHighlights_Dev');
+  const db = await client.db('pillar');
 
   // Cache the database connection and return the connection
   cachedDb = db;
