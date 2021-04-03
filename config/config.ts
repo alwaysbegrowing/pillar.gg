@@ -61,8 +61,8 @@ export default defineConfig({
         },
         {
           path: '/videos/:id',
-          name: 'home',
-          component: './Home',
+          name: 'Video Player',
+          component: './VideoPlayer',
         },
       ],
     },

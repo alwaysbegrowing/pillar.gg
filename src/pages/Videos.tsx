@@ -1,8 +1,9 @@
-import React from 'react';
-import { List, Space, Card, Button } from 'antd';
-import { ClockCircleOutlined, EyeOutlined, CalendarOutlined } from '@ant-design/icons';
+import { CalendarOutlined, ClockCircleOutlined, EyeOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
-import { useVideos } from '../services/hooks/api';
+import { Button, Card, List, Space } from 'antd';
+import React, { useState } from 'react';
+import { history } from 'umi';
+import { useClips, useVideos } from '../services/hooks/api';
 
 const IconText = ({ icon, text }: any) => (
   <Space>
@@ -12,8 +13,14 @@ const IconText = ({ icon, text }: any) => (
 );
 
 const Videos = () => {
-  const { data: videos } = useVideos();
-  if (!videos) return 'loading';
+  const [lastHoveredVideo, setLastHoveredVideo] = useState();
+  const { data: videos, isLoading, isError } = useVideos();
+
+  // used only for prefetching clip data on button hover
+  useClips(lastHoveredVideo);
+
+  if (isLoading) return 'loading...';
+  if (isError) return 'error';
 
   return (
     <PageContainer>
@@ -33,7 +40,7 @@ const Videos = () => {
             view_count,
             url,
             published_at,
-            id
+            id,
           } = video;
 
           const thumbnail = thumbnail_url.replace('%{width}', 270).replace('%{height}', 150);
@@ -53,18 +60,16 @@ const Videos = () => {
                     text={published_at}
                     key="list-vertical-published"
                   />,
-
-                  // <IconText icon={MessageOutlined} text="2" key="list-vertical-message" />,
                 ]}
-                extra={<img width={272} alt="logo" src={thumbnail} />}
+                extra={thumbnail ? <img width={272} alt="logo" src={thumbnail} /> : null}
               >
-                <List.Item.Meta
-                  // avatar={<Avatar src={avatar} />}
-
-                  title={<a href={url}>{title}</a>}
-                  description={description}
-                />
-                <Button href={`/videos/${id}`}>Create Clips from this VOD</Button>
+                <List.Item.Meta title={<a href={url}>{title}</a>} description={description} />
+                <Button
+                  onMouseOver={() => setLastHoveredVideo(id)}
+                  onClick={() => history.push(`/videos/${id}`)}
+                >
+                  Create Clips from this VOD
+                </Button>
               </List.Item>
             </Card>
           );
