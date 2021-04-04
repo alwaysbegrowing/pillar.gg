@@ -19,7 +19,7 @@ function useVideos() {
   // const { data: userData } = useUser();
   // gorc id 108268890
   // liihs id 73626243
-  const userData = { id: 108268890 };
+  const userData = { id: 73626243 };
   const { data, error } = useSWR(
     () => `https://api.twitch.tv/helix/videos?first=20&type=archive&user_id=${userData.id}`,
     fetcher,
