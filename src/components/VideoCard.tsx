@@ -3,6 +3,7 @@ import { Button, Card, List, Space } from 'antd';
 import React from 'react';
 import { history } from 'umi';
 import { useClips } from '../services/hooks/api';
+import formatDistance from 'date-fns/formatDistance';
 
 const IconText = ({ icon, text }: any) => (
   <Space>
@@ -39,15 +40,21 @@ const VideoCard = ({
   id,
 }: VideoCardProps) => {
   const { data } = useClips(id);
-  const thumbnail = thumbnail_url.replace('%{width}', '270').replace('%{height}', '150');
+  const thumbnail = thumbnail_url.replace('%{width}', '216').replace('%{height}', '120');
+  const simpleTime = formatDistance(new Date(published_at), new Date(), { addSuffix: true });
+
   return (
     <Card>
       <List.Item
         key={title}
         actions={[
           <IconText icon={ClockCircleOutlined} text={duration} key="list-vertical-star-o" />,
-          <IconText icon={EyeOutlined} text={view_count} key="list-vertical-like-o" />,
-          <IconText icon={CalendarOutlined} text={published_at} key="list-vertical-published" />,
+          <IconText
+            icon={EyeOutlined}
+            text={view_count.toLocaleString()}
+            key="list-vertical-like-o"
+          />,
+          <IconText icon={CalendarOutlined} text={simpleTime} key="list-vertical-published" />,
         ]}
         extra={thumbnail ? <img width={272} alt="logo" src={thumbnail} /> : null}
       >
