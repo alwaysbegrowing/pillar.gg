@@ -4,6 +4,7 @@ import TweenOne from 'rc-tween-one';
 import { getChildrenToRender } from './utils';
 import { Button } from 'antd';
 import { useUser } from '../../services/hooks/api';
+import { history } from 'umi';
 
 const twitchClientId = '2nakqoqdxka9v5oekyo6742bmnxt2o';
 const redirectURI = `${window.location.origin}/TwitchAuth`;
@@ -15,10 +16,14 @@ const Banner5 = (props) => {
   const buttonText = display_name ? `Log in as ${display_name}` : 'Log in with Twitch';
 
   const twitchAuth = () => {
-    window.open(
-      `https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${redirectURI}&response_type=code&scope=user_read`,
-      '_self',
-    );
+    if (userData) {
+      history.push('/videos');
+    } else {
+      window.open(
+        `https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${redirectURI}&response_type=code&scope=user_read`,
+        '_self',
+      );
+    }
   };
   const { ...tagProps } = props;
   const { dataSource } = tagProps;
