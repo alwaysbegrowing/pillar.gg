@@ -42,18 +42,31 @@ export default defineConfig({
         },
       ],
     },
-    {
-      path: '/home',
-      name: 'home',
-      icon: 'HomeOutlined',
-      component: './Home',
-    },
+    // {
+    //   path: '/home',
+    //   name: 'home',
+    //   icon: 'HomeOutlined',
+    //   component: './Home',
+    // },
     {
       path: '/videos',
       name: 'videos',
       icon: 'VideoCameraOutlined',
-      component: './Videos',
+      hideChildrenInMenu: true,
+      routes: [
+        {
+          path: '/videos',
+          name: 'videos',
+          component: './Videos',
+        },
+        {
+          path: '/videos/:id',
+          name: 'Video Player',
+          component: './VideoPlayer',
+        },
+      ],
     },
+
     // {
     //   path: '/analysis',
     //   name: 'analysis',

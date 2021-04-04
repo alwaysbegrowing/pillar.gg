@@ -3,7 +3,7 @@ import QueueAnim from 'rc-queue-anim';
 import TweenOne from 'rc-tween-one';
 import { getChildrenToRender } from './utils';
 import { Button } from 'antd';
-import { useUser } from '../../services/hooks/user';
+import { useUser } from '../../services/hooks/api';
 
 const twitchClientId = '2nakqoqdxka9v5oekyo6742bmnxt2o';
 const redirectURI = `${window.location.origin}/TwitchAuth`;

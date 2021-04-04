@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 import { LogoutOutlined } from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
 import { history } from 'umi';
-import { useUser } from '../../services/hooks/user';
+import { useUser } from '../../services/hooks/api';
 // import { outLogin } from '@/services/login';
 // import { stringify } from 'querystring';
 import HeaderDropdown from '../HeaderDropdown';
