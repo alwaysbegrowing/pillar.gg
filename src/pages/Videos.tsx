@@ -3,17 +3,16 @@ import { List } from 'antd';
 import React from 'react';
 import { useVideos } from '../services/hooks/api';
 import VideoCard from '../components/VideoCard';
+import SelectUser from '../components/SelectUser';
 
 const Videos = () => {
   const { data: videos, isLoading, isError } = useVideos();
-
-  // used only for prefetching clip data on button hover
 
   if (isLoading) return 'loading...';
   if (isError) return 'error';
 
   return (
-    <PageContainer>
+    <PageContainer extra={<SelectUser />}>
       <List
         itemLayout="vertical"
         size="large"
