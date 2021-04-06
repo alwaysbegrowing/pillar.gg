@@ -1,9 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import useSWR from 'swr';
 import { fetcher } from '../fetcher';
+import { GlobalContext } from '../../ContextWrapper';
 
 function useUser() {
-  const { data, error, mutate } = useSWR('https://api.twitch.tv/helix/users', fetcher);
+  const { twitchId } = useContext(GlobalContext);
+
+  const selfUrl = 'https://api.twitch.tv/helix/users';
+  const otherUrl = `https://api.twitch.tv/helix/users?id=${twitchId}`;
+
+  const url = twitchId ? otherUrl : selfUrl;
+  const { data, error, mutate } = useSWR(url, fetcher);
   const access_token = localStorage.getItem('access_token');
   useEffect(() => {
     mutate();
@@ -15,11 +22,21 @@ function useUser() {
   };
 }
 
+function useDbUsers() {
+  const { data, error } = useSWR('/api/users', fetcher);
+
+  return {
+    data,
+    isLoading: !error && !data,
+    isError: error,
+  };
+}
+
 function useVideos() {
-  // const { data: userData } = useUser();
+  const { data: userData } = useUser();
   // gorc id 108268890
   // liihs id 73626243
-  const userData = { id: 108268890 };
+  // const userData = { id: 73626243 };
   const { data, error } = useSWR(
     () => `https://api.twitch.tv/helix/videos?first=20&type=archive&user_id=${userData.id}`,
     fetcher,
@@ -42,4 +59,4 @@ function useClips(clipId: number | string | undefined) {
   };
 }
 
-export { useUser, useVideos, useClips };
+export { useUser, useVideos, useClips, useDbUsers };
