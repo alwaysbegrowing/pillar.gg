@@ -14,9 +14,17 @@ export default async (req: VercelRequest, res: VercelResponse) => {
 
   const options = {
     projection: {
-      clips1: { $slice: lim },
-      clips2: { $slice: lim },
-      clips3: { $slice: lim },
+      clips: {
+        algo1: {
+          $slice: lim,
+        },
+        algo2: {
+          $slice: lim,
+        },
+        algo3: {
+          $slice: lim,
+        },
+      },
     },
   };
   const result = await db.collection('timestamps').findOne({ videoId }, options);

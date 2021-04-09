@@ -53,7 +53,7 @@ function useClips(clipId: number | string | undefined) {
   const { data, error } = useSWR(clipId ? () => `/api/timestamps/${clipId}` : null, fetcher);
 
   return {
-    data: data?.clips1,
+    data: data?.clips,
     isLoading: !error && !data,
     isError: error,
   };
