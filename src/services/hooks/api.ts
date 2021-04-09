@@ -49,8 +49,34 @@ function useVideos() {
   };
 }
 
+interface IndividualTimestamp {
+  startTime: number;
+  endTime: number;
+}
+
+interface Algorithm {
+  algo1: IndividualTimestamp[];
+  algo2?: IndividualTimestamp[];
+  algo3?: IndividualTimestamp[];
+  algo4?: IndividualTimestamp[];
+  algo5?: IndividualTimestamp[];
+}
+interface TimestampStructure {
+  videoId: string;
+  _id: string;
+  clips: Algorithm;
+}
+
+interface UseClipsDataProps {
+  data?: TimestampStructure;
+  error?: boolean;
+}
+
 function useClips(clipId: number | string | undefined) {
-  const { data, error } = useSWR(clipId ? () => `/api/timestamps/${clipId}` : null, fetcher);
+  const { data, error }: UseClipsDataProps = useSWR(
+    clipId ? () => `/api/timestamps/${clipId}` : null,
+    fetcher,
+  );
 
   return {
     data: data?.clips,
