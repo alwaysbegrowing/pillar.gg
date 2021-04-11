@@ -68,11 +68,6 @@ const VerticalClipList = ({
       <Empty
         image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
         imageStyle={{ height: 60 }}
-        //   description={
-        //   <span>
-        //     Let's get started
-        //   </span>
-        // }
       >
         <Button style={{ marginTop: 8 }} loading>
           Generating Clips
@@ -84,11 +79,6 @@ const VerticalClipList = ({
     <Empty
       image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
       imageStyle={{ height: 60 }}
-      //   description={
-      //   <span>
-      //     Let's get started
-      //   </span>
-      // }
     >
       <Button style={{ marginTop: 8 }} icon={<DownloadOutlined />} onClick={() => showClips()}>
         Make Clips
@@ -202,7 +192,6 @@ export default () => {
           />
         </Col>
         <Col offset={1}>
-          {/* only looking at algorithm1 for now until we have a more complete solution */}
           <VerticalClipList
             play={play}
             algorithmClips={selectedAlgorithmData}
@@ -216,8 +205,6 @@ export default () => {
 
           {isClipListVisible ? <AlgorithmRadio setPickedAlgorithm={setPickedAlgorithm} /> : null}
         </Col>
-        {/* <Col offset={1}>
-        </Col> */}
       </Row>
       <Row justify="center">{isClipListVisible ? <DownloadButton /> : null}</Row>
     </div>
