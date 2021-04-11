@@ -26,6 +26,7 @@ const seek = (ref: any, seekTime: number) => {
   }
 };
 
+const toTime = (seconds: number) => new Date(seconds * 1000).toISOString().substr(11, 8);
 const ClipRow = ({ play, algorithmClips, clipIndex, playing }: any) => (
   <Row justify="center" style={{ marginTop: 24 }}>
     <List
@@ -35,13 +36,22 @@ const ClipRow = ({ play, algorithmClips, clipIndex, playing }: any) => (
         const selected = clipIndex === i && playing;
         return (
           <List.Item>
-            <Card title={`Clip ${i + 1}`}>
-              <Button onClick={() => play(item, i)}>{selected ? 'Playing' : 'View'}</Button>
+            <Card
+              // title={`Clip ${i + 1}`}
+              actions={[
+                <Button onClick={() => play(item, i)}>{selected ? 'Playing' : 'View'}</Button>,
+              ]}
+            >
+              <div>{toTime(item.startTime)}</div>
+              <div>{toTime(item.endTime)}</div>
             </Card>
           </List.Item>
         );
       }}
     />
+    <Button style={{ marginLeft: 8 }} icon={<DownloadOutlined />}>
+      Download
+    </Button>
   </Row>
 );
 
@@ -56,7 +66,7 @@ export default () => {
 
   if (isLoading) return 'loading...';
   if (isError) return 'error';
-  console.log(data);
+  if (!data) return 'no data';
 
   const play = (item: ClipProps, i: number) => {
     const { startTime } = item;
@@ -97,12 +107,6 @@ export default () => {
           <ClipRow play={play} algorithmClips={item} playing={playing} clipIndex={clipIndex} />
         )}
       />
-
-      <Row justify="center">
-        <Button type="primary" icon={<DownloadOutlined />}>
-          Download Clips
-        </Button>
-      </Row>
     </div>
   );
 };

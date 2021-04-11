@@ -24,6 +24,9 @@ export default async (req: VercelRequest, res: VercelResponse) => {
         algo3: {
           $slice: lim,
         },
+        algo4: {
+          $slice: lim,
+        },
       },
     },
   };
