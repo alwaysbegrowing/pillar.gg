@@ -36,6 +36,7 @@ const VerticalClipList = ({
   showClips,
   isClipListVisible,
   isClipInSelectedAlgorithm,
+  loading,
 }: any) => {
   if (isClipListVisible) {
     return (
@@ -60,6 +61,23 @@ const VerticalClipList = ({
           );
         }}
       />
+    );
+  }
+  if (loading) {
+    return (
+      <Empty
+        image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+        imageStyle={{ height: 60 }}
+        //   description={
+        //   <span>
+        //     Let's get started
+        //   </span>
+        // }
+      >
+        <Button style={{ marginTop: 8 }} loading>
+          Generating Clips
+        </Button>
+      </Empty>
     );
   }
   return (
@@ -111,6 +129,7 @@ export default () => {
   const [clipIndex, setClipIndex] = useState<number>(0);
   const [isClipListVisible, setIsClipListVisible] = useState<boolean>(false);
   const [pickedAlgorithm, setPickedAlgorithm] = useState<number>(1);
+  const [isClipListLoading, setIsClipListLoading] = useState<boolean>(false);
 
   if (isLoading) return 'loading...';
   if (isError) return 'error';
@@ -125,10 +144,15 @@ export default () => {
   };
 
   const showClips = () => {
-    notification.success({
-      message: 'Your clips have been loaded',
-    });
-    setIsClipListVisible(true);
+    const randTime = Math.random() * (3000 - 500) + 500;
+    setIsClipListLoading(true);
+    setTimeout(() => {
+      notification.success({
+        message: 'Your clips have been loaded',
+      });
+      setIsClipListVisible(true);
+      setIsClipListLoading(false);
+    }, randTime);
   };
 
   let selectedAlgorithmData;
@@ -187,6 +211,7 @@ export default () => {
             showClips={showClips}
             isClipListVisible={isClipListVisible}
             isClipInSelectedAlgorithm={playingClipAlgorithm === pickedAlgorithm}
+            loading={isClipListLoading}
           />
 
           {isClipListVisible ? <AlgorithmRadio setPickedAlgorithm={setPickedAlgorithm} /> : null}
