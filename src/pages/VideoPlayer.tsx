@@ -7,12 +7,12 @@ import { DownloadOutlined } from '@ant-design/icons';
 
 import { useParams } from 'umi';
 
-interface ProgressProps {
-  played: number;
-  playedSeconds: number;
-  loaded: number;
-  loadedSeconds: number;
-}
+// interface ProgressProps {
+//   played: number;
+//   playedSeconds: number;
+//   loaded: number;
+//   loadedSeconds: number;
+// }
 
 interface ClipProps {
   id: number;
@@ -26,6 +26,25 @@ const seek = (ref: any, seekTime: number) => {
   }
 };
 
+const ClipRow = ({ play, algorithmClips, clipIndex, playing }: any) => (
+  <Row justify="center" style={{ marginTop: 24 }}>
+    <List
+      grid={{ gutter: 8 }}
+      dataSource={algorithmClips}
+      renderItem={(item: any, i) => {
+        const selected = clipIndex === i && playing;
+        return (
+          <List.Item>
+            <Card title={`Clip ${i + 1}`}>
+              <Button onClick={() => play(item, i)}>{selected ? 'Playing' : 'View'}</Button>
+            </Card>
+          </List.Item>
+        );
+      }}
+    />
+  </Row>
+);
+
 export default () => {
   const { id } = useParams<{ id: string }>();
 
@@ -37,6 +56,7 @@ export default () => {
 
   if (isLoading) return 'loading...';
   if (isError) return 'error';
+  console.log(data);
 
   const play = (item: ClipProps, i: number) => {
     const { startTime } = item;
@@ -44,17 +64,17 @@ export default () => {
     setClipIndex(i);
     setPlaying(true);
   };
-  const onProgress = ({ playedSeconds }: ProgressProps) => {
-    const secondsLeftOnClip = data[clipIndex].endTime - playedSeconds;
-    if (secondsLeftOnClip <= 1) {
-      if (clipIndex + 1 === data.length) {
-        setPlaying(false);
-      } else {
-        seek(videoRef, data[clipIndex + 1].startTime);
-        setClipIndex((index) => index + 1);
-      }
-    }
-  };
+  // const onProgress = ({ playedSeconds }: ProgressProps) => {
+  //   const secondsLeftOnClip = data[clipIndex].endTime - playedSeconds;
+  //   if (secondsLeftOnClip <= 1) {
+  //     if (clipIndex + 1 === data.length) {
+  //       setPlaying(false);
+  //     } else {
+  //       seek(videoRef, data[clipIndex + 1].startTime);
+  //       setClipIndex((index) => index + 1);
+  //     }
+  //   }
+  // };
   return (
     <div>
       <Row justify="center">
@@ -62,32 +82,22 @@ export default () => {
           controls
           playing={playing}
           onReady={() => {
-            seek(videoRef, data[0].startTime);
+            seek(videoRef, Object.values(data)[0].startTime);
           }}
           // not working https://github.com/cookpete/react-player/issues/1206
           progressInterval={100}
-          onProgress={onProgress}
+          // onProgress={onProgress}
           ref={videoRef}
           url={`https://twitch.tv/videos/${id}`}
         />
       </Row>
+      <List
+        dataSource={Object.values(data)}
+        renderItem={(item) => (
+          <ClipRow play={play} algorithmClips={item} playing={playing} clipIndex={clipIndex} />
+        )}
+      />
 
-      <Row justify="center" style={{ marginTop: 24 }}>
-        <List
-          grid={{ gutter: 8 }}
-          dataSource={data}
-          renderItem={(item: any, i) => {
-            const selected = clipIndex === i && playing;
-            return (
-              <List.Item>
-                <Card title={`Clip ${i + 1}`}>
-                  <Button onClick={() => play(item, i)}>{selected ? 'Playing' : 'View'}</Button>
-                </Card>
-              </List.Item>
-            );
-          }}
-        />
-      </Row>
       <Row justify="center">
         <Button type="primary" icon={<DownloadOutlined />}>
           Download Clips
