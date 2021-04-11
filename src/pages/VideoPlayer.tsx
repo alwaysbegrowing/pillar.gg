@@ -138,7 +138,7 @@ export default () => {
     setIsClipListLoading(true);
     setTimeout(() => {
       notification.success({
-        message: 'Your clips have been loaded',
+        message: 'Best clips successfully generated',
       });
       setIsClipListVisible(true);
       setIsClipListLoading(false);
