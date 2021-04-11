@@ -49,7 +49,6 @@ const VerticalClipList = ({
           return (
             <List.Item>
               <Card
-                // title={`Clip ${i + 1}`}
                 actions={[
                   <Button onClick={() => play(item, i)}>{selected ? 'Playing' : 'View'}</Button>,
                 ]}
