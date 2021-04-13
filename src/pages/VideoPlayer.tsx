@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import ReactPlayer from 'react-player';
 import { useClips } from '../services/hooks/api';
-import { List, Button, Row, Col, Empty, Select, notification } from 'antd';
+import { List, Button, Row, Col, Empty, Select, ConfigProvider, notification } from 'antd';
 import { Card } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 
@@ -34,12 +34,35 @@ const VerticalClipList = ({
   clipIndex,
   playing,
   showClips,
-  isClipListVisible,
   isClipInSelectedAlgorithm,
   loading,
 }: any) => {
-  if (isClipListVisible) {
+  if (loading) {
     return (
+      <Empty
+        image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+        imageStyle={{ height: 60 }}
+      >
+        <Button style={{ marginTop: 8 }} loading>
+          Generating Clips
+        </Button>
+      </Empty>
+    );
+  }
+
+  return (
+    <ConfigProvider
+      renderEmpty={() => (
+        <Empty
+          image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+          imageStyle={{ height: 60 }}
+        >
+          <Button style={{ marginTop: 8 }} icon={<DownloadOutlined />} onClick={() => showClips()}>
+            Make Clips
+          </Button>
+        </Empty>
+      )}
+    >
       <List
         style={{ height: '40vh', overflow: 'scroll' }}
         bordered={true}
@@ -60,29 +83,7 @@ const VerticalClipList = ({
           );
         }}
       />
-    );
-  }
-  if (loading) {
-    return (
-      <Empty
-        image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-        imageStyle={{ height: 60 }}
-      >
-        <Button style={{ marginTop: 8 }} loading>
-          Generating Clips
-        </Button>
-      </Empty>
-    );
-  }
-  return (
-    <Empty
-      image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-      imageStyle={{ height: 60 }}
-    >
-      <Button style={{ marginTop: 8 }} icon={<DownloadOutlined />} onClick={() => showClips()}>
-        Make Clips
-      </Button>
-    </Empty>
+    </ConfigProvider>
   );
 };
 
@@ -162,6 +163,8 @@ export default () => {
       selectedAlgorithmData = data.algo1;
       break;
   }
+
+  if (!isClipListVisible) selectedAlgorithmData = [];
   // const onProgress = ({ playedSeconds }: ProgressProps) => {
   //   const secondsLeftOnClip = data[clipIndex].endTime - playedSeconds;
   //   if (secondsLeftOnClip <= 1) {
