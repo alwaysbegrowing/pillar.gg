@@ -23,7 +23,15 @@ const formatKey = (timestamp: IndividualTimestamp) => {
   return `${timestamp.startTime}-${timestamp.endTime}`;
 };
 
-const App = ({ arr, thumbnail }: { arr: IndividualTimestamp[], thumbnail: string }) => {
+const App = ({
+  arr,
+  thumbnail,
+  play,
+}: {
+  play: (timestamp: number) => any;
+  arr: IndividualTimestamp[];
+  thumbnail: string;
+}) => {
   const [items, setItems] = useState<IndividualTimestamp[]>(arr);
 
   const sensors = useSensors(
@@ -40,11 +48,17 @@ const App = ({ arr, thumbnail }: { arr: IndividualTimestamp[], thumbnail: string
         <List
           grid={{ gutter: 8 }}
           dataSource={items}
-          renderItem={(item: any) => {
-            const timeRange = formatKey(item);
+          renderItem={(timestamp: IndividualTimestamp) => {
+            const timeRange = formatKey(timestamp);
             return (
               <List.Item>
-                <SortableItem key={timeRange} id={timeRange} thumbnail={thumbnail}/>
+                <SortableItem
+                  play={() => play(timestamp.startTime)}
+                  timestamp={timestamp}
+                  key={timeRange}
+                  id={timeRange}
+                  thumbnail={thumbnail}
+                />
               </List.Item>
             );
           }}

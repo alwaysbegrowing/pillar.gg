@@ -1,10 +1,11 @@
 import React, { useState, useRef } from 'react';
 import ReactPlayer from 'react-player';
 import { useClips, useVideo } from '../services/hooks/api';
-import { List, Button, Row } from 'antd';
+import { List, Button, Row, PageHeader } from 'antd';
 import { Card } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import Sortable from '../components/Sortable';
+import { PageContainer } from '@ant-design/pro-layout';
 
 import { useParams } from 'umi';
 
@@ -20,12 +21,6 @@ interface ClipProps {
   startTime: number;
   endTime: number;
 }
-
-const seek = (ref: any, seekTime: number) => {
-  if (ref.current) {
-    ref.current.seekTo(seekTime);
-  }
-};
 
 const toTime = (seconds: number) => new Date(seconds * 1000).toISOString().substr(11, 8);
 const ClipRow = ({ play, algorithmClips, clipIndex, playing }: any) => (
@@ -67,7 +62,15 @@ export default () => {
     ? thumbnail_url.replace('%{width}', '108').replace('%{height}', '60')
     : '';
 
-  const videoRef = useRef(null);
+
+
+  const videoRef = useRef<ReactPlayer>(null);
+
+  const seek = (seekTime: number) => {
+    if (videoRef.current?.seekTo) {
+      videoRef.current.seekTo(seekTime);
+    }
+  };
 
   const [playing, setPlaying] = useState<boolean>(false);
   const [clipIndex, setClipIndex] = useState<number>(0);
@@ -76,10 +79,8 @@ export default () => {
   if (isError) return 'error';
   if (!data) return 'no data';
 
-  const play = (item: ClipProps, i: number) => {
-    const { startTime } = item;
-    seek(videoRef, startTime);
-    setClipIndex(i);
+  const play = (seekTime: number) => {
+    seek(seekTime);
     setPlaying(true);
   };
   // const onProgress = ({ playedSeconds }: ProgressProps) => {
@@ -94,13 +95,17 @@ export default () => {
   //   }
   // };
   return (
-    <div>
-      <Row justify="center">
+
+    <PageContainer extra={<Button type='primary' icon={<DownloadOutlined />}>
+    Create Highlight Compilation
+  </Button>}>
+
+      <Row >
         <ReactPlayer
           controls
           playing={playing}
           onReady={() => {
-            seek(videoRef, Object.values(data)[0].startTime);
+            seek(Object.values(data)[0].startTime);
           }}
           // not working https://github.com/cookpete/react-player/issues/1206
           progressInterval={100}
@@ -109,13 +114,12 @@ export default () => {
           url={`https://twitch.tv/videos/${id}`}
         />
       </Row>
-      {data.algo1 && <Sortable thumbnail={thumbnail} arr={data.algo1} />}
-      {/* <List
-        dataSource={Object.values(data)}
-        renderItem={(item) => (
-          <ClipRow play={play} algorithmClips={item} playing={playing} clipIndex={clipIndex} />
-        )}
-      /> */}
-    </div>
+      <Row style={{marginTop: 24}}>
+      {data.algo1 && <Sortable play={play} thumbnail={thumbnail} arr={data.algo1} />}
+      </Row>
+      
+   
+      </PageContainer>
+
   );
 };

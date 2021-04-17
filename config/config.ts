@@ -50,7 +50,7 @@ export default defineConfig({
         },
         {
           path: '/videos/:id',
-          name: 'Video Player',
+          name: 'Select Clips',
           component: './VideoPlayer',
         },
       ],
