@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Card, Avatar, Switch } from 'antd';
+import { Card, Avatar, Switch, Radio, Tooltip, Button } from 'antd';
 import {
   EditOutlined,
   PlayCircleOutlined,
@@ -20,8 +20,10 @@ export function SortableItem({
   thumbnail,
   timestamp,
   play,
+  selectedClipId,
 }: {
   play: () => any;
+  selectedClipId: string;
   id: string;
   thumbnail: string;
   timestamp: IndividualTimestamp;
@@ -34,14 +36,16 @@ export function SortableItem({
     transition,
   };
 
+  const selectedStyle = selectedClipId === id ? { backgroundColor: '#f9f0ff' } : {};
+
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <Card
-      // style={{backgroundColor: 'red'}}
+        style={selectedStyle}
         hoverable
         // make clips variable width based on their length
         // style={{ width: clipLength * 8 }}
-        // cover={<img alt="Twitch Thumbnail" src={thumbnail} />}
+        cover={<img alt="Twitch Thumbnail" src={thumbnail} />}
         // actions={[
         //   <>
         //   <PlusOutlined /> 5s
@@ -54,7 +58,15 @@ export function SortableItem({
         //   <MinusOutlined />
         //   </>
         // ]}
-        actions={[<PlayCircleOutlined onClick={() => play()} key="play" />,  <Switch checkedChildren="Use" unCheckedChildren="Hide"/>]}
+        actions={[
+          <Tooltip title="Play this clip">
+            <Button size="small" onClick={() => play()} icon={<PlayCircleOutlined />}>
+              View
+            </Button>
+          </Tooltip>,
+
+          <Switch defaultChecked checkedChildren="Use" unCheckedChildren="Hide" />,
+        ]}
       >
         <Meta
           // avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}

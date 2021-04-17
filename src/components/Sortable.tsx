@@ -27,8 +27,10 @@ const App = ({
   arr,
   thumbnail,
   play,
+  selectedClipId
 }: {
-  play: (timestamp: number) => any;
+  selectedClipId: string,
+  play: (timestamp: number, clipId: string) => any;
   arr: IndividualTimestamp[];
   thumbnail: string;
 }) => {
@@ -53,11 +55,12 @@ const App = ({
             return (
               <List.Item>
                 <SortableItem
-                  play={() => play(timestamp.startTime)}
+                  play={() => play(timestamp.startTime, timeRange)}
                   timestamp={timestamp}
                   key={timeRange}
                   id={timeRange}
                   thumbnail={thumbnail}
+                  selectedClipId={selectedClipId}
                 />
               </List.Item>
             );
