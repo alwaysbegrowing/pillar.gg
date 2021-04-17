@@ -23,7 +23,7 @@ const formatKey = (timestamp: IndividualTimestamp) => {
   return `${timestamp.startTime}-${timestamp.endTime}`;
 };
 
-const App = ({ arr }: { arr: IndividualTimestamp[] }) => {
+const App = ({ arr, thumbnail }: { arr: IndividualTimestamp[], thumbnail: string }) => {
   const [items, setItems] = useState<IndividualTimestamp[]>(arr);
 
   const sensors = useSensors(
@@ -44,7 +44,7 @@ const App = ({ arr }: { arr: IndividualTimestamp[] }) => {
             const timeRange = formatKey(item);
             return (
               <List.Item>
-                <SortableItem key={timeRange} id={timeRange} />
+                <SortableItem key={timeRange} id={timeRange} thumbnail={thumbnail}/>
               </List.Item>
             );
           }}

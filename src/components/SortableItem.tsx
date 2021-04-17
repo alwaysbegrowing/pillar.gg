@@ -1,11 +1,12 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Card } from 'antd';
-
+import { Card, Avatar } from 'antd';
+import { EditOutlined, EllipsisOutlined, DeleteOutlined } from '@ant-design/icons';
+const { Meta } = Card;
 // const toTime = (seconds: number) => new Date(seconds * 1000).toISOString().substr(11, 8);
 
-export function SortableItem({ id }: { id: string }) {
+export function SortableItem({ id, thumbnail }: { id: string, thumbnail: string }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
   const style = {
@@ -15,15 +16,26 @@ export function SortableItem({ id }: { id: string }) {
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <Card
-      //   actions={[
-      //     <Button onClick={() => play(item, i)}>{selected ? 'Playing' : 'View'}</Button>,
-      //   ]}
-      >
-        {/* <div>{toTime(item.startTime)}</div>
-              <div>{toTime(item.endTime)}</div> */}
-        {id}
-      </Card>
+     <Card
+    style={{ width: 150 }}
+    cover={
+      <img
+        alt='Twitch Thumbnail'
+        src={thumbnail}
+      />
+    }
+    actions={[
+      <DeleteOutlined key="setting" />,
+      <EditOutlined key="edit" />,
+      <EllipsisOutlined key="ellipsis" />,
+    ]}
+  >
+    {/* <Meta
+      avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+      title="Card title"
+      description="This is the description"
+    /> */}
+  </Card>,
     </div>
   );
 }
