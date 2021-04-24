@@ -35,5 +35,9 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     res.status(404).end();
     return;
   }
+  if (result.clips?.algo1) {
+    result.clips.algo1 = result.clips.algo1.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
+  }
+
   res.json(result);
 };
