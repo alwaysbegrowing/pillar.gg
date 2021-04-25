@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -27,9 +27,9 @@ const App = ({
   arr,
   thumbnail,
   play,
-  selectedClipId
+  selectedClipId,
 }: {
-  selectedClipId: string,
+  selectedClipId: string;
   play: (timestamp: number, clipId: string) => any;
   arr: IndividualTimestamp[];
   thumbnail: string;
@@ -43,6 +43,12 @@ const App = ({
     }),
   );
   const itemIds = items.map((item: IndividualTimestamp) => formatKey(item)); // ["1", "2", "3"]
+  useEffect(() => {
+    const [firstTimeStamp] = arr;
+    const timeRange = formatKey(firstTimeStamp);
+
+    play(firstTimeStamp.startTime, timeRange);
+  }, [arr, play]);
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
