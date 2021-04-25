@@ -17,7 +17,7 @@ import type { IndividualTimestamp } from '../services/hooks/api';
 
 import { List } from 'antd';
 
-import { SortableItem } from './SortableItem';
+import { SortableItem } from './SortableClipCard';
 
 const formatKey = (timestamp: IndividualTimestamp) => {
   return `${timestamp.startTime}-${timestamp.endTime}`;

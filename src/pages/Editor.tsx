@@ -4,11 +4,10 @@ import { useClips, useVideo } from '../services/hooks/api';
 import { List, Button, Row, Col, PageHeader, Slider, Progress } from 'antd';
 import { Card } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
-import Sortable from '../components/Sortable';
+import Sortable from '../components/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
-import styles from './VideoPlayer.less';
 import { useParams } from 'umi';
-import Video from '../components/Video';
+import VideoPlayer from '../components/VideoPlayer';
 interface ProgressProps {
   played: number;
   playedSeconds: number;
@@ -37,11 +36,11 @@ export default () => {
 
   const videoRef = useRef<ReactPlayer>(null);
 
-  const seek = (seekTime: number) => {
+  const seek = useCallback((seekTime: number) => {
     if (videoRef.current?.seekTo) {
       videoRef.current.seekTo(seekTime);
     }
-  };
+  }, [videoRef]);
 
   const [playing, setPlaying] = useState<boolean>(false);
   const [secondsPlayed, setSecondsPlayed] = useState<number>(0);
@@ -106,7 +105,7 @@ export default () => {
     >
       <Row justify="center" gutter={24}>
         <Col span={10} style={{ marginBottom: 24 }}>
-          <Video
+          <VideoPlayer
             videoRef={videoRef}
             interval={100}
             playing={playing}
@@ -118,26 +117,7 @@ export default () => {
             url={`https://twitch.tv/videos/${id}`}
           />
 
-          {/* <div onClick={() => console.log('clicky')} className={styles.wrapper}>
-            <ReactPlayer
-              className={styles.player}
-              width="100%"
-              height="100%"
-              controls
-              playing={playing}
-              // onReady={() => {
-              //   seek(Object.values(data)[0].startTime);
-              // }}
-              // playsinline
-              // not working https://github.com/cookpete/react-player/issues/1206
-              progressInterval={100}
-              onProgress={onProgress}
-              config={{ options: {} }}
-              ref={videoRef}
-              url={`https://twitch.tv/videos/${id}`}
-            />
-          </div>
-          <Controls value={progress}></Controls> */}
+  
         </Col>
         <Col span={24}>
           {data.algo1 && (

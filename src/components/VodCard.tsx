@@ -14,12 +14,12 @@ const IconText = ({ icon, text }: any) => (
 );
 
 const ViewVideoButton = ({ id }: { id: number | string }) => (
-  <Button onClick={() => history.push(`/videos/${id}`)}>Create Clips from this VOD</Button>
+  <Button onClick={() => history.push(`/vods/${id}`)}>Create Clips from this VOD</Button>
 );
 
 const ProcessingButton = () => <Button loading={true}>Processing Clips</Button>;
 
-interface VideoCardProps {
+interface VodCardProps {
   thumbnail_url: string;
   title: string;
   description: string;
@@ -30,7 +30,7 @@ interface VideoCardProps {
   id: number;
 }
 
-const VideoCard = ({
+const VodCard = ({
   thumbnail_url,
   title,
   description,
@@ -39,7 +39,7 @@ const VideoCard = ({
   url,
   published_at,
   id,
-}: VideoCardProps) => {
+}: VodCardProps) => {
   const { data } = useClips(id);
   const thumbnail = thumbnail_url.replace('%{width}', '216').replace('%{height}', '120');
   const simpleTime = formatDistance(new Date(published_at), new Date(), { addSuffix: true });
@@ -66,4 +66,4 @@ const VideoCard = ({
   );
 };
 
-export default VideoCard;
+export default VodCard;

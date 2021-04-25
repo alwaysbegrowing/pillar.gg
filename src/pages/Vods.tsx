@@ -2,7 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { List } from 'antd';
 import React from 'react';
 import { useVideos } from '../services/hooks/api';
-import VideoCard from '../components/VideoCard';
+import VodCard from '../components/VodCard';
 import SelectUser from '../components/SelectUser';
 
 const Videos = () => {
@@ -20,7 +20,7 @@ const Videos = () => {
           pageSize: 10,
         }}
         dataSource={videos}
-        renderItem={(video: any) => <VideoCard {...video} />}
+        renderItem={(video: any) => <VodCard {...video} />}
       />
     </PageContainer>
   );

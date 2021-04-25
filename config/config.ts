@@ -38,20 +38,20 @@ export default defineConfig({
     //   component: './Home',
     // },
     {
-      path: '/videos',
-      name: 'videos',
+      path: '/vods',
+      name: 'Vods',
       icon: 'VideoCameraOutlined',
       hideChildrenInMenu: true,
       routes: [
         {
-          path: '/videos',
-          name: 'videos',
-          component: './Videos',
+          path: '/vods',
+          name: 'Vods',
+          component: './Vods',
         },
         {
-          path: '/videos/:id',
+          path: '/vods/:id',
           name: 'Select Clips',
-          component: './VideoPlayer',
+          component: './Editor',
         },
       ],
     },
