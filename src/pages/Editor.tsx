@@ -3,7 +3,7 @@ import ReactPlayer from 'react-player/twitch';
 import { useClips, useVideo } from '../services/hooks/api';
 import { List, Button, Row, Col, PageHeader, Slider, Progress } from 'antd';
 import { Card } from 'antd';
-import { DownloadOutlined } from '@ant-design/icons';
+import { ControlOutlined, DownloadOutlined } from '@ant-design/icons';
 import Sortable from '../components/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
@@ -15,13 +15,7 @@ interface ProgressProps {
   loadedSeconds: number;
 }
 
-const Controls = ({ value }) => (
-  <div>
-    <Slider value={value} />
-  </div>
-);
-
-const getStartEndTimeFromClipId = (clipId: string) => clipId.split('-');
+const getStartEndTimeFromClipId = (clipId: string): number[] => clipId.split('-').map(Number);
 
 export default () => {
   const { id } = useParams<{ id: string }>();
@@ -36,12 +30,21 @@ export default () => {
 
   const videoRef = useRef<ReactPlayer>(null);
 
-  const seek = useCallback((seekTime: number) => {
-    if (videoRef.current?.seekTo) {
-      videoRef.current.seekTo(seekTime);
-    }
-  }, [videoRef]);
+  const seek = useCallback(
+    (seekTime: number) => {
+      if (videoRef.current?.seekTo) {
+        videoRef.current.seekTo(seekTime);
+      }
+    },
+    [videoRef],
+  );
 
+  const getTime = useCallback(() => {
+    if (videoRef.current?.getCurrentTime) {
+      return videoRef.current.getCurrentTime();
+    }
+    return null;
+  }, [videoRef]);
   const [playing, setPlaying] = useState<boolean>(false);
   const [secondsPlayed, setSecondsPlayed] = useState<number>(0);
 
@@ -57,13 +60,15 @@ export default () => {
     [seek, setSecondsPlayed, setPlaying, setSelectedClipId],
   );
 
-
   if (isLoading) return 'loading...';
   if (isError) return 'error';
   if (!data) return 'no data';
 
   const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId);
 
+  const onProgress = ({ playedSeconds }: ProgressProps) => {
+      setSecondsPlayed(playedSeconds);
+  };
   const clipPercent = (progress, startTime, endTime) => {
     if (!progress || !startTime || !endTime) return 0;
     const elapsed = progress - startTime;
@@ -82,6 +87,7 @@ export default () => {
   // };
   const progress = clipPercent(secondsPlayed, startTime, endTime);
   const clipLength = Math.floor(endTime - startTime);
+  const clipTimePlayed = Math.floor(secondsPlayed - startTime);
   return (
     <PageContainer
       // title='Select Clips'
@@ -107,17 +113,14 @@ export default () => {
         <Col span={10} style={{ marginBottom: 24 }}>
           <VideoPlayer
             videoRef={videoRef}
-            interval={100}
             playing={playing}
             setPlaying={setPlaying}
-            progress={secondsPlayed}
-            setProgress={setSecondsPlayed}
+            progress={clipTimePlayed}
+            onProgress={onProgress}
             controlKeys
             duration={clipLength}
             url={`https://twitch.tv/videos/${id}`}
           />
-
-  
         </Col>
         <Col span={24}>
           {data.algo1 && (

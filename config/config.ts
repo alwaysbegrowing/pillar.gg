@@ -69,10 +69,10 @@ export default defineConfig({
     //   component: './Settings',
     // },
     {
-      path: '/feedback',
-      name: 'feedback',
+      path: '/discord',
+      name: 'discord',
       icon: 'MessageOutlined',
-      component: './Feedback',
+      component: './Discord',
     },
     {
       path: '/',

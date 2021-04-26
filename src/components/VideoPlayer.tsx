@@ -35,13 +35,13 @@ const CandidateVideo = ({
   duration,
   setDuration,
   progress,
-  setProgress,
+  onProgress,
   videoRef,
   controlKeys,
   playing,
   setPlaying,
-  interval,
 }) => {
+  console.log({progress})
   const [muted, setMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -82,9 +82,7 @@ const CandidateVideo = ({
           width="100%"
           playing={playing}
           muted={muted}
-          progressInterval={msFor60Fps}
-          config={{ youtube: { playerVars: { rel: false, modestbranding: true } } }}
-          onProgress={(progress) => setProgress(progress)}
+          onProgress={onProgress}
           url={url}
         />
         <div
@@ -113,18 +111,18 @@ const CandidateVideo = ({
               paddingTop: 4,
               paddingBottom: 4,
             }}
-            max={duration * interval}
-            value={progress.playedSeconds * interval}
-            onChange={(playedSeconds) => {
-              if (playing) {
-                setPlaying(false);
-              }
-              videoRef.current.seekTo(playedSeconds / interval, 'seconds');
-              setProgress((progress) => ({
-                ...progress,
-                playedSeconds: playedSeconds / interval,
-              }));
-            }}
+            max={duration }
+            value={progress }
+            // onChange={(playedSeconds) => {
+            //   if (playing) {
+            //     setPlaying(false);
+            //   }
+            //   videoRef.current.seekTo(playedSeconds / , 'seconds');
+            //   setProgress((progress) => ({
+            //     ...progress,
+            //     playedSeconds: playedSeconds / ,
+            //   }));
+            // }}
             onAfterChange={() => {
               // setTimeout makes sure that this is called after onChange
               setTimeout(() => setPlaying(true), 200);
@@ -154,7 +152,7 @@ const CandidateVideo = ({
                 <SoundOutlined style={styles.icon} onClick={() => setMuted((muted) => !muted)} />
               )}
               <div style={{ fontSize: 12, color: 'white' }}>
-                {`${progress.playedSeconds} / ${duration}`}
+                {`${progress} / ${duration}`}
               </div>
 
               {/* <a download href={url}>
