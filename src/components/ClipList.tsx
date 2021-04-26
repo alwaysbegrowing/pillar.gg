@@ -17,7 +17,7 @@ import type { IndividualTimestamp } from '../services/hooks/api';
 
 import { List } from 'antd';
 
-import { SortableItem } from './SortableClipCard';
+import { SortableClipCard } from './SortableClipCard';
 
 const formatKey = (timestamp: IndividualTimestamp) => {
   return `${timestamp.startTime}-${timestamp.endTime}`;
@@ -43,10 +43,15 @@ const App = ({
     }),
   );
   const itemIds = items.map((item: IndividualTimestamp) => formatKey(item)); // ["1", "2", "3"]
+  const defaultChecked = {};
+  itemIds.forEach((id) => {
+    defaultChecked[id] = true;
+  });
+  const [checkedItems, setCheckedItems] = useState<Record<string, unknown>>(defaultChecked);
+
   useEffect(() => {
     const [firstTimeStamp] = arr;
     const timeRange = formatKey(firstTimeStamp);
-
     play(firstTimeStamp.startTime, timeRange);
   }, [arr, play]);
 
@@ -60,13 +65,14 @@ const App = ({
             const timeRange = formatKey(timestamp);
             return (
               <List.Item>
-                <SortableItem
+                <SortableClipCard
                   play={() => play(timestamp.startTime, timeRange)}
                   timestamp={timestamp}
                   key={timeRange}
                   id={timeRange}
                   thumbnail={thumbnail}
                   selectedClipId={selectedClipId}
+                  checked={{ checkedItems, setCheckedItems }}
                 />
               </List.Item>
             );

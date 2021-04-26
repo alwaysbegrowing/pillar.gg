@@ -15,21 +15,23 @@ import { Divider } from 'antd';
 const { Meta } = Card;
 const toTime = (seconds: number) => new Date(seconds * 1000).toISOString().substr(11, 8);
 
-export function SortableItem({
+export function SortableClipCard({
   id,
   thumbnail,
   timestamp,
   play,
   selectedClipId,
+  checked,
 }: {
   play: () => any;
   selectedClipId: string;
   id: string;
+  checked: { checkedItems: Record<string, unknown>; setCheckedItems: any };
   thumbnail: string;
   timestamp: IndividualTimestamp;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
-
+  const { checkedItems, setCheckedItems } = checked;
   const clipLength = timestamp.endTime - timestamp.startTime;
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -37,6 +39,12 @@ export function SortableItem({
   };
 
   const selectedStyle = selectedClipId === id ? { backgroundColor: '#f9f0ff' } : {};
+
+  const che = (isChecked: boolean) => {
+    setCheckedItems((items: any) => {
+      return { ...items, [id]: isChecked };
+    });
+  };
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
@@ -65,7 +73,12 @@ export function SortableItem({
             </Button>
           </Tooltip>,
 
-          <Switch defaultChecked checkedChildren="Use" unCheckedChildren="Hide" />,
+          <Switch
+            onChange={che}
+            checked={checkedItems[id]}
+            checkedChildren="Use"
+            unCheckedChildren="Hide"
+          />,
         ]}
       >
         <Meta
