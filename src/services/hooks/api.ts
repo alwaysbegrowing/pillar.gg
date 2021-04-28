@@ -62,6 +62,7 @@ function useVideo(id: string | number) {
 export interface IndividualTimestamp {
   startTime: number;
   endTime: number;
+  selected?: boolean;
 }
 
 interface Algorithm {

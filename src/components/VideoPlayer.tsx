@@ -26,22 +26,28 @@ const styles = {
 
   icon: {
     color: '#f1f7fe',
-    // fontSize: 16,
   },
 };
-
+interface CandidateVideoProps {
+  url: string;
+  duration: number;
+  progress: number;
+  onProgress: any;
+  videoRef: ReactPlayer;
+  controlKeys: boolean;
+  playing: boolean;
+  setPlaying: React.Dispatch<React.SetStateAction<boolean>>;
+}
 const CandidateVideo = ({
   url,
   duration,
-  setDuration,
   progress,
   onProgress,
   videoRef,
   controlKeys,
   playing,
   setPlaying,
-}) => {
-  console.log({progress})
+}: CandidateVideoProps) => {
   const [muted, setMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -111,8 +117,8 @@ const CandidateVideo = ({
               paddingTop: 4,
               paddingBottom: 4,
             }}
-            max={duration }
-            value={progress }
+            max={duration}
+            value={progress}
             // onChange={(playedSeconds) => {
             //   if (playing) {
             //     setPlaying(false);
@@ -151,9 +157,7 @@ const CandidateVideo = ({
               ) : (
                 <SoundOutlined style={styles.icon} onClick={() => setMuted((muted) => !muted)} />
               )}
-              <div style={{ fontSize: 12, color: 'white' }}>
-                {`${progress} / ${duration}`}
-              </div>
+              <div style={{ fontSize: 12, color: 'white' }}>{`${progress} / ${duration}`}</div>
 
               {/* <a download href={url}>
               Download

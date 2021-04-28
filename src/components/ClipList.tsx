@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -24,44 +24,42 @@ const formatKey = (timestamp: IndividualTimestamp) => {
 };
 
 const App = ({
-  arr,
   thumbnail,
   play,
   selectedClipId,
+  clipInfo,
 }: {
   selectedClipId: string;
   play: (timestamp: number, clipId: string) => any;
-  arr: IndividualTimestamp[];
   thumbnail: string;
+  clipInfo: { clips: IndividualTimestamp[]; setClips: any };
 }) => {
-  const [items, setItems] = useState<IndividualTimestamp[]>(arr);
-
+  const { clips, setClips } = clipInfo;
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
-  const itemIds = items.map((item: IndividualTimestamp) => formatKey(item)); // ["1", "2", "3"]
-  const defaultChecked = {};
-  itemIds.forEach((id) => {
-    defaultChecked[id] = true;
-  });
-  const [checkedItems, setCheckedItems] = useState<Record<string, unknown>>(defaultChecked);
+  const itemIds = clips.map((item: IndividualTimestamp) => formatKey(item)); // ["1", "2", "3"]
+
 
   useEffect(() => {
-    const [firstTimeStamp] = arr;
-    const timeRange = formatKey(firstTimeStamp);
-    play(firstTimeStamp.startTime, timeRange);
-  }, [arr, play]);
+    if (clips) {
+      const [firstTimeStamp] = clips;
+      const timeRange = formatKey(firstTimeStamp);
+      play(firstTimeStamp.startTime, timeRange);
+    }
+  }, [clips, play]);
+
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={itemIds} strategy={horizontalListSortingStrategy}>
         <List
           grid={{ gutter: 8 }}
-          dataSource={items}
-          renderItem={(timestamp: IndividualTimestamp) => {
+          dataSource={clips}
+          renderItem={(timestamp: IndividualTimestamp, i: number) => {
             const timeRange = formatKey(timestamp);
             return (
               <List.Item>
@@ -70,9 +68,11 @@ const App = ({
                   timestamp={timestamp}
                   key={timeRange}
                   id={timeRange}
+                  i={i}
                   thumbnail={thumbnail}
                   selectedClipId={selectedClipId}
-                  checked={{ checkedItems, setCheckedItems }}
+                  setClips={setClips}
+                  
                 />
               </List.Item>
             );
@@ -86,7 +86,7 @@ const App = ({
     const { active, over } = event;
 
     if (active.id !== over.id) {
-      setItems((oldItems) => {
+      setClips((oldItems: IndividualTimestamp[]) => {
         const oldIndex = oldItems.findIndex((oldItem) => formatKey(oldItem) === active.id);
         const newIndex = oldItems.findIndex((oldItem) => formatKey(oldItem) === over.id);
 

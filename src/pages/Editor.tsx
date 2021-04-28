@@ -1,13 +1,14 @@
-import React, { useState, useRef, useCallback } from 'react';
-import ReactPlayer from 'react-player/twitch';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import type ReactPlayer from 'react-player/twitch';
 import { useClips, useVideo } from '../services/hooks/api';
-import { List, Button, Row, Col, PageHeader, Slider, Progress } from 'antd';
-import { Card } from 'antd';
-import { ControlOutlined, DownloadOutlined } from '@ant-design/icons';
-import Sortable from '../components/ClipList';
+import { Button, Row, Col, Popconfirm } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
+import ClipList from '../components/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
 import VideoPlayer from '../components/VideoPlayer';
+import type { IndividualTimestamp } from '../services/hooks/api';
+
 interface ProgressProps {
   played: number;
   playedSeconds: number;
@@ -15,12 +16,23 @@ interface ProgressProps {
   loadedSeconds: number;
 }
 
+const sendClips = (videoId: string, clips: IndividualTimestamp[]) => {
+  const data = { videoId, clips };
+
+  fetch('https://k4r85s4uyh.execute-api.us-east-1.amazonaws.com/prod/clips', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+};
+
 const getStartEndTimeFromClipId = (clipId: string): number[] => clipId.split('-').map(Number);
 
 export default () => {
   const { id } = useParams<{ id: string }>();
 
   const { data, isLoading, isError } = useClips(id);
+
+  const [clips, setClips] = useState<IndividualTimestamp[] | null>(null);
 
   const { data: videoData } = useVideo(id);
   const { thumbnail_url } = videoData || {};
@@ -39,14 +51,9 @@ export default () => {
     [videoRef],
   );
 
-  const getTime = useCallback(() => {
-    if (videoRef.current?.getCurrentTime) {
-      return videoRef.current.getCurrentTime();
-    }
-    return null;
-  }, [videoRef]);
   const [playing, setPlaying] = useState<boolean>(false);
   const [secondsPlayed, setSecondsPlayed] = useState<number>(0);
+  const [isCombineButtonDisabled, setIsCombineButtonDisabled] = useState<boolean>(false);
 
   const [selectedClipId, setSelectedClipId] = useState<string>('');
 
@@ -60,6 +67,13 @@ export default () => {
     [seek, setSecondsPlayed, setPlaying, setSelectedClipId],
   );
 
+  useEffect(() => {
+    if (data) {
+      const clipsDefaultChecked = data.algo1.map((timestamp) => ({ ...timestamp, selected: true }));
+      setClips(clipsDefaultChecked);
+    }
+  }, [data]);
+
   if (isLoading) return 'loading...';
   if (isError) return 'error';
   if (!data) return 'no data';
@@ -67,46 +81,55 @@ export default () => {
   const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId);
 
   const onProgress = ({ playedSeconds }: ProgressProps) => {
-      setSecondsPlayed(playedSeconds);
-  };
-  const clipPercent = (progress, startTime, endTime) => {
-    if (!progress || !startTime || !endTime) return 0;
-    const elapsed = progress - startTime;
-    const left = endTime - progress;
-    const percent = (elapsed / (elapsed + left)) * 100;
-    if (percent > 100) {
-      setPlaying(false);
-      setSecondsPlayed(endTime);
-    }
-    return percent;
+    setSecondsPlayed((seconds) => {
+      if (Math.abs(playedSeconds - seconds) > 5) return seconds;
+      if (playedSeconds > endTime) {
+        setPlaying(false);
+        return startTime;
+      }
+      return playedSeconds;
+    });
   };
 
-  // const onProgress = ({ playedSeconds }: ProgressProps) => {
-  //   // console.log(playedSeconds )
-  //   setSecondsPlayed(playedSeconds);
-  // };
-  const progress = clipPercent(secondsPlayed, startTime, endTime);
-  const clipLength = Math.floor(endTime - startTime);
-  const clipTimePlayed = Math.floor(secondsPlayed - startTime);
+  const clipLength = Math.round(endTime - startTime);
+  const clipTimePlayed = Math.round(secondsPlayed - startTime);
+
+  const combineClips = () => {
+    if (clips) {
+      const selectedClips = clips.filter((clip) => clip.selected);
+      setIsCombineButtonDisabled(true);
+      sendClips(id, selectedClips);
+    }
+  };
   return (
     <PageContainer
-      // title='Select Clips'
-      // extra={
-      //   <Button type="primary" icon={<DownloadOutlined />}>
-      //     Create Highlight Compilation
-      //   </Button>
-      // }
       content="Switch on the clips that you would like to use in your compilation video. Click and drag
       clips to re-order them."
       extra={
-        <Button
-          onClick={() => setPlaying(false)}
-          style={{ marginLeft: 24 }}
-          type="primary"
-          icon={<DownloadOutlined />}
+        <Popconfirm
+          title={
+            <div>
+              <div>Are you ready to combine these clips?</div>
+              <div>You will recieve an email with combined video once it has been processed.</div>
+              <div>You can only do this once per VOD.</div>
+            </div>
+          }
+          onConfirm={combineClips}
+          // onCancel={cancel}
+          okText="Combine"
+          cancelText="No"
         >
-          Combine Selected Clips
-        </Button>
+          <Button
+            // onClick={combineClips}
+            style={{ marginLeft: 24 }}
+            type="primary"
+            disabled={isCombineButtonDisabled}
+            icon={<DownloadOutlined />}
+          >
+            Combine Selected Clips
+          </Button>
+          {}
+        </Popconfirm>
       }
     >
       <Row justify="center" gutter={24}>
@@ -123,12 +146,12 @@ export default () => {
           />
         </Col>
         <Col span={24}>
-          {data.algo1 && (
-            <Sortable
+          {data.algo1 && clips && (
+            <ClipList
+              clipInfo={{ clips, setClips }}
               selectedClipId={selectedClipId}
               play={play}
               thumbnail={thumbnail}
-              arr={data.algo1}
             />
           )}
         </Col>

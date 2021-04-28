@@ -21,18 +21,19 @@ export function SortableClipCard({
   timestamp,
   play,
   selectedClipId,
-  checked,
+  // checked,
+  setClips,
+  i,
 }: {
   play: () => any;
   selectedClipId: string;
   id: string;
-  checked: { checkedItems: Record<string, unknown>; setCheckedItems: any };
+  setClips: any;
+  i: number;
   thumbnail: string;
   timestamp: IndividualTimestamp;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
-  const { checkedItems, setCheckedItems } = checked;
-  const clipLength = timestamp.endTime - timestamp.startTime;
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -41,8 +42,10 @@ export function SortableClipCard({
   const selectedStyle = selectedClipId === id ? { backgroundColor: '#f9f0ff' } : {};
 
   const che = (isChecked: boolean) => {
-    setCheckedItems((items: any) => {
-      return { ...items, [id]: isChecked };
+    setClips((clips: IndividualTimestamp[]) => {
+      const newClips = [...clips];
+      newClips[i].selected = isChecked;
+      return newClips;
     });
   };
 
@@ -51,8 +54,6 @@ export function SortableClipCard({
       <Card
         style={selectedStyle}
         hoverable
-        // make clips variable width based on their length
-        // style={{ width: clipLength * 8 }}
         cover={<img alt="Twitch Thumbnail" src={thumbnail} />}
         // actions={[
         //   <>
@@ -75,7 +76,7 @@ export function SortableClipCard({
 
           <Switch
             onChange={che}
-            checked={checkedItems[id]}
+            checked={timestamp.selected}
             checkedChildren="Use"
             unCheckedChildren="Hide"
           />,
