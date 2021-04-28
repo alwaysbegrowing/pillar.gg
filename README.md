@@ -19,6 +19,7 @@ npm i -g vercel
 Recieve environment variables from Vercel
 
 ```bash
+# Environment: Pillar / pillargg
 vercel env pull
 ```
 
