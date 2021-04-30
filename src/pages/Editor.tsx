@@ -103,21 +103,21 @@ export default () => {
   };
   return (
     <PageContainer
-      content="Switch on the clips that you would like to use in your compilation video. Click and drag
-      clips to re-order them."
+      content="Hide clips you don't want in your compilation video. Click and drag
+      clips to re-order them on the timeline. Click the Export Video button when you are ready. "
       extra={
         <Popconfirm
           title={
             <div>
-              <div>Are you ready to combine these clips?</div>
-              <div>You will recieve an email with combined video once it has been processed.</div>
+              <div>Are you ready to export your video?</div>
+              <div>You will recieve an email with the combined video once it has been processed.</div>
               <div>You can only do this once per VOD.</div>
             </div>
           }
           onConfirm={combineClips}
           // onCancel={cancel}
-          okText="Combine"
-          cancelText="No"
+          okText="Export"
+          cancelText="Nevermind"
         >
           <Button
             // onClick={combineClips}
