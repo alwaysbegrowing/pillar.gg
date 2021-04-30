@@ -8,7 +8,7 @@ const Discord = () => {
       <PageContainer>
         <Card>
         
-      <Button size='large' href='https://discord.com/invite/UesTDB7A?' type='link'>Join Discord</Button>
+      <Button size='large' href='https://discord.com/invite/35c5t46zU5?' type='link'>Join Discord</Button>
         </Card>
       </PageContainer>
     );
