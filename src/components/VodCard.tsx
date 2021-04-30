@@ -1,10 +1,9 @@
 import { CalendarOutlined, ClockCircleOutlined, EyeOutlined } from '@ant-design/icons';
 import { Button, Card, List, Space } from 'antd';
+import formatDistance from 'date-fns/formatDistance';
 import React from 'react';
 import { history } from 'umi';
 import { useClips } from '../services/hooks/api';
-import formatDistance from 'date-fns/formatDistance';
-
 
 const IconText = ({ icon, text }: any) => (
   <Space>

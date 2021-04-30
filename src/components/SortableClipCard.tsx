@@ -1,14 +1,8 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Card, Avatar, Switch, Radio, Tooltip, Button } from 'antd';
-import {
-  EditOutlined,
-  PlayCircleOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-  MinusOutlined,
-} from '@ant-design/icons';
+import { Card, Switch, Tooltip, Button } from 'antd';
+import { PlayCircleOutlined } from '@ant-design/icons';
 import type { IndividualTimestamp } from '../services/hooks/api';
 import { Divider } from 'antd';
 
@@ -21,7 +15,6 @@ export function SortableClipCard({
   timestamp,
   play,
   selectedClipId,
-  // checked,
   setClips,
   i,
 }: {
@@ -55,18 +48,6 @@ export function SortableClipCard({
         style={selectedStyle}
         hoverable
         cover={<img alt="Twitch Thumbnail" src={thumbnail} />}
-        // actions={[
-        //   <>
-        //   <PlusOutlined /> 5s
-        //   <MinusOutlined />
-        //   </>,
-        //   <PlayCircleOutlined key="setting" />,
-        //   <DeleteOutlined key="setting" />,
-        //   <>
-        //   <PlusOutlined /> 5s
-        //   <MinusOutlined />
-        //   </>
-        // ]}
         actions={[
           <Tooltip title="Play this clip">
             <Button size="small" onClick={() => play()} icon={<PlayCircleOutlined />}>
@@ -83,8 +64,6 @@ export function SortableClipCard({
         ]}
       >
         <Meta
-          // avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-          // title="Card title"
           description={
             <>
               {toTime(timestamp.startTime)} <Divider type="vertical" /> {toTime(timestamp.endTime)}

@@ -1,21 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import ReactPlayer from 'react-player';
 import {
-  NotificationOutlined,
-  SoundOutlined,
-  PauseOutlined,
   CaretRightOutlined,
+  NotificationOutlined,
+  PauseOutlined,
+  SoundOutlined,
 } from '@ant-design/icons';
-
-import { Spin, Slider, Space, Row } from 'antd';
-
-const msFor60Fps = 16.6;
+import { Row, Slider, Space, Spin } from 'antd';
+import React, { useCallback, useEffect, useState } from 'react';
+import ReactPlayer from 'react-player/twitch';
 
 const styles = {
   playerWrapper: {
-    position: 'relative',
     paddingTop: '56.25%',
-    // boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.2)',
   },
 
   reactPlayer: {
@@ -28,7 +23,7 @@ const styles = {
     color: '#f1f7fe',
   },
 };
-interface CandidateVideoProps {
+interface VideoProps {
   url: string;
   duration: number;
   progress: number;
@@ -38,7 +33,7 @@ interface CandidateVideoProps {
   playing: boolean;
   setPlaying: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const CandidateVideo = ({
+const Video = ({
   url,
   duration,
   progress,
@@ -47,28 +42,37 @@ const CandidateVideo = ({
   controlKeys,
   playing,
   setPlaying,
-}: CandidateVideoProps) => {
+}: VideoProps) => {
   const [muted, setMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
   const [hover, setHover] = useState(true);
 
-  const handleEnter = (event) => {
-    const { code } = event;
-    if (code === 'Space' && controlKeys) {
-      event.preventDefault();
-      setPlaying((playing) => !playing);
-    }
-  };
+  const handleEnter = useCallback(
+    (event) => {
+      const { code } = event;
+      if (code === 'Space' && controlKeys) {
+        event.preventDefault();
+        setPlaying((isPlaying) => !isPlaying);
+      }
+    },
+    [setPlaying, controlKeys],
+  );
 
   useEffect(() => {
     window.addEventListener('keydown', handleEnter);
     return () => window.removeEventListener('keydown', handleEnter);
-  }, [controlKeys]);
+  }, [controlKeys, handleEnter]);
 
   useEffect(() => {
     setIsLoading(false);
   }, [url]);
+
+  const togglePlaying = () => {
+    setPlaying((isPlaying) => !isPlaying);
+  };
+  const toggleMuted = () => {
+    setMuted((isMuted) => !isMuted);
+  };
 
   return (
     <Spin spinning={!isLoading}>
@@ -79,9 +83,6 @@ const CandidateVideo = ({
       >
         <ReactPlayer
           onReady={() => setIsLoading(true)}
-          onError={() => {
-            console.log('Error with VideoPlayer');
-          }}
           style={styles.reactPlayer}
           ref={videoRef}
           height="100%"
@@ -92,7 +93,7 @@ const CandidateVideo = ({
           url={url}
         />
         <div
-          onClick={() => setPlaying((playing) => !playing)}
+          onClick={togglePlaying}
           style={{
             position: 'absolute',
             top: 0,
@@ -119,58 +120,27 @@ const CandidateVideo = ({
             }}
             max={duration}
             value={progress}
-            // onChange={(playedSeconds) => {
-            //   if (playing) {
-            //     setPlaying(false);
-            //   }
-            //   videoRef.current.seekTo(playedSeconds / , 'seconds');
-            //   setProgress((progress) => ({
-            //     ...progress,
-            //     playedSeconds: playedSeconds / ,
-            //   }));
-            // }}
-            onAfterChange={() => {
-              // setTimeout makes sure that this is called after onChange
-              setTimeout(() => setPlaying(true), 200);
-            }}
-            // tipFormatter={tip => tip)}
           />
 
           <Row justify="space-between" style={{ marginLeft: 16, marginRight: 16, marginBottom: 8 }}>
             <Space size="middle">
               {playing ? (
-                <PauseOutlined
-                  style={styles.icon}
-                  onClick={() => setPlaying((playing) => !playing)}
-                />
+                <PauseOutlined style={styles.icon} onClick={togglePlaying} />
               ) : (
-                <CaretRightOutlined
-                  style={styles.icon}
-                  onClick={() => setPlaying((playing) => !playing)}
-                />
+                <CaretRightOutlined style={styles.icon} onClick={togglePlaying} />
               )}
               {muted ? (
-                <NotificationOutlined
-                  style={styles.icon}
-                  onClick={() => setMuted((muted) => !muted)}
-                />
+                <NotificationOutlined style={styles.icon} onClick={toggleMuted} />
               ) : (
-                <SoundOutlined style={styles.icon} onClick={() => setMuted((muted) => !muted)} />
+                <SoundOutlined style={styles.icon} onClick={toggleMuted} />
               )}
               <div style={{ fontSize: 12, color: 'white' }}>{`${progress} / ${duration}`}</div>
-
-              {/* <a download href={url}>
-              Download
-            </a> */}
             </Space>
-            {/* <SpeedSelector playbackSpeed={playbackSpeed} setPlaybackSpeed={setPlaybackSpeed} /> */}
           </Row>
         </div>
       </div>
-      {/* <Button style={{ marginTop: 24 }}>Create Clips</Button> */}
-      {/* </Card> */}
     </Spin>
   );
 };
 
-export default CandidateVideo;
+export default Video;

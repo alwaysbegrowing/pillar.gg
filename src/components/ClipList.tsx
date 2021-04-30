@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
 import {
-  DndContext,
   closestCenter,
+  DndContext,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -9,14 +8,13 @@ import {
 } from '@dnd-kit/core';
 import {
   arrayMove,
+  horizontalListSortingStrategy,
   SortableContext,
   sortableKeyboardCoordinates,
-  horizontalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import type { IndividualTimestamp } from '../services/hooks/api';
-
 import { List } from 'antd';
-
+import React, { useEffect } from 'react';
+import type { IndividualTimestamp } from '../services/hooks/api';
 import { SortableClipCard } from './SortableClipCard';
 
 const formatKey = (timestamp: IndividualTimestamp) => {
@@ -43,7 +41,6 @@ const App = ({
   );
   const itemIds = clips.map((item: IndividualTimestamp) => formatKey(item)); // ["1", "2", "3"]
 
-
   useEffect(() => {
     if (clips) {
       const [firstTimeStamp] = clips;
@@ -51,7 +48,6 @@ const App = ({
       play(firstTimeStamp.startTime, timeRange);
     }
   }, [clips, play]);
-
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -72,7 +68,6 @@ const App = ({
                   thumbnail={thumbnail}
                   selectedClipId={selectedClipId}
                   setClips={setClips}
-                  
                 />
               </List.Item>
             );
