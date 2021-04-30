@@ -38,20 +38,20 @@ export default defineConfig({
     //   component: './Home',
     // },
     {
-      path: '/videos',
-      name: 'videos',
+      path: '/vods',
+      name: 'Vods',
       icon: 'VideoCameraOutlined',
       hideChildrenInMenu: true,
       routes: [
         {
-          path: '/videos',
-          name: 'videos',
-          component: './Videos',
+          path: '/vods',
+          name: 'Vods',
+          component: './Vods',
         },
         {
-          path: '/videos/:id',
-          name: 'Video Player',
-          component: './VideoPlayer',
+          path: '/vods/:id',
+          name: 'Select Clips',
+          component: './Editor',
         },
       ],
     },
@@ -69,10 +69,10 @@ export default defineConfig({
     //   component: './Settings',
     // },
     {
-      path: '/feedback',
-      name: 'feedback',
+      path: '/discord',
+      name: 'discord',
       icon: 'MessageOutlined',
-      component: './Feedback',
+      component: './Discord',
     },
     {
       path: '/',

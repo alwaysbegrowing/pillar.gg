@@ -4,7 +4,7 @@ const connectToDatabase = require('../_connectToDatabase');
 
 export default async (req: VercelRequest, res: VercelResponse) => {
   const {
-    query: { videoId, limit = 5 },
+    query: { videoId, limit = 10 },
   } = req;
 
   const lim = parseInt(limit as string, 10);
@@ -35,5 +35,9 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     res.status(404).end();
     return;
   }
+  if (result.clips?.algo1) {
+    result.clips.algo1 = result.clips.algo1.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
+  }
+
   res.json(result);
 };

@@ -34,9 +34,6 @@ function useDbUsers() {
 
 function useVideos() {
   const { data: userData } = useUser();
-  // gorc id 108268890
-  // liihs id 73626243
-  // const userData = { id: 73626243 };
   const { data, error } = useSWR(
     () => `https://api.twitch.tv/helix/videos?first=20&type=archive&user_id=${userData.id}`,
     fetcher,
@@ -49,9 +46,23 @@ function useVideos() {
   };
 }
 
-interface IndividualTimestamp {
+function useVideo(id: string | number) {
+  const { data, error } = useSWR(
+    () => `https://api.twitch.tv/helix/videos?first=20&type=archive&id=${id}`,
+    fetcher,
+  );
+
+  return {
+    data: data?.data?.[0],
+    isLoading: !error && !data,
+    isError: error,
+  };
+}
+
+export interface IndividualTimestamp {
   startTime: number;
   endTime: number;
+  selected?: boolean;
 }
 
 interface Algorithm {
@@ -85,4 +96,4 @@ function useClips(clipId: number | string | undefined) {
   };
 }
 
-export { useUser, useVideos, useClips, useDbUsers };
+export { useUser, useVideos, useVideo, useClips, useDbUsers };
