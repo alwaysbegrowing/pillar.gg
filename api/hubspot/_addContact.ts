@@ -1,5 +1,7 @@
 const hubspot = require('@hubspot/api-client');
 
+const { HUBSPOT_API_KEY } = process.env;
+
 interface TwitchUserData {
   id: string;
   login: string;
@@ -30,7 +32,7 @@ export default async (twitchUserData: TwitchUserData) => {
         email: twitchUserData.email,
       },
     };
-    const hubspotClient = new hubspot.Client({ apiKey: process.env.HUBSPOT_API_KEY });
+    const hubspotClient = new hubspot.Client({ apiKey: HUBSPOT_API_KEY });
     const createContactResponse = await hubspotClient.crm.contacts.basicApi.create(contactObj);
     return { hubspot_contact_id: createContactResponse.body.id };
   } catch (e: any) {
