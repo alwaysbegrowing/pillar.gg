@@ -22,7 +22,6 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
 
     const filter = {
       twitch_id: twitchUserData.id,
-      hubspot_contact_id: hubspotID.hubspot_contact_id,
     };
     const options = { upsert: true };
     const updatedoc = {
