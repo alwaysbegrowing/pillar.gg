@@ -25,7 +25,7 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
     };
     const options = { upsert: true };
     const updatedoc = {
-      $set: Object.assign(twitchUserData, hubspotID),
+      $set: { ...twitchUserData, ...hubspotID },
     };
 
     db.collection('users').updateOne(filter, updatedoc, options);
