@@ -93,15 +93,6 @@ const Video = ({
           url={url}
         />
         <div
-          onClick={togglePlaying}
-          style={{
-            position: 'absolute',
-            top: 0,
-            height: 'calc(100% - 50px)',
-            width: '100%',
-          }}
-        />
-        <div
           style={{
             width: '100%',
             bottom: 0,
