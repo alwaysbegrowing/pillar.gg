@@ -6,6 +6,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
   const {
     query: { videoId, limit = 10 },
   } = req;
+  console.log('HERE I AM ');
 
   const lim = parseInt(limit as string, 10);
   // throw 400 error here if input is not an int
@@ -35,8 +36,8 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     res.status(404).end();
     return;
   }
-  if (result.clips?.algo1) {
-    result.clips.algo1 = result.clips.algo1.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
+  if (result.clips?.brain) {
+    result.clips.brain = result.clips.brain.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
   }
 
   res.json(result);
