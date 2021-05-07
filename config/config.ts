@@ -75,6 +75,12 @@ export default defineConfig({
       component: './Discord',
     },
     {
+      path: '/account',
+      name: 'account',
+      icon: 'MessageOutlined',
+      component: './AccountInfo',
+    },
+    {
       path: '/',
       layout: false,
       component: './Landing',

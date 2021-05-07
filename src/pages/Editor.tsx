@@ -8,6 +8,14 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
 import VideoPlayer from '../components/VideoPlayer';
 import type { IndividualTimestamp } from '../services/hooks/api';
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import CheckoutForm from "../components/Stripe/CheckoutForm";
+import './Editor.css';
+
+const promise = loadStripe("pk_test_51ImP67FDvrBp8Tj0MMvZTLbZYPznpj2wiHIxJ9Su2eEFHhEp3tOuEwUEBw8AqG4JI61zEwPaNzCs7xOJ5lXqAqAs007iMPcfPG");
+
+
 
 interface ProgressProps {
   played: number;
@@ -101,6 +109,29 @@ export default () => {
       sendClips(id, selectedClips);
     }
   };
+
+  const popConfirmText = () => {
+    const flag = false;
+    let text = null;
+    if(flag)
+    {
+       text =
+        <div>
+          <div>Are you ready to export your video?</div>
+          <div>You will receive an email with the combined video once it has been processed.</div>
+          <div>You can only do this once per VOD.</div>
+          <Button>Add Credit Card</Button>
+        </div>
+        } else{
+      text = <div><Elements stripe={promise}>
+        <CheckoutForm />
+      </Elements>
+      </div>
+
+    }
+    return text;
+  }
+
   return (
     <PageContainer
       content="Hide clips you don't want in your compilation video. Click and drag
@@ -108,11 +139,7 @@ export default () => {
       extra={
         <Popconfirm
           title={
-            <div>
-              <div>Are you ready to export your video?</div>
-              <div>You will recieve an email with the combined video once it has been processed.</div>
-              <div>You can only do this once per VOD.</div>
-            </div>
+           popConfirmText
           }
           onConfirm={combineClips}
           // onCancel={cancel}
@@ -126,7 +153,7 @@ export default () => {
             disabled={isCombineButtonDisabled}
             icon={<DownloadOutlined />}
           >
-            Combine Selected Clips
+           Export Video
           </Button>
           {}
         </Popconfirm>

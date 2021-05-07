@@ -76,7 +76,7 @@
     "react-helmet-async": "^1.0.4",
     "react-player": "^2.9.0",
     "react-sublime-video": "^0.2.5",
-    "stripe": "^8.119.0",
+    "stripe": "^8.145.0",
     "twitch": "^4.4.13",
     "twitch-webhooks": "^4.4.13",
     "umi": "^3.2.14",
