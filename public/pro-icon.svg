@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="122px" height="123px" viewBox="0 0 122 123" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Group 2</title>
+    <g id="LogoMark" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-2" transform="translate(0.000000, -4.500000)">
+            <g id="Rectangle" transform="translate(0.000000, 4.500000)" fill="#7D6CFD">
+                <rect x="0" y="0" width="122" height="123" rx="6"></rect>
+            </g>
+            <g id="Oval" transform="translate(81.000000, 82.500000)" fill="#FFFFFF">
+                <circle cx="7" cy="7" r="7"></circle>
+            </g>
+            <g id="Group" transform="translate(26.000000, 0.000000)" fill="#FFFFFF" fill-rule="nonzero" font-family="AlegreyaRoman-Bold, Alegreya" font-size="96" font-weight="bold">
+                <g id="P">
+                    <text>
+                        <tspan x="0" y="98">P</tspan>
+                    </text>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
