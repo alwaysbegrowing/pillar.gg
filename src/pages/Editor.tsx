@@ -32,7 +32,7 @@ export default () => {
 
   const { data, isLoading, isError } = useClips(id);
 
-  const [clips, setClips] = useState<IndividualTimestamp[] | null>(null);
+  const [clips, setClips] = useState<IndividualTimestamp[] | []>([]);
 
   const { data: videoData } = useVideo(id);
   const { thumbnail_url } = videoData || {};
@@ -68,9 +68,16 @@ export default () => {
   );
 
   useEffect(() => {
-    if (data && data.brain) {
+    if (data?.brain) {
       const clipsDefaultChecked = data.brain.map((timestamp) => ({ ...timestamp, selected: true }));
-      setClips(clipsDefaultChecked);
+      setClips((prev) => [...prev, ...clipsDefaultChecked]);
+    }
+    if (data?.ccc) {
+      const append = data.ccc.map((d) => ({
+        ...d,
+        verifiedTwitch: true,
+      }));
+      setClips((prev) => [...prev, ...append]);
     }
   }, [data]);
 
@@ -148,7 +155,7 @@ export default () => {
           />
         </Col>
         <Col span={24}>
-          {clips && (
+          {clips.length && (
             <ClipList
               clipInfo={{ clips, setClips }}
               selectedClipId={selectedClipId}

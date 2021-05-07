@@ -27,6 +27,9 @@ export default async (req: VercelRequest, res: VercelResponse) => {
         algo4: {
           $slice: lim,
         },
+        ccc: {
+          $slice: lim,
+        },
       },
     },
   };
@@ -39,5 +42,8 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     result.clips.brain = result.clips.brain.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
   }
 
+  if (result.clips?.ccc) {
+    result.clips.ccc = result.clips.ccc.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
+  }
   res.json(result);
 };
