@@ -14,7 +14,7 @@ const Banner5 = () => {
 
   const twitchAuth = () => {
     if (userData) {
-      history.push('/videos');
+      history.push('/vods');
     } else {
       window.open(
         `https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${redirectURI}&response_type=code&scope=user_read`,
