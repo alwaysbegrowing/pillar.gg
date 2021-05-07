@@ -69,7 +69,7 @@ export default () => {
 
   useEffect(() => {
     if (data && data.brain) {
-      const clipsDefaultChecked = data.map((timestamp) => ({ ...timestamp, selected: true }));
+      const clipsDefaultChecked = data.brain.map((timestamp) => ({ ...timestamp, selected: true }));
       setClips(clipsDefaultChecked);
     }
   }, [data]);
@@ -148,7 +148,7 @@ export default () => {
           />
         </Col>
         <Col span={24}>
-          {data.clips.brain && clips && (
+          {clips && (
             <ClipList
               clipInfo={{ clips, setClips }}
               selectedClipId={selectedClipId}
