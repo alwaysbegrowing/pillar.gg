@@ -69,7 +69,7 @@ export default () => {
 
   useEffect(() => {
     if (data && data.algo1) {
-      const clipsDefaultChecked = data.map((timestamp) => ({ ...timestamp, selected: true }));
+      const clipsDefaultChecked = data.algo1.map((timestamp) => ({ ...timestamp, selected: true }));
       setClips(clipsDefaultChecked);
     }
   }, [data]);
