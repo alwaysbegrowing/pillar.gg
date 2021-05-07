@@ -68,8 +68,8 @@ export default () => {
   );
 
   useEffect(() => {
-    if (data) {
-      const clipsDefaultChecked = data.algo1.map((timestamp) => ({ ...timestamp, selected: true }));
+    if (data && data.algo1) {
+      const clipsDefaultChecked = data.map((timestamp) => ({ ...timestamp, selected: true }));
       setClips(clipsDefaultChecked);
     }
   }, [data]);
@@ -110,7 +110,9 @@ export default () => {
           title={
             <div>
               <div>Are you ready to export your video?</div>
-              <div>You will recieve an email with the combined video once it has been processed.</div>
+              <div>
+                You will recieve an email with the combined video once it has been processed.
+              </div>
               <div>You can only do this once per VOD.</div>
             </div>
           }
