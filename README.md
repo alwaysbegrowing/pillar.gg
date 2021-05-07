@@ -15,6 +15,11 @@ Install Vercel CLI for running
 ```bash
 npm i -g vercel
 ```
+Connect project to vercel
+```bash
+vercel link
+```
+
 
 Recieve environment variables from Vercel
 
