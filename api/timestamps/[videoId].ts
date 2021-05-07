@@ -6,7 +6,6 @@ export default async (req: VercelRequest, res: VercelResponse) => {
   const {
     query: { videoId, limit = 10 },
   } = req;
-  console.log('HERE I AM ');
 
   const lim = parseInt(limit as string, 10);
   // throw 400 error here if input is not an int
