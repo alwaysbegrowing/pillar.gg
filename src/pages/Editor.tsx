@@ -19,7 +19,7 @@ interface ProgressProps {
 const sendClips = (videoId: string, clips: IndividualTimestamp[]) => {
   const data = { videoId, clips };
 
-  fetch('https://k4r85s4uyh.execute-api.us-east-1.amazonaws.com/prod/clips', {
+  fetch('https://5i9oqay4hh.execute-api.us-east-1.amazonaws.com/prod/clips', {
     method: 'POST',
     body: JSON.stringify(data),
   });
@@ -68,8 +68,8 @@ export default () => {
   );
 
   useEffect(() => {
-    if (data && data.algo1) {
-      const clipsDefaultChecked = data.map((timestamp) => ({ ...timestamp, selected: true }));
+    if (data && data.brain) {
+      const clipsDefaultChecked = data.brain.map((timestamp) => ({ ...timestamp, selected: true }));
       setClips(clipsDefaultChecked);
     }
   }, [data]);
@@ -148,7 +148,7 @@ export default () => {
           />
         </Col>
         <Col span={24}>
-          {data.algo1 && clips && (
+          {clips && (
             <ClipList
               clipInfo={{ clips, setClips }}
               selectedClipId={selectedClipId}
