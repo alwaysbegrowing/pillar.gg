@@ -13,7 +13,7 @@ export default {
   },
   title: 'Pillar',
   pwa: false,
-  logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
+  logo: 'https://apppillargg-misc-assets.s3.amazonaws.com/logomark.svg',
   iconfontUrl: '',
 } as LayoutSettings & {
   pwa: boolean;
