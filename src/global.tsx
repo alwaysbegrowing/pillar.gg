@@ -7,6 +7,11 @@ import defaultSettings from '../config/defaultSettings';
 const { pwa } = defaultSettings;
 const isHttps = document.location.protocol === 'https:';
 
+const script = document.createElement('script');
+script.src = '//js-na1.hs-scripts.com/9257754.js';
+script.async = true;
+document.body.appendChild(script);
+
 // if pwa is true
 if (pwa) {
   // Notify user if offline now
