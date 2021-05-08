@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
 import { useClips, useVideo, useUser } from '../services/hooks/api';
-import { Button, Row, Col, Popconfirm, notification, message } from 'antd';
+import { Button, Row, Col, Popconfirm, notification, message, Empty } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import ClipList from '../components/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -170,7 +170,7 @@ export default () => {
       }
     >
       <Row justify="center" gutter={24}>
-        <Col span={10} style={{ marginBottom: 24 }}>
+        <Col span={14} style={{ marginBottom: 24 }}>
           <VideoPlayer
             videoRef={videoRef}
             playing={playing}
@@ -183,13 +183,15 @@ export default () => {
           />
         </Col>
         <Col span={24}>
-          {clips.length && (
+          {clips.length ? (
             <ClipList
               clipInfo={{ clips, setClips }}
               selectedClipId={selectedClipId}
               play={play}
               thumbnail={thumbnail}
             />
+          ) : (
+            <Empty description="There are no clips for this vod yet..." />
           )}
         </Col>
       </Row>
