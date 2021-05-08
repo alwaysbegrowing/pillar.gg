@@ -45,7 +45,7 @@ const Video = ({
 }: VideoProps) => {
   const [muted, setMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [hover, setHover] = useState(true);
+  const [hover, setHover] = useState(false);
 
   const handleEnter = useCallback(
     (event) => {
@@ -78,7 +78,7 @@ const Video = ({
     <Spin spinning={!isLoading}>
       <div
         onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
         style={styles.playerWrapper}
       >
         <ReactPlayer
@@ -91,15 +91,6 @@ const Video = ({
           muted={muted}
           onProgress={onProgress}
           url={url}
-        />
-        <div
-          onClick={togglePlaying}
-          style={{
-            position: 'absolute',
-            top: 0,
-            height: 'calc(100% - 50px)',
-            width: '100%',
-          }}
         />
         <div
           style={{
