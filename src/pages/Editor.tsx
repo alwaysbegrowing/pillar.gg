@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
 import { useClips, useVideo, useUser } from '../services/hooks/api';
-import { Button, Row, Col, Popconfirm, notification, message } from 'antd';
+import { Button, Row, Col, Popconfirm, notification, message, Empty } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import ClipList from '../components/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -190,7 +190,9 @@ export default () => {
               play={play}
               thumbnail={thumbnail}
             />
-          ) : null}
+          ) : (
+            <Empty description="There are no clips for this vod yet..." />
+          )}
         </Col>
       </Row>
     </PageContainer>
