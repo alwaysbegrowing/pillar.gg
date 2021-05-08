@@ -1,4 +1,4 @@
-import { useEffect, useContext } from 'react';
+import { useEffect, useContext, useMemo } from 'react';
 import useSWR from 'swr';
 import { fetcher } from '../fetcher';
 import { GlobalContext } from '../../ContextWrapper';
@@ -72,11 +72,13 @@ interface Algorithm {
   algo3?: IndividualTimestamp[];
   algo4?: IndividualTimestamp[];
   algo5?: IndividualTimestamp[];
+  brain: IndividualTimestamp[];
 }
 interface TimestampStructure {
   videoId: string;
   _id: string;
   clips: Algorithm;
+  ccc: IndividualTimestamp[];
 }
 
 interface UseClipsDataProps {
@@ -90,8 +92,15 @@ function useClips(clipId: number | string | undefined) {
     fetcher,
   );
 
+  const formatedData = useMemo(
+    () => ({
+      ...data?.clips,
+      ccc: data?.ccc,
+    }),
+    [data],
+  );
   return {
-    data: data?.clips,
+    data: formatedData,
     isLoading: !error && !data,
     isError: error,
   };

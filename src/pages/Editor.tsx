@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
-import { useClips, useVideo } from '../services/hooks/api';
-import { Button, Row, Col, Popconfirm, notification } from 'antd';
+import { useClips, useVideo, useUser } from '../services/hooks/api';
+import { Button, Row, Col, Popconfirm, notification, message } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import ClipList from '../components/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -16,19 +16,21 @@ interface ProgressProps {
   loadedSeconds: number;
 }
 
-const sendClips = (videoId: string, clips: IndividualTimestamp[]) => {
+const sendClips = async (videoId: string, clips: IndividualTimestamp[]) => {
   const data = { videoId, clips };
 
-  fetch('https://5i9oqay4hh.execute-api.us-east-1.amazonaws.com/prod/clips', {
+  const resp = await fetch('https://5i9oqay4hh.execute-api.us-east-1.amazonaws.com/prod/clips', {
     method: 'POST',
     body: JSON.stringify(data),
   });
+  return resp.ok;
 };
 
 const getStartEndTimeFromClipId = (clipId: string): number[] => clipId.split('-').map(Number);
 
 export default () => {
   const { id } = useParams<{ id: string }>();
+  const { data: userData } = useUser();
   const { data, isLoading, isError } = useClips(id);
   const [clips, setClips] = useState<IndividualTimestamp[] | []>([]);
   const { data: videoData } = useVideo(id);
@@ -42,8 +44,8 @@ export default () => {
   const [visible, setVisible] = React.useState(false);
   const [confirmLoading, setConfirmLoading] = React.useState(false);
 
-  const openNotificationWithIcon = (type) => {
-    notification[type]({
+  const showSuccessNotificaiton = () => {
+    notification.success({
       message: 'Success! ',
       description:
         'Your video has successfully started exporting!' +
@@ -56,7 +58,6 @@ export default () => {
   };
 
   const handleCancel = () => {
-    console.log('Clicked cancel button');
     setVisible(false);
   };
 
@@ -101,6 +102,8 @@ export default () => {
   if (isError) return 'error';
   if (!data) return 'no data';
 
+  const { email } = userData;
+
   const onProgress = ({ playedSeconds }: ProgressProps) => {
     setSecondsPlayed((seconds) => {
       if (Math.abs(playedSeconds - seconds) > 5) return seconds;
@@ -115,22 +118,20 @@ export default () => {
   const clipLength = Math.round(endTime - startTime);
   const clipTimePlayed = Math.round(secondsPlayed - startTime);
 
-  const combineClips = () => {
+  const combineClips = async () => {
     if (clips) {
       const selectedClips = clips.filter((clip) => clip.selected);
       setIsCombineButtonDisabled(true);
-      sendClips(id, selectedClips);
-    }
-  };
-
-  const handleOk = () => {
-    setConfirmLoading(true);
-    combineClips();
-    setTimeout(() => {
-      setVisible(false);
+      setConfirmLoading(true);
+      const success = await sendClips(id, selectedClips);
       setConfirmLoading(false);
-      openNotificationWithIcon('success');
-    }, 2000);
+      setVisible(false);
+      if (success) {
+        showSuccessNotificaiton();
+      } else {
+        message.error('Error combining clips');
+      }
+    }
   };
 
   return (
@@ -143,13 +144,13 @@ export default () => {
             <div>
               <div>Are you ready to export your video?</div>
               <div>
-                You will receive an email with the combined video once it has been processed.
+                {`You will receive an email at ${email} with the combined video once it has been processed.`}
               </div>
               <div>For now, you can only do this once per VOD.</div>
             </div>
           }
           visible={visible}
-          onConfirm={handleOk}
+          onConfirm={combineClips}
           okButtonProps={{ loading: confirmLoading }}
           onCancel={handleCancel}
           okText="Export"
