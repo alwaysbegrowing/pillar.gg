@@ -43,6 +43,7 @@ const Video = ({
   playing,
   setPlaying,
 }: VideoProps) => {
+  const [clickedMature, setClickedMature] = useState(false);
   const [muted, setMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hover, setHover] = useState(false);
@@ -67,13 +68,22 @@ const Video = ({
     setIsLoading(false);
   }, [url]);
 
+  // Silly hack to see if the iframe has been clicked into to accept the mature
+  // If it has, show the overlay to handle pause / play
+  const monitor = setInterval(() => {
+    const elem = document.activeElement;
+    if (elem && elem.tagName === 'IFRAME') {
+      clearInterval(monitor);
+      setClickedMature(true);
+    }
+  }, 100);
+
   const togglePlaying = () => {
     setPlaying((isPlaying) => !isPlaying);
   };
   const toggleMuted = () => {
     setMuted((isMuted) => !isMuted);
   };
-
   return (
     <Spin spinning={!isLoading}>
       <div
@@ -91,6 +101,16 @@ const Video = ({
           muted={muted}
           onProgress={onProgress}
           url={url}
+        />
+        <div
+          onClick={togglePlaying}
+          style={{
+            display: clickedMature ? 'block' : 'none',
+            position: 'absolute',
+            top: 0,
+            height: 'calc(100% - 50px)',
+            width: '100%',
+          }}
         />
         <div
           style={{

@@ -142,7 +142,7 @@ export default () => {
       }
     >
       <Row justify="center" gutter={24}>
-        <Col span={10} style={{ marginBottom: 24 }}>
+        <Col flex="auto" style={{ marginBottom: 24 }}>
           <VideoPlayer
             videoRef={videoRef}
             playing={playing}
@@ -155,14 +155,14 @@ export default () => {
           />
         </Col>
         <Col span={24}>
-          {clips.length && (
+          {clips.length ? (
             <ClipList
               clipInfo={{ clips, setClips }}
               selectedClipId={selectedClipId}
               play={play}
               thumbnail={thumbnail}
             />
-          )}
+          ) : null}
         </Col>
       </Row>
     </PageContainer>
