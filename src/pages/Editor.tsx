@@ -170,7 +170,7 @@ export default () => {
       }
     >
       <Row justify="center" gutter={24}>
-        <Col flex="auto" style={{ marginBottom: 24 }}>
+        <Col span={14} style={{ marginBottom: 24 }}>
           <VideoPlayer
             videoRef={videoRef}
             playing={playing}
