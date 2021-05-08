@@ -14,7 +14,6 @@ export const layout = (): BasicLayoutProps & {
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     footerRender: () => <Footer />,
-
     menuHeaderRender: undefined,
     ...defaultSettings,
   };

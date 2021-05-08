@@ -3,7 +3,7 @@ export default {
   'menu.videos': 'Videos',
   'menu.analysis': 'Analysis',
   'menu.settings': 'Settings',
-  'menu.feedback': 'Feedback',
+  'menu.discord': 'Discord',
   'menu.more-blocks': 'More Blocks',
   'menu.login': 'Login',
   'menu.register': 'Register',

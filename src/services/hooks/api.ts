@@ -1,7 +1,19 @@
-import { useEffect, useContext } from 'react';
+import { useEffect, useContext, useMemo } from 'react';
 import useSWR from 'swr';
 import { fetcher } from '../fetcher';
 import { GlobalContext } from '../../ContextWrapper';
+
+interface DbUser {
+  display_name: string;
+  twitch_id: number;
+  _id: string;
+}
+
+
+interface UseDBUserProps {
+  data?: DbUser[];
+  error?: boolean;
+}
 
 function useUser() {
   const { twitchId } = useContext(GlobalContext);
@@ -23,7 +35,7 @@ function useUser() {
 }
 
 function useDbUsers() {
-  const { data, error } = useSWR('/api/users', fetcher);
+  const { data, error }: UseDBUserProps = useSWR('/api/users', fetcher);
 
   return {
     data,
@@ -34,9 +46,6 @@ function useDbUsers() {
 
 function useVideos() {
   const { data: userData } = useUser();
-  // gorc id 108268890
-  // liihs id 73626243
-  // const userData = { id: 73626243 };
   const { data, error } = useSWR(
     () => `https://api.twitch.tv/helix/videos?first=20&type=archive&user_id=${userData.id}`,
     fetcher,
@@ -49,9 +58,24 @@ function useVideos() {
   };
 }
 
-interface IndividualTimestamp {
+function useVideo(id: string | number) {
+  const { data, error } = useSWR(
+    () => `https://api.twitch.tv/helix/videos?first=20&type=archive&id=${id}`,
+    fetcher,
+  );
+
+  return {
+    data: data?.data?.[0],
+    isLoading: !error && !data,
+    isError: error,
+  };
+}
+
+export interface IndividualTimestamp {
   startTime: number;
   endTime: number;
+  selected?: boolean;
+  verifiedTwitch?: boolean;
 }
 
 interface Algorithm {
@@ -60,11 +84,13 @@ interface Algorithm {
   algo3?: IndividualTimestamp[];
   algo4?: IndividualTimestamp[];
   algo5?: IndividualTimestamp[];
+  brain: IndividualTimestamp[];
 }
 interface TimestampStructure {
   videoId: string;
   _id: string;
   clips: Algorithm;
+  ccc: IndividualTimestamp[];
 }
 
 interface UseClipsDataProps {
@@ -78,6 +104,7 @@ function useClips(clipId: number | string | undefined) {
     fetcher,
   );
 
+
   return {
     data: data?.clips,
     isLoading: !error && !data,
@@ -85,4 +112,4 @@ function useClips(clipId: number | string | undefined) {
   };
 }
 
-export { useUser, useVideos, useClips, useDbUsers };
+export { useUser, useVideos, useVideo, useClips, useDbUsers };

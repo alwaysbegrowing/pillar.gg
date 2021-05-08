@@ -10,7 +10,7 @@ export default () => {
       const resp = await fetch(`/api/user/login?code=${code}`);
       const result = await resp.json();
       localStorage.setItem('access_token', result.access_token);
-      history.push('/videos');
+      history.push('/vods');
     };
     login();
   }, []);

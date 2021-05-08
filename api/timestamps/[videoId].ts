@@ -4,7 +4,7 @@ const connectToDatabase = require('../_connectToDatabase');
 
 export default async (req: VercelRequest, res: VercelResponse) => {
   const {
-    query: { videoId, limit = 5 },
+    query: { videoId, limit = 10 },
   } = req;
 
   const lim = parseInt(limit as string, 10);
@@ -27,6 +27,9 @@ export default async (req: VercelRequest, res: VercelResponse) => {
         algo4: {
           $slice: lim,
         },
+        ccc: {
+          $slice: lim,
+        },
       },
     },
   };
@@ -34,6 +37,13 @@ export default async (req: VercelRequest, res: VercelResponse) => {
   if (!result) {
     res.status(404).end();
     return;
+  }
+  if (result.clips?.brain) {
+    result.clips.brain = result.clips.brain.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
+  }
+
+  if (result.clips?.ccc) {
+    result.clips.ccc = result.clips.ccc.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
   }
   res.json(result);
 };
