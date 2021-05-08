@@ -3,6 +3,18 @@ import useSWR from 'swr';
 import { fetcher } from '../fetcher';
 import { GlobalContext } from '../../ContextWrapper';
 
+interface DbUser {
+  display_name: string;
+  twitch_id: number;
+  _id: string;
+}
+
+
+interface UseDBUserProps {
+  data?: DbUser[];
+  error?: boolean;
+}
+
 function useUser() {
   const { twitchId } = useContext(GlobalContext);
 
@@ -23,7 +35,7 @@ function useUser() {
 }
 
 function useDbUsers() {
-  const { data, error } = useSWR('/api/users', fetcher);
+  const { data, error }: UseDBUserProps = useSWR('/api/users', fetcher);
 
   return {
     data,
@@ -92,15 +104,9 @@ function useClips(clipId: number | string | undefined) {
     fetcher,
   );
 
-  const formatedData = useMemo(
-    () => ({
-      ...data?.clips,
-      ccc: data?.ccc,
-    }),
-    [data],
-  );
+
   return {
-    data: formatedData,
+    data: data?.clips,
     isLoading: !error && !data,
     isError: error,
   };
