@@ -145,7 +145,7 @@ export default () => {
               <div>
                 You will receive an email with the combined video once it has been processed.
               </div>
-              <div>You can only do this once per VOD.</div>
+              <div>For now, you can only do this once per VOD.</div>
             </div>
           }
           visible={visible}
