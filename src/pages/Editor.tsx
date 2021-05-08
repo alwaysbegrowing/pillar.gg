@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
 import { useClips, useVideo } from '../services/hooks/api';
-import { Button, Row, Col, Popconfirm } from 'antd';
+import { Button, Row, Col, Popconfirm, notification } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import ClipList from '../components/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -29,18 +29,40 @@ const getStartEndTimeFromClipId = (clipId: string): number[] => clipId.split('-'
 
 export default () => {
   const { id } = useParams<{ id: string }>();
-
   const { data, isLoading, isError } = useClips(id);
-
   const [clips, setClips] = useState<IndividualTimestamp[] | []>([]);
-
   const { data: videoData } = useVideo(id);
   const { thumbnail_url } = videoData || {};
+  const videoRef = useRef<ReactPlayer>(null);
+  const [playing, setPlaying] = useState<boolean>(false);
+  const [secondsPlayed, setSecondsPlayed] = useState<number>(0);
+  const [isCombineButtonDisabled, setIsCombineButtonDisabled] = useState<boolean>(false);
+  const [selectedClipId, setSelectedClipId] = useState<string>('');
+  const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId);
+  const [visible, setVisible] = React.useState(false);
+  const [confirmLoading, setConfirmLoading] = React.useState(false);
+
+  const openNotificationWithIcon = (type) => {
+    notification[type]({
+      message: 'Success! ',
+      description:
+        'Your video has successfully started exporting!' +
+        ' The link to download your video will be emailed to you in 5-10 minutes. ',
+    });
+  };
+
+  const showPopconfirm = () => {
+    setVisible(true);
+  };
+
+  const handleCancel = () => {
+    console.log('Clicked cancel button');
+    setVisible(false);
+  };
+
   const thumbnail = thumbnail_url
     ? thumbnail_url.replace('%{width}', '195').replace('%{height}', '108')
     : '';
-
-  const videoRef = useRef<ReactPlayer>(null);
 
   const seek = useCallback(
     (seekTime: number) => {
@@ -50,12 +72,6 @@ export default () => {
     },
     [videoRef],
   );
-
-  const [playing, setPlaying] = useState<boolean>(false);
-  const [secondsPlayed, setSecondsPlayed] = useState<number>(0);
-  const [isCombineButtonDisabled, setIsCombineButtonDisabled] = useState<boolean>(false);
-
-  const [selectedClipId, setSelectedClipId] = useState<string>('');
 
   const play = useCallback(
     (seekTime: number, clipId: string) => {
@@ -85,8 +101,6 @@ export default () => {
   if (isError) return 'error';
   if (!data) return 'no data';
 
-  const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId);
-
   const onProgress = ({ playedSeconds }: ProgressProps) => {
     setSecondsPlayed((seconds) => {
       if (Math.abs(playedSeconds - seconds) > 5) return seconds;
@@ -108,6 +122,17 @@ export default () => {
       sendClips(id, selectedClips);
     }
   };
+
+  const handleOk = () => {
+    setConfirmLoading(true);
+    combineClips();
+    setTimeout(() => {
+      setVisible(false);
+      setConfirmLoading(false);
+      openNotificationWithIcon('success');
+    }, 2000);
+  };
+
   return (
     <PageContainer
       content="Hide clips you don't want in your compilation video. Click and drag
@@ -118,22 +143,24 @@ export default () => {
             <div>
               <div>Are you ready to export your video?</div>
               <div>
-                You will recieve an email with the combined video once it has been processed.
+                You will receive an email with the combined video once it has been processed.
               </div>
               <div>You can only do this once per VOD.</div>
             </div>
           }
-          onConfirm={combineClips}
-          // onCancel={cancel}
+          visible={visible}
+          onConfirm={handleOk}
+          okButtonProps={{ loading: confirmLoading }}
+          onCancel={handleCancel}
           okText="Export"
           cancelText="Nevermind"
         >
           <Button
-            // onClick={combineClips}
             style={{ marginLeft: 24 }}
             type="primary"
             disabled={isCombineButtonDisabled}
             icon={<DownloadOutlined />}
+            onClick={showPopconfirm}
           >
             Combine Selected Clips
           </Button>
