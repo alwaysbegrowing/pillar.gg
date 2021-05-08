@@ -4,7 +4,11 @@ import { Select } from 'antd';
 import { useDbUsers, useUser } from '../services/hooks/api';
 import { GlobalContext } from '../ContextWrapper';
 
-const { Option } = Select;
+function removeDuplicates(myArr, prop) {
+  return myArr.filter((obj, pos, arr) => {
+    return arr.map((mapObj) => mapObj[prop]).indexOf(obj[prop]) === pos;
+  });
+}
 
 const SelectUser = () => {
   const { data, isLoading } = useDbUsers();
@@ -12,17 +16,20 @@ const SelectUser = () => {
   const { setTwitchId } = useContext(GlobalContext);
 
   function handleChange(value: number) {
-    setTwitchId(value);
+    if (value) setTwitchId(value);
   }
 
   if (isLoading || !userData) return null;
 
+  const options = data.map((u: any) => ({ value: u.twitch_id, label: u.display_name }));
+
   return (
-    <Select style={{ width: 120 }} defaultValue={userData.id} onChange={handleChange}>
-      {data.map((user: any) => (
-        <Option value={user.twitch_id}>{user.display_name}</Option>
-      ))}
-    </Select>
+    <Select
+      options={removeDuplicates(options, 'value')}
+      style={{ width: 120 }}
+      defaultValue={userData.id}
+      onChange={handleChange}
+    />
   );
 };
 
