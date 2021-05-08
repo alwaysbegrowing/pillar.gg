@@ -1,7 +1,19 @@
-import { useEffect, useContext } from 'react';
+import { useEffect, useContext, useMemo } from 'react';
 import useSWR from 'swr';
 import { fetcher } from '../fetcher';
 import { GlobalContext } from '../../ContextWrapper';
+
+interface DbUser {
+  display_name: string;
+  twitch_id: number;
+  _id: string;
+}
+
+
+interface UseDBUserProps {
+  data?: DbUser[];
+  error?: boolean;
+}
 
 function useUser() {
   const { twitchId } = useContext(GlobalContext);
@@ -23,7 +35,7 @@ function useUser() {
 }
 
 function useDbUsers() {
-  const { data, error } = useSWR('/api/users', fetcher);
+  const { data, error }: UseDBUserProps = useSWR('/api/users', fetcher);
 
   return {
     data,
@@ -72,11 +84,13 @@ interface Algorithm {
   algo3?: IndividualTimestamp[];
   algo4?: IndividualTimestamp[];
   algo5?: IndividualTimestamp[];
+  brain: IndividualTimestamp[];
 }
 interface TimestampStructure {
   videoId: string;
   _id: string;
   clips: Algorithm;
+  ccc: IndividualTimestamp[];
 }
 
 interface UseClipsDataProps {
@@ -89,6 +103,7 @@ function useClips(clipId: number | string | undefined) {
     clipId ? () => `/api/timestamps/${clipId}` : null,
     fetcher,
   );
+
 
   return {
     data: data?.clips,
