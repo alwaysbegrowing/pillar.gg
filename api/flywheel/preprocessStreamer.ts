@@ -50,8 +50,8 @@ console.log(arr)
 
   const mongo_result = await db.collection('users').insertOne({
     "twitch_id": object.twitchId,
-      "testName": object.twitchUsername,
-      "display_name": object.twitchUsername,
+      "testName": object.twitchUsername.substring(26),
+      "display_name": object.twitchUsername.substring(26),
       "email": "stvngts620@gmail.com"
   }
 );
