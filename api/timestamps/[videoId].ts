@@ -27,6 +27,9 @@ export default async (req: VercelRequest, res: VercelResponse) => {
         algo4: {
           $slice: lim,
         },
+        ccc: {
+          $slice: lim,
+        },
       },
     },
   };
@@ -35,9 +38,12 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     res.status(404).end();
     return;
   }
-  if (result.clips?.algo1) {
-    result.clips.algo1 = result.clips.algo1.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
+  if (result.clips?.brain) {
+    result.clips.brain = result.clips.brain.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
   }
 
+  if (result.ccc) {
+    result.clips.ccc = result.ccc.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
+  }
   res.json(result);
 };

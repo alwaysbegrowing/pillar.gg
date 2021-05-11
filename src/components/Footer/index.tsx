@@ -8,7 +8,7 @@ export default () => (
       {
         key: 'Privacy Policy',
         title: 'Privacy Policy',
-        href: 'https://dev.pillar.gg/PrivacyPolicy',
+        href: 'https://app.pillar.gg/PrivacyPolicy',
         blankTarget: true,
       },
     ]}

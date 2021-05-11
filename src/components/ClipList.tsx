@@ -63,6 +63,7 @@ const App = ({
                   play={() => play(timestamp.startTime, timeRange)}
                   timestamp={timestamp}
                   key={timeRange}
+                  verifiedTwitch={timestamp.verifiedTwitch}
                   id={timeRange}
                   i={i}
                   thumbnail={thumbnail}

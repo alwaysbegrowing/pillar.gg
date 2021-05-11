@@ -3,7 +3,7 @@ import { history } from 'umi';
 import type { ResponseError } from 'umi-request';
 import request from 'umi-request';
 
-const twitchClientId = '2nakqoqdxka9v5oekyo6742bmnxt2o';
+const twitchClientId = 'phpnjz4llxez4zpw3iurfthoi573c8';
 
 const codeMessage = {
   200: 'The server successfully returned the requested data. ',
