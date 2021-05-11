@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { useUser } from '../../services/hooks/api';
 import { history } from 'umi';
 
-const twitchClientId = '2nakqoqdxka9v5oekyo6742bmnxt2o';
+const twitchClientId = 'phpnjz4llxez4zpw3iurfthoi573c8';
 const redirectURI = `${window.location.origin}/TwitchAuth`;
 
 const Banner5 = () => {
