@@ -43,8 +43,8 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     result.clips.brain = result.clips.brain.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
   }
 
-  if (result.ccc) {
-    if(result.ccc.length > 1)
+  if (result?.ccc?.length > 1) {
+ 
     result.clips.ccc = result.ccc.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
   }
   res.json(result);
