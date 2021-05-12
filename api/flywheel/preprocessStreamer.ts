@@ -16,7 +16,6 @@ export default async (req: VercelRequest, res: VercelResponse) => {
   const db = await connectToDatabase();
 
   if(req.query.twitchUsernames === undefined) {
-    console.log("In if statment")
     res.status(200).json({"msg": 'ERROR. No streamers were submitted. Copy paste this link into the url bar: http://localhost:8000/api/flywheel/preprocessStreamer?twitchUsernames=["TWITCH_TRACKER_URL_HERE","TWITCH_TRACKER_URL_HERE"] '})
     return;
   }
