@@ -38,8 +38,8 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     res.status(404).end();
     return;
   }
-  if (result.clips?.brain) {
-    if(result.clips.brain > 1)
+  if (result.clips?.brain?.length > 1) {
+
     result.clips.brain = result.clips.brain.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
   }
 
