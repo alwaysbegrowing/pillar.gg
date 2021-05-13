@@ -7,7 +7,8 @@ import SelectUser from '../components/SelectUser';
 
 const shouldRenderExtra = () => {
   const { NODE_ENV } = process.env;
-  if (NODE_ENV === 'development') {
+  const code = new URLSearchParams(window.location.search).get('debug') || false;
+  if (NODE_ENV === 'development' || code === 'true') {
     return <SelectUser />;
   }
   return null;
