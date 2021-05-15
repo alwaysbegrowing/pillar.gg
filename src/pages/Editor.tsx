@@ -8,6 +8,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
 import VideoPlayer from '../components/VideoPlayer';
 import type { IndividualTimestamp } from '../services/hooks/api';
+import { useIntl } from 'umi';
 
 interface ProgressProps {
   played: number;
@@ -46,10 +47,12 @@ export default () => {
 
   const showSuccessNotificaiton = () => {
     notification.success({
-      message: 'Success! ',
-      description:
-        'Your video has successfully started exporting!' +
-        ' The link to download your video will be emailed to you in 5-10 minutes. ',
+      message: useIntl().formatMessage({ id: 'pages.editor.successNotification.message', defaultMessage: 'Success!' }),
+      // message: 'Success! ',
+      description: useIntl().formatMessage({ id: 'pages.editor.successNotification.description', defaultMessage: 'Your video has successfully started exporting! The link to download your video will be emailed to you in 5-10 minutes. '})
+      // description:
+      //   'Your video has successfully started exporting!' +
+      //   ' The link to download your video will be emailed to you in 5-10 minutes. ',
     });
   };
 
@@ -98,9 +101,9 @@ export default () => {
     }
   }, [data]);
 
-  if (isLoading) return 'loading...';
-  if (isError) return 'error';
-  if (!data) return 'no data';
+  if (isLoading) return useIntl().formatMessage({ id: 'pages.editor.loading', defaultMessage: 'Loading...' });
+  if (isError) return useIntl().formatMessage({ id: 'pages.editor.error', defaultMessage: 'error' });
+  if (!data) return useIntl().formatMessage({ id: 'pages.editor.noData', defaultMessage: 'no data' });
 
   const { email } = userData;
 
@@ -129,32 +132,31 @@ export default () => {
       if (success) {
         showSuccessNotificaiton();
       } else {
-        message.error('Error combining clips');
+        message.error(useIntl().formatMessage({ id: 'pages.editor.combineClips.error', defaultMessage: 'Error combining clips'}));
       }
     }
   };
 
   return (
     <PageContainer
-      content="Hide clips you don't want in your compilation video. Click and drag
-      clips to re-order them on the timeline. Click the Export Video button when you are ready. "
+      content={useIntl().formatMessage({ id: 'pages.editor.instructions', defaultMessage: "Hide clips you don't want in your compilation video. Click and drag clips to re-order them on the timeline. Click the Export Video button when you are ready. "})}
       extra={
         <Popconfirm
           title={
             <div>
-              <div>Are you ready to export your video?</div>
+              <div>{useIntl().formatMessage({ id: 'pages.editor.exportConfirm1', defaultMessage: 'Are you ready to export your video?'})}</div>
               <div>
-                {`You will receive an email at ${email} with the combined video once it has been processed.`}
+                {useIntl().formatMessage({ id: 'pages.editor.exportConfirm2', defaultMessage: `You will receive an email at ${email} with the combined video once it has been processed.`}, {email})}
               </div>
-              <div>For now, you can only do this once per VOD.</div>
+              <div>{useIntl().formatMessage({ id: 'pages.editor.exportConfirm3', defaultMessage: 'For now, you can only do this once per VOD.'})}</div>
             </div>
           }
           visible={visible}
           onConfirm={combineClips}
           okButtonProps={{ loading: confirmLoading }}
           onCancel={handleCancel}
-          okText="Export"
-          cancelText="Nevermind"
+          okText={useIntl().formatMessage({ id: 'pages.editor.exportOkText', defaultMessage: 'Export'})}
+          cancelText={useIntl().formatMessage({ id: 'pages.editor.exportCancelText', defaultMessage: 'Nevermind'})}
         >
           <Button
             style={{ marginLeft: 24 }}
@@ -163,7 +165,7 @@ export default () => {
             icon={<DownloadOutlined />}
             onClick={showPopconfirm}
           >
-            Combine Selected Clips
+            {useIntl().formatMessage({ id: 'pages.editor.combineClipsButton', defaultMessage: 'Combine Selected Clips'})}
           </Button>
           {}
         </Popconfirm>
@@ -191,7 +193,7 @@ export default () => {
               thumbnail={thumbnail}
             />
           ) : (
-            <Empty description="There are no clips for this vod yet..." />
+            <Empty description={useIntl().formatMessage({ id: 'pages.editor.noClips', defaultMessage: 'There are no clips for this vod yet...'})} />
           )}
         </Col>
       </Row>
