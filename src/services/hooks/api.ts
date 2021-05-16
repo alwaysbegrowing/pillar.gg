@@ -9,7 +9,6 @@ interface DbUser {
   _id: string;
 }
 
-
 interface UseDBUserProps {
   data?: DbUser[];
   error?: boolean;
@@ -103,10 +102,10 @@ function useClips(clipId: number | string | undefined) {
     clipId ? () => `/api/timestamps/${clipId}` : null,
     fetcher,
   );
-
+  const alldata = useMemo(() => ({ ...data?.clips, ccc: data?.ccc }), [JSON.stringify(data)]);
 
   return {
-    data: data?.clips,
+    data: alldata,
     isLoading: !error && !data,
     isError: error,
   };
