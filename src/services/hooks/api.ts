@@ -1,4 +1,4 @@
-import { useEffect, useContext, useMemo } from 'react';
+import { useEffect, useContext } from 'react';
 import useSWR from 'swr';
 import { fetcher } from '../fetcher';
 import { GlobalContext } from '../../ContextWrapper';
@@ -8,7 +8,6 @@ interface DbUser {
   twitch_id: number;
   _id: string;
 }
-
 
 interface UseDBUserProps {
   data?: DbUser[];
@@ -103,7 +102,6 @@ function useClips(clipId: number | string | undefined) {
     clipId ? () => `/api/timestamps/${clipId}` : null,
     fetcher,
   );
-
 
   return {
     data: data?.clips,
