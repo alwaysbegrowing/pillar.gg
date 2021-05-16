@@ -51,7 +51,7 @@ const Video = ({
   const handleEnter = useCallback(
     (event) => {
       const { code } = event;
-      if (code === 'Space' && controlKeys) {
+      if (code === controlKeys) {
         event.preventDefault();
         setPlaying((isPlaying) => !isPlaying);
       }
