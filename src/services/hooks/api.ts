@@ -1,4 +1,4 @@
-import { useEffect, useContext } from 'react';
+import { useEffect, useContext, useMemo } from 'react';
 import useSWR from 'swr';
 import { fetcher } from '../fetcher';
 import { GlobalContext } from '../../ContextWrapper';
@@ -102,9 +102,10 @@ function useClips(clipId: number | string | undefined) {
     clipId ? () => `/api/timestamps/${clipId}` : null,
     fetcher,
   );
+  const alldata = useMemo(() => ({ ...data?.clips, ccc: data?.ccc }), [JSON.stringify(data)]);
 
   return {
-    data: data?.clips,
+    data: alldata,
     isLoading: !error && !data,
     isError: error,
   };
