@@ -44,15 +44,19 @@ export default () => {
   const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId);
   const [visible, setVisible] = React.useState(false);
   const [confirmLoading, setConfirmLoading] = React.useState(false);
+  const { formatMessage } = useIntl();
 
   const showSuccessNotificaiton = () => {
     notification.success({
-      message: useIntl().formatMessage({ id: 'pages.editor.successNotification.message', defaultMessage: 'Success!' }),
-      // message: 'Success! ',
-      description: useIntl().formatMessage({ id: 'pages.editor.successNotification.description', defaultMessage: 'Your video has successfully started exporting! The link to download your video will be emailed to you in 5-10 minutes. '})
-      // description:
-      //   'Your video has successfully started exporting!' +
-      //   ' The link to download your video will be emailed to you in 5-10 minutes. ',
+      message: formatMessage({
+        id: 'pages.editor.successNotification.message',
+        defaultMessage: 'Success!',
+      }),
+      description: formatMessage({
+        id: 'pages.editor.successNotification.description',
+        defaultMessage:
+          'Your video has successfully started exporting! The link to download your video will be emailed to you in 5-10 minutes. ',
+      }),
     });
   };
 
@@ -101,9 +105,9 @@ export default () => {
     }
   }, [data]);
 
-  if (isLoading) return useIntl().formatMessage({ id: 'pages.editor.loading', defaultMessage: 'Loading...' });
-  if (isError) return useIntl().formatMessage({ id: 'pages.editor.error', defaultMessage: 'error' });
-  if (!data) return useIntl().formatMessage({ id: 'pages.editor.noData', defaultMessage: 'no data' });
+  if (isLoading) return formatMessage({ id: 'pages.editor.loading', defaultMessage: 'Loading...' });
+  if (isError) return formatMessage({ id: 'pages.editor.error', defaultMessage: 'error' });
+  if (!data) return formatMessage({ id: 'pages.editor.noData', defaultMessage: 'no data' });
 
   const { email } = userData;
 
@@ -132,31 +136,59 @@ export default () => {
       if (success) {
         showSuccessNotificaiton();
       } else {
-        message.error(useIntl().formatMessage({ id: 'pages.editor.combineClips.error', defaultMessage: 'Error combining clips'}));
+        message.error(
+          formatMessage({
+            id: 'pages.editor.combineClips.error',
+            defaultMessage: 'Error combining clips',
+          }),
+        );
       }
     }
   };
 
   return (
     <PageContainer
-      content={useIntl().formatMessage({ id: 'pages.editor.instructions', defaultMessage: "Hide clips you don't want in your compilation video. Click and drag clips to re-order them on the timeline. Click the Export Video button when you are ready. "})}
+      content={formatMessage({
+        id: 'pages.editor.instructions',
+        defaultMessage:
+          "Hide clips you don't want in your compilation video. Click and drag clips to re-order them on the timeline. Click the Export Video button when you are ready. ",
+      })}
       extra={
         <Popconfirm
           title={
             <div>
-              <div>{useIntl().formatMessage({ id: 'pages.editor.exportConfirm1', defaultMessage: 'Are you ready to export your video?'})}</div>
               <div>
-                {useIntl().formatMessage({ id: 'pages.editor.exportConfirm2', defaultMessage: `You will receive an email at ${email} with the combined video once it has been processed.`}, {email})}
+                {formatMessage({
+                  id: 'pages.editor.exportConfirm1',
+                  defaultMessage: 'Are you ready to export your video?',
+                })}
               </div>
-              <div>{useIntl().formatMessage({ id: 'pages.editor.exportConfirm3', defaultMessage: 'For now, you can only do this once per VOD.'})}</div>
+              <div>
+                {formatMessage(
+                  {
+                    id: 'pages.editor.exportConfirm2',
+                    defaultMessage: `You will receive an email at ${email} with the combined video once it has been processed.`,
+                  },
+                  { email },
+                )}
+              </div>
+              <div>
+                {formatMessage({
+                  id: 'pages.editor.exportConfirm3',
+                  defaultMessage: 'For now, you can only do this once per VOD.',
+                })}
+              </div>
             </div>
           }
           visible={visible}
           onConfirm={combineClips}
           okButtonProps={{ loading: confirmLoading }}
           onCancel={handleCancel}
-          okText={useIntl().formatMessage({ id: 'pages.editor.exportOkText', defaultMessage: 'Export'})}
-          cancelText={useIntl().formatMessage({ id: 'pages.editor.exportCancelText', defaultMessage: 'Nevermind'})}
+          okText={formatMessage({ id: 'pages.editor.exportOkText', defaultMessage: 'Export' })}
+          cancelText={formatMessage({
+            id: 'pages.editor.exportCancelText',
+            defaultMessage: 'Nevermind',
+          })}
         >
           <Button
             style={{ marginLeft: 24 }}
@@ -165,7 +197,10 @@ export default () => {
             icon={<DownloadOutlined />}
             onClick={showPopconfirm}
           >
-            {useIntl().formatMessage({ id: 'pages.editor.combineClipsButton', defaultMessage: 'Combine Selected Clips'})}
+            {formatMessage({
+              id: 'pages.editor.combineClipsButton',
+              defaultMessage: 'Combine Selected Clips',
+            })}
           </Button>
           {}
         </Popconfirm>
@@ -193,7 +228,12 @@ export default () => {
               thumbnail={thumbnail}
             />
           ) : (
-            <Empty description={useIntl().formatMessage({ id: 'pages.editor.noClips', defaultMessage: 'There are no clips for this vod yet...'})} />
+            <Empty
+              description={formatMessage({
+                id: 'pages.editor.noClips',
+                defaultMessage: 'There are no clips for this vod yet...',
+              })}
+            />
           )}
         </Col>
       </Row>
