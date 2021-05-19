@@ -1,5 +1,4 @@
 export default {
-  'menu.discord': 'Discord',
   'menu.Vods': 'Vods',
   'menu.Vods.Vods': 'Vods',
   'menu.Vods.Select Clips': 'クリップを選択',
