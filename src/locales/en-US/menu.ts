@@ -51,4 +51,7 @@ export default {
   'menu.editor.mind': 'Mind Editor',
   'menu.editor.koni': 'Koni Editor',
   'menu.Vods': 'Vods',
+  'menu.Vods.Vods': 'Vods',
+  'menu.Vods.Select Clips': 'Select Clips',
+  'menu.Discord': 'Discord',
 };
