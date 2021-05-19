@@ -50,12 +50,9 @@ export default () => {
     notification.success({
       message: formatMessage({
         id: 'pages.editor.successNotification.message',
-        defaultMessage: 'Success!',
       }),
       description: formatMessage({
         id: 'pages.editor.successNotification.description',
-        defaultMessage:
-          'Your video has successfully started exporting! The link to download your video will be emailed to you in 5-10 minutes. ',
       }),
     });
   };
@@ -105,9 +102,9 @@ export default () => {
     }
   }, [data]);
 
-  if (isLoading) return formatMessage({ id: 'pages.editor.loading', defaultMessage: 'Loading...' });
-  if (isError) return formatMessage({ id: 'pages.editor.error', defaultMessage: 'error' });
-  if (!data) return formatMessage({ id: 'pages.editor.noData', defaultMessage: 'no data' });
+  if (isLoading) return formatMessage({ id: 'pages.editor.loading' });
+  if (isError) return formatMessage({ id: 'pages.editor.error' });
+  if (!data) return formatMessage({ id: 'pages.editor.noData' });
 
   const { email } = userData;
 
@@ -139,7 +136,6 @@ export default () => {
         message.error(
           formatMessage({
             id: 'pages.editor.combineClips.error',
-            defaultMessage: 'Error combining clips',
           }),
         );
       }
@@ -150,8 +146,6 @@ export default () => {
     <PageContainer
       content={formatMessage({
         id: 'pages.editor.instructions',
-        defaultMessage:
-          "Hide clips you don't want in your compilation video. Click and drag clips to re-order them on the timeline. Click the Export Video button when you are ready. ",
       })}
       extra={
         <Popconfirm
@@ -160,14 +154,12 @@ export default () => {
               <div>
                 {formatMessage({
                   id: 'pages.editor.exportConfirm1',
-                  defaultMessage: 'Are you ready to export your video?',
                 })}
               </div>
               <div>
                 {formatMessage(
                   {
                     id: 'pages.editor.exportConfirm2',
-                    defaultMessage: `You will receive an email at ${email} with the combined video once it has been processed.`,
                   },
                   { email },
                 )}
@@ -175,7 +167,6 @@ export default () => {
               <div>
                 {formatMessage({
                   id: 'pages.editor.exportConfirm3',
-                  defaultMessage: 'For now, you can only do this once per VOD.',
                 })}
               </div>
             </div>
@@ -184,10 +175,9 @@ export default () => {
           onConfirm={combineClips}
           okButtonProps={{ loading: confirmLoading }}
           onCancel={handleCancel}
-          okText={formatMessage({ id: 'pages.editor.exportOkText', defaultMessage: 'Export' })}
+          okText={formatMessage({ id: 'pages.editor.exportOkText' })}
           cancelText={formatMessage({
             id: 'pages.editor.exportCancelText',
-            defaultMessage: 'Nevermind',
           })}
         >
           <Button
@@ -199,7 +189,6 @@ export default () => {
           >
             {formatMessage({
               id: 'pages.editor.combineClipsButton',
-              defaultMessage: 'Combine Selected Clips',
             })}
           </Button>
           {}
@@ -231,7 +220,6 @@ export default () => {
             <Empty
               description={formatMessage({
                 id: 'pages.editor.noClips',
-                defaultMessage: 'There are no clips for this vod yet...',
               })}
             />
           )}
