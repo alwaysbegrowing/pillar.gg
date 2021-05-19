@@ -34,20 +34,19 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     },
   };
   const result = await db.collection('timestamps').findOne({ videoId }, options);
-  result.clips = result.clips || {};
-  console.log(result)
   if (!result) {
     res.status(404).end();
     return;
   }
+  result.clips = result.clips || {};
 
   if (result.clips?.brain?.length > 1) {
-      result.clips.brain = result.clips.brain.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
+    result.clips.brain = result.clips.brain.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
   }
 
   if (result?.ccc?.length > 1) {
-      result.clips.ccc = result.ccc.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
-    }
+    result.clips.ccc = result.ccc.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
+  }
 
   res.json(result);
 };

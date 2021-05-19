@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
 import { useClips, useVideo, useUser } from '../services/hooks/api';
-import { Button, Row, Col, Popconfirm, notification, message, Empty } from 'antd';
+import { Button, Row, Col, Popconfirm, notification, message, Empty, Input } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import ClipList from '../components/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -9,6 +9,8 @@ import { useParams } from 'umi';
 import VideoPlayer from '../components/VideoPlayer';
 import type { IndividualTimestamp } from '../services/hooks/api';
 import { useIntl } from 'umi';
+
+const { Search } = Input;
 
 interface ProgressProps {
   played: number;
@@ -45,15 +47,14 @@ export default () => {
   const [visible, setVisible] = React.useState(false);
   const [confirmLoading, setConfirmLoading] = React.useState(false);
   const { formatMessage } = useIntl();
+  const [clipFeedbackText, setClipFeedbackText] = useState('');
 
-  const showSuccessNotificaiton = () => {
+  const showSuccessNotification = (successMessage: string) => {
     notification.success({
       message: formatMessage({
         id: 'pages.editor.successNotification.message',
       }),
-      description: formatMessage({
-        id: 'pages.editor.successNotification.description',
-      }),
+      description: successMessage,
     });
   };
 
@@ -108,6 +109,29 @@ export default () => {
 
   const { email } = userData;
 
+  const onChange = (event) => {
+    setClipFeedbackText(event.target.value);
+  };
+
+  const onSubmitClipFeedback = async () => {
+    const clipData = getStartEndTimeFromClipId(selectedClipId);
+    const resp = await fetch('/api/submitClipFeedback', {
+      method: 'POST',
+      body: JSON.stringify({
+        videoId: id,
+        feedbackText: clipFeedbackText,
+        clip: { startTime: clipData[0], endTime: clipData[1] },
+      }),
+    });
+    const successMessage = formatMessage({
+      id: 'pages.editor.onSubmitClipFeedback.successMessage',
+    });
+    showSuccessNotification(successMessage);
+    setClipFeedbackText('');
+
+    return resp.ok;
+  };
+
   const onProgress = ({ playedSeconds }: ProgressProps) => {
     setSecondsPlayed((seconds) => {
       if (Math.abs(playedSeconds - seconds) > 5) return seconds;
@@ -123,6 +147,7 @@ export default () => {
   const clipTimePlayed = Math.round(secondsPlayed - startTime);
 
   const combineClips = async () => {
+    const successMessage = formatMessage({ id: 'pages.editor.combineClips.successMessage' });
     if (clips) {
       const selectedClips = clips.filter((clip) => clip.selected);
       setIsCombineButtonDisabled(true);
@@ -131,7 +156,7 @@ export default () => {
       setConfirmLoading(false);
       setVisible(false);
       if (success) {
-        showSuccessNotificaiton();
+        showSuccessNotification(successMessage);
       } else {
         message.error(
           formatMessage({
@@ -206,6 +231,13 @@ export default () => {
             controlKeys
             duration={clipLength}
             url={`https://twitch.tv/videos/${id}`}
+          />
+          <Search
+            placeholder={'This clip was good/ok/bad because...'}
+            onChange={onChange}
+            value={clipFeedbackText}
+            enterButton={'Submit'}
+            onSearch={onSubmitClipFeedback}
           />
         </Col>
         <Col span={24}>
