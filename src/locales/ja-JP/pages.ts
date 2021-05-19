@@ -16,4 +16,8 @@ export default {
   'pages.editor.exportCancelText': '気にしないで',
   'pages.editor.combineClipsButton': '選択したクリップを組み合わせる',
   'pages.editor.noClips': 'このVODのクリップはまだありません...',
+  'pages.editor.onSubmitClipFeedback.successMessage':
+    'クリップフィードバックを正常に送信しました。 ありがとうございました！',
+  'pages.editor.combineClips.successMessage':
+    '動画のエクスポートが正常に開始されました。 ビデオをダウンロードするためのリンクは、5〜10分以内に電子メールで送信されます。',
 };
