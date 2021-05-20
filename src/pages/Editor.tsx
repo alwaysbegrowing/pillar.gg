@@ -8,6 +8,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
 import VideoPlayer from '../components/VideoPlayer';
 import type { IndividualTimestamp } from '../services/hooks/api';
+import { useIntl } from 'umi';
 
 const { Search } = Input;
 
@@ -45,11 +46,14 @@ export default () => {
   const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId);
   const [visible, setVisible] = React.useState(false);
   const [confirmLoading, setConfirmLoading] = React.useState(false);
+  const { formatMessage } = useIntl();
   const [clipFeedbackText, setClipFeedbackText] = useState('');
 
   const showSuccessNotification = (successMessage: string) => {
     notification.success({
-      message: 'Success! ',
+      message: formatMessage({
+        id: 'pages.editor.successNotification.message',
+      }),
       description: successMessage,
     });
   };
@@ -99,9 +103,9 @@ export default () => {
     }
   }, [data]);
 
-  if (isLoading) return 'loading...';
-  if (isError) return 'error';
-  if (!data) return 'no data';
+  if (isLoading) return formatMessage({ id: 'pages.editor.loading' });
+  if (isError) return formatMessage({ id: 'pages.editor.error' });
+  if (!data) return formatMessage({ id: 'pages.editor.noData' });
 
   const { email } = userData;
 
@@ -119,7 +123,9 @@ export default () => {
         clip: { startTime: clipData[0], endTime: clipData[1] },
       }),
     });
-    const successMessage = 'Successfully submitted your clip feedback. Thank you! ';
+    const successMessage = formatMessage({
+      id: 'pages.editor.onSubmitClipFeedback.successMessage',
+    });
     showSuccessNotification(successMessage);
     setClipFeedbackText('');
 
@@ -141,9 +147,7 @@ export default () => {
   const clipTimePlayed = Math.round(secondsPlayed - startTime);
 
   const combineClips = async () => {
-    const successMessage =
-      'Your video has successfully started exporting!' +
-      ' The link to download your video will be emailed to you in 5-10 minutes. ';
+    const successMessage = formatMessage({ id: 'pages.editor.combineClips.successMessage' });
     if (clips) {
       const selectedClips = clips.filter((clip) => clip.selected);
       setIsCombineButtonDisabled(true);
@@ -154,32 +158,52 @@ export default () => {
       if (success) {
         showSuccessNotification(successMessage);
       } else {
-        message.error('Error combining clips');
+        message.error(
+          formatMessage({
+            id: 'pages.editor.combineClips.error',
+          }),
+        );
       }
     }
   };
 
   return (
     <PageContainer
-      content="Hide clips you don't want in your compilation video. Click and drag
-      clips to re-order them on the timeline. Click the Export Video button when you are ready. "
+      content={formatMessage({
+        id: 'pages.editor.instructions',
+      })}
       extra={
         <Popconfirm
           title={
             <div>
-              <div>Are you ready to export your video?</div>
               <div>
-                {`You will receive an email at ${email} with the combined video once it has been processed.`}
+                {formatMessage({
+                  id: 'pages.editor.exportConfirm1',
+                })}
               </div>
-              <div>For now, you can only do this once per VOD.</div>
+              <div>
+                {formatMessage(
+                  {
+                    id: 'pages.editor.exportConfirm2',
+                  },
+                  { email },
+                )}
+              </div>
+              <div>
+                {formatMessage({
+                  id: 'pages.editor.exportConfirm3',
+                })}
+              </div>
             </div>
           }
           visible={visible}
           onConfirm={combineClips}
           okButtonProps={{ loading: confirmLoading }}
           onCancel={handleCancel}
-          okText="Export"
-          cancelText="Nevermind"
+          okText={formatMessage({ id: 'pages.editor.exportOkText' })}
+          cancelText={formatMessage({
+            id: 'pages.editor.exportCancelText',
+          })}
         >
           <Button
             style={{ marginLeft: 24 }}
@@ -188,7 +212,9 @@ export default () => {
             icon={<DownloadOutlined />}
             onClick={showPopconfirm}
           >
-            Combine Selected Clips
+            {formatMessage({
+              id: 'pages.editor.combineClipsButton',
+            })}
           </Button>
           {}
         </Popconfirm>
@@ -223,7 +249,11 @@ export default () => {
               thumbnail={thumbnail}
             />
           ) : (
-            <Empty description="There are no clips for this vod yet..." />
+            <Empty
+              description={formatMessage({
+                id: 'pages.editor.noClips',
+              })}
+            />
           )}
         </Col>
       </Row>
