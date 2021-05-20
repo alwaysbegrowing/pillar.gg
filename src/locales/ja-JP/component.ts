@@ -1,0 +1,15 @@
+export default {
+  'component.tagSelect.expand': '展開',
+  'component.tagSelect.collapse': '閉じる',
+  'component.tagSelect.all': 'すべて',
+  'component.VodCard.ViewVideoButton': 'このVODからクリップを作成する',
+  'component.VodCard.ProcessingButton': 'クリップの処理',
+  'component.SortableClipCard.Card.Tooltip.title': 'このクリップを再生する',
+  'component.SortableClipCard.Card.Tooltip.Button': '観る',
+  'component.SortableClipCard.Card.Switch.checkedChildren': '使用する',
+  'component.SortableClipCard.Card.Switch.unCheckedChildren': '隠す',
+  'component.SortableClipCard.div.Badge.Ribbon.text': 'チャットから',
+  'component.Footer.copyright': 'Pillar',
+  'component.Footer.key': '個人情報保護方針',
+  'component.Footer.title': '個人情報保護方針',
+};

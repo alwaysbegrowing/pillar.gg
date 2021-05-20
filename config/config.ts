@@ -18,7 +18,7 @@ export default defineConfig({
   },
   locale: {
     // default zh-en
-    default: 'en',
+    default: 'en-US',
     antd: true,
     // default true, when it is true, will use `navigator.language` overwrite default
     baseNavigator: true,
@@ -70,7 +70,7 @@ export default defineConfig({
     // },
     {
       path: '/discord',
-      name: 'discord',
+      name: 'Discord',
       icon: 'MessageOutlined',
       component: './Discord',
     },

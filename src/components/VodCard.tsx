@@ -4,6 +4,7 @@ import formatDistance from 'date-fns/formatDistance';
 import React from 'react';
 import { history } from 'umi';
 import { useClips } from '../services/hooks/api';
+import { useIntl } from 'umi';
 
 const IconText = ({ icon, text }: any) => (
   <Space>
@@ -13,10 +14,16 @@ const IconText = ({ icon, text }: any) => (
 );
 
 const ViewVideoButton = ({ id }: { id: number | string }) => (
-  <Button onClick={() => history.push(`/vods/${id}`)}>Create Clips from this VOD</Button>
+  <Button onClick={() => history.push(`/vods/${id}`)}>
+    {useIntl().formatMessage({ id: 'component.VodCard.ViewVideoButton' })}
+  </Button>
 );
 
-const ProcessingButton = () => <Button loading={true}>Processing Clips</Button>;
+const ProcessingButton = () => (
+  <Button loading={true}>
+    {useIntl().formatMessage({ id: 'component.VodCard.ProcessingButton' })}
+  </Button>
+);
 
 interface VodCardProps {
   thumbnail_url: string;

@@ -5,6 +5,7 @@ import { Card, Switch, Tooltip, Button, Badge } from 'antd';
 import { PlayCircleOutlined } from '@ant-design/icons';
 import type { IndividualTimestamp } from '../services/hooks/api';
 import { Divider } from 'antd';
+import { useIntl } from 'umi';
 
 const { Meta } = Card;
 const toTime = (seconds: number) => new Date(seconds * 1000).toISOString().substr(11, 8);
@@ -28,6 +29,7 @@ export function SortableClipCard({
   thumbnail: string;
   timestamp: IndividualTimestamp;
 }) {
+  const { formatMessage } = useIntl();
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -50,17 +52,21 @@ export function SortableClipCard({
       hoverable
       cover={<img alt="Twitch Thumbnail" src={thumbnail} />}
       actions={[
-        <Tooltip title="Play this clip">
+        <Tooltip title={formatMessage({ id: 'component.SortableClipCard.Card.Tooltip.title' })}>
           <Button size="small" onClick={() => play()} icon={<PlayCircleOutlined />}>
-            View
+            {formatMessage({ id: 'component.SortableClipCard.Card.Tooltip.Button' })}
           </Button>
         </Tooltip>,
 
         <Switch
           onChange={che}
           checked={timestamp.selected}
-          checkedChildren="Use"
-          unCheckedChildren="Hide"
+          checkedChildren={formatMessage({
+            id: 'component.SortableClipCard.Card.Switch.checkedChildren',
+          })}
+          unCheckedChildren={formatMessage({
+            id: 'component.SortableClipCard.Card.Switch.unCheckedChildren',
+          })}
         />,
       ]}
     >
@@ -76,7 +82,13 @@ export function SortableClipCard({
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      {verifiedTwitch && <Badge.Ribbon text="From Chat">{card}</Badge.Ribbon>}
+      {verifiedTwitch && (
+        <Badge.Ribbon
+          text={formatMessage({ id: 'component.SortableClipCard.div.Badge.Ribbon.text' })}
+        >
+          {card}
+        </Badge.Ribbon>
+      )}
       {!verifiedTwitch && card}
     </div>
   );
