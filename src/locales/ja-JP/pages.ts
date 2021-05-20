@@ -7,14 +7,14 @@ export default {
   'pages.editor.noData': 'データなし',
   'pages.editor.combineClips.error': 'クリップの結合中にエラーが発生しました',
   'pages.editor.instructions':
-    'コンパイルビデオで不要なクリップを非表示にします。クリップをクリックしてドラッグし、タイムラインで並べ替えます。準備ができたら、[ビデオのエクスポート]ボタンをクリックします。',
-  'pages.editor.exportConfirm1': 'ビデオをエクスポートする準備はできていますか？',
+    '不要なクリップを非表示にしましょう。クリップをドラッグし、並べ替える事が出来ます。準備ができたら、[ビデオをエクスポート]ボタンをクリックして下さい。',
+  'pages.editor.exportConfirm1': 'ビデオをエクスポートしますか？',
   'pages.editor.exportConfirm2':
     '処理が完了すると、結合されたビデオが記載されたメールが {email} に届きます。',
   'pages.editor.exportConfirm3': '今のところ、これはVODごとに1回だけ実行できます。',
   'pages.editor.exportOkText': '書き出す',
-  'pages.editor.exportCancelText': '気にしないで',
-  'pages.editor.combineClipsButton': '選択したクリップを組み合わせる',
+  'pages.editor.exportCancelText': 'キャンセル',
+  'pages.editor.combineClipsButton': '選択したビデオをエクスポート',
   'pages.editor.noClips': 'このVODのクリップはまだありません...',
   'pages.editor.onSubmitClipFeedback.successMessage':
     'クリップフィードバックを正常に送信しました。 ありがとうございました！',
