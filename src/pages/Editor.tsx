@@ -48,6 +48,8 @@ export default () => {
   const [confirmLoading, setConfirmLoading] = React.useState(false);
   const { formatMessage } = useIntl();
   const [clipFeedbackText, setClipFeedbackText] = useState('');
+  const [seeking, setSeeking] = useState(false);
+  const [sliderValue, setSliderValue] = useState(0);
 
   const showSuccessNotification = (successMessage: string) => {
     notification.success({
@@ -109,7 +111,7 @@ export default () => {
 
   const { email } = userData;
 
-  const onChange = (event) => {
+  const onChange = (event: any) => {
     setClipFeedbackText(event.target.value);
   };
 
@@ -133,14 +135,30 @@ export default () => {
   };
 
   const onProgress = ({ playedSeconds }: ProgressProps) => {
-    setSecondsPlayed((seconds) => {
-      if (Math.abs(playedSeconds - seconds) > 5) return seconds;
-      if (playedSeconds > endTime) {
-        setPlaying(false);
-        return startTime;
-      }
-      return playedSeconds;
-    });
+    if (!seeking) {
+      setSliderValue(Math.round(playedSeconds - startTime));
+      setSecondsPlayed((seconds) => {
+        if (Math.abs(playedSeconds - seconds) > 5) return seconds;
+        if (playedSeconds > endTime) {
+          setPlaying(false);
+          return startTime;
+        }
+        return playedSeconds;
+      });
+    }
+  };
+
+  const onSliderChange = (value: number) => {
+    setSeeking(true);
+    setPlaying(false);
+    setSliderValue(value);
+  };
+
+  const onSliderDone = (value: number) => {
+    seek(value + startTime); // seek isn't working
+    setSliderValue(value);
+    setPlaying(true);
+    setSeeking(false);
   };
 
   const clipLength = Math.round(endTime - startTime);
@@ -228,6 +246,9 @@ export default () => {
             setPlaying={setPlaying}
             progress={clipTimePlayed}
             onProgress={onProgress}
+            onSliderChange={onSliderChange}
+            onSliderDone={onSliderDone}
+            sliderValue={sliderValue}
             controlKeys
             duration={clipLength}
             url={`https://twitch.tv/videos/${id}`}

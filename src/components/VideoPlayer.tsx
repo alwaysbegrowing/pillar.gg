@@ -27,7 +27,10 @@ interface VideoProps {
   url: string;
   duration: number;
   progress: number;
+  sliderValue: number;
   onProgress: any;
+  onSliderChange: any;
+  onSliderDone: any;
   videoRef: ReactPlayer;
   controlKeys: boolean;
   playing: boolean;
@@ -37,7 +40,10 @@ const Video = ({
   url,
   duration,
   progress,
+  sliderValue,
   onProgress,
+  onSliderChange,
+  onSliderDone,
   videoRef,
   controlKeys,
   playing,
@@ -121,6 +127,7 @@ const Video = ({
             backgroundColor: 'rgba(0,0,0,.7)',
           }}
         >
+          {/* <div onMouseDown={onSliderClick} onMouseUp={onSliderRelease}> */}
           <Slider
             style={{
               marginLeft: 8,
@@ -130,8 +137,11 @@ const Video = ({
               paddingBottom: 4,
             }}
             max={duration}
-            value={progress}
+            value={sliderValue}
+            onChange={onSliderChange}
+            onAfterChange={onSliderDone}
           />
+          {/* </div> */}
 
           <Row justify="space-between" style={{ marginLeft: 16, marginRight: 16, marginBottom: 8 }}>
             <Space size="middle">
