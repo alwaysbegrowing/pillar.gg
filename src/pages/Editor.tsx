@@ -136,7 +136,16 @@ export default () => {
 
   const onProgress = ({ playedSeconds }: ProgressProps) => {
     if (!seeking) {
-      setSliderValue(Math.round(playedSeconds - startTime));
+      setSliderValue(() => {
+        const seconds = Math.round(playedSeconds - startTime);
+        const duration = endTime - startTime;
+
+        if (seconds < duration) {
+          return secondsPlayed;
+        }
+
+        return 0;
+      });
       setSecondsPlayed((seconds) => {
         if (Math.abs(playedSeconds - seconds) > 5) return seconds;
         if (playedSeconds > endTime) {
@@ -155,7 +164,7 @@ export default () => {
   };
 
   const onSliderDone = (value: number) => {
-    seek(value + startTime); // seek isn't working
+    seek(100); // seek isn't working
     setSliderValue(value);
     setPlaying(true);
     setSeeking(false);
