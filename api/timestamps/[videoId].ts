@@ -48,5 +48,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     result.clips.ccc = result.ccc.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
   }
 
+  // scrub for muted portions of clips and dont return them
+
   res.json(result);
 };

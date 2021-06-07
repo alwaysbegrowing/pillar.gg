@@ -63,9 +63,9 @@ const VodCard = ({
           />,
           <IconText icon={CalendarOutlined} text={simpleTime} key="list-vertical-published" />,
         ]}
-        extra={thumbnail ? <img width={272} alt="logo" src={thumbnail} /> : null}
+        extra={<a target="_blank" href={url}>thumbnail</a> ? <a target="_blank" href={url}><img width={272} alt="logo" src={thumbnail} /></a> : null}
       >
-        <List.Item.Meta title={<a href={url}>{title}</a>} description={description} />
+        <List.Item.Meta title={<a href={`/vods/${id}`}>{title}</a>} description={description} />
         {data ? <ViewVideoButton id={id} /> : <ProcessingButton />}
       </List.Item>
     </Card>

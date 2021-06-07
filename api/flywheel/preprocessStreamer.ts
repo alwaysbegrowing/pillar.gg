@@ -12,15 +12,16 @@ const connectToDatabase = require('../_connectToDatabase');
 
 export default async (req: VercelRequest, res: VercelResponse) => {
   const MAX_PROCESSING_LIMIT = 5;
-  const TWITCH_TRACKER_URL = "https://twitchtracker.com/";
+  // const TWITCH_TRACKER_URL = "https://twitchtracker.com/";
   const db = await connectToDatabase();
 
-  if(req.query.twitchUsernames === undefined) {
+  if(req.query.twitchUsernames == null) {
     res.status(200).json({"msg": 'ERROR. No streamers were submitted. Copy paste this link into the url bar: http://localhost:8000/api/flywheel/preprocessStreamer?twitchUsernames=["TWITCH_TRACKER_URL_HERE","TWITCH_TRACKER_URL_HERE"] '})
     return;
   }
 
-  const twitchUsernames = JSON.parse(req.query.twitchUsernames.toString());
+  const arr1 = req.query.twitchUsernames as string;
+  const twitchUsernames = JSON.parse(arr1);
 
   if(twitchUsernames.length > MAX_PROCESSING_LIMIT) {
     res.status(200).json({"msg": "ERROR. Max streamers in request exceeded. No streamers were pre-processed. You can only pre-process up to 5 streamers at a time. "})
