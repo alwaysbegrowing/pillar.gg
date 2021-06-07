@@ -138,10 +138,11 @@ export default () => {
     if (!seeking) {
       setSliderValue(() => {
         const seconds = Math.round(playedSeconds - startTime);
+        console.log(seconds);
         const duration = endTime - startTime;
 
-        if (seconds < duration) {
-          return secondsPlayed;
+        if (seconds < duration && seconds > 0) {
+          return seconds;
         }
 
         return 0;
@@ -164,7 +165,9 @@ export default () => {
   };
 
   const onSliderDone = (value: number) => {
-    seek(100); // seek isn't working
+    const seekTime = value + startTime;
+    console.log(seekTime);
+    videoRef.current?.seekTo(seekTime); // seek isn't working
     setSliderValue(value);
     setPlaying(true);
     setSeeking(false);
