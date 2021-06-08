@@ -159,17 +159,14 @@ export default () => {
 
   const onSliderChange = (value: number) => {
     setSeeking(true);
-    setPlaying(false);
     setSliderValue(value);
   };
 
   const onSliderDone = (value: number) => {
     const seekTime = value + startTime;
-    // console.log({seekTime: seekTime, value: value});
-    seek(seekTime); // seek isn't working
     setSliderValue(value);
-    setPlaying(true);
     setSeeking(false);
+    seek(seekTime); // seek does not work unless the video is playing
   };
 
   const clipLength = Math.round(endTime - startTime);

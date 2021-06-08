@@ -127,7 +127,6 @@ const Video = ({
             backgroundColor: 'rgba(0,0,0,.7)',
           }}
         >
-          {/* <div onMouseDown={onSliderClick} onMouseUp={onSliderRelease}> */}
           <Slider
             style={{
               marginLeft: 8,
@@ -141,7 +140,6 @@ const Video = ({
             onChange={onSliderChange}
             onAfterChange={onSliderDone}
           />
-          {/* </div> */}
 
           <Row justify="space-between" style={{ marginLeft: 16, marginRight: 16, marginBottom: 8 }}>
             <Space size="middle">
