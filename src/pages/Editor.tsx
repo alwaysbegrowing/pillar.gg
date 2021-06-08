@@ -166,7 +166,7 @@ export default () => {
     const seekTime = value + startTime;
     setSliderValue(value);
     setSeeking(false);
-    seek(seekTime); // seek does not work unless the video is playing
+    seek(seekTime); // seek does not work unless the video is playing https://git.io/JZ30f
   };
 
   const clipLength = Math.round(endTime - startTime);
