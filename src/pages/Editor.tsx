@@ -159,6 +159,7 @@ export default () => {
 
   const onSliderChange = (value: number) => {
     setSeeking(true);
+    setPlaying(true);
     setSliderValue(value);
   };
 
