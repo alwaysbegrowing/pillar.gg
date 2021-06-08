@@ -84,6 +84,7 @@ const Video = ({
   const toggleMuted = () => {
     setMuted((isMuted) => !isMuted);
   };
+  
   return (
     <Spin spinning={!isLoading}>
       <div
@@ -91,6 +92,7 @@ const Video = ({
         onMouseLeave={() => setHover(false)}
         style={styles.playerWrapper}
       >
+        {/* @ts-ignore*/}
         <ReactPlayer
           onReady={() => setIsLoading(true)}
           style={styles.reactPlayer}

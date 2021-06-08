@@ -220,7 +220,7 @@ export default () => {
         </Popconfirm>
       }
     >
-      <Row justify="center" gutter={24}>
+      <Row gutter={24}>
         <Col span={14} style={{ marginBottom: 24 }}>
           <VideoPlayer
             videoRef={videoRef}
@@ -240,7 +240,7 @@ export default () => {
             onSearch={onSubmitClipFeedback}
           />
         </Col>
-        <Col span={24}>
+        <Col style={{alignItems: 'flex-start'}} span={8}>
           {clips.length ? (
             <ClipList
               clipInfo={{ clips, setClips }}

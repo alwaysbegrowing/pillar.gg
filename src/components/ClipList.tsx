@@ -51,14 +51,16 @@ const App = ({
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <SortableContext items={itemIds} strategy={horizontalListSortingStrategy}>
+      <SortableContext  items={itemIds} strategy={horizontalListSortingStrategy}>
         <List
           grid={{ gutter: 8 }}
           dataSource={clips}
+          itemLayout="vertical"
+          
           renderItem={(timestamp: IndividualTimestamp, i: number) => {
             const timeRange = formatKey(timestamp);
             return (
-              <List.Item>
+              <List.Item style={{width: "100%"}}>
                 <SortableClipCard
                   play={() => play(timestamp.startTime, timeRange)}
                   timestamp={timestamp}
@@ -69,6 +71,7 @@ const App = ({
                   thumbnail={thumbnail}
                   selectedClipId={selectedClipId}
                   setClips={setClips}
+                  
                 />
               </List.Item>
             );

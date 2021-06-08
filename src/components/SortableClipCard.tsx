@@ -47,37 +47,41 @@ export function SortableClipCard({
   };
 
   const card = (
-    <Card
-      style={selectedStyle}
-      hoverable
-      cover={<img alt="Twitch Thumbnail" src={thumbnail} />}
-      actions={[
-        <Tooltip title={formatMessage({ id: 'component.SortableClipCard.Card.Tooltip.title' })}>
-          <Button size="small" onClick={() => play()} icon={<PlayCircleOutlined />}>
-            {formatMessage({ id: 'component.SortableClipCard.Card.Tooltip.Button' })}
-          </Button>
-        </Tooltip>,
+    <div style={{width: '100%'}}>
 
-        <Switch
-          onChange={che}
-          checked={timestamp.selected}
-          checkedChildren={formatMessage({
-            id: 'component.SortableClipCard.Card.Switch.checkedChildren',
-          })}
-          unCheckedChildren={formatMessage({
-            id: 'component.SortableClipCard.Card.Switch.unCheckedChildren',
-          })}
-        />,
-      ]}
-    >
-      <Meta
-        description={
-          <>
-            {toTime(timestamp.startTime)} <Divider type="vertical" /> {toTime(timestamp.endTime)}
-          </>
-        }
-      />
-    </Card>
+      <p>Test card goes here</p>
+    </div>
+    // <Card
+    //   style={selectedStyle}
+    //   hoverable
+    //   cover={<img alt="Twitch Thumbnail" src={thumbnail} />}
+    //   actions={[
+    //     <Tooltip title={formatMessage({ id: 'component.SortableClipCard.Card.Tooltip.title' })}>
+    //       <Button size="small" onClick={() => play()} icon={<PlayCircleOutlined />}>
+    //         {formatMessage({ id: 'component.SortableClipCard.Card.Tooltip.Button' })}
+    //       </Button>
+    //     </Tooltip>,
+    //
+    //     <Switch
+    //       onChange={che}
+    //       checked={timestamp.selected}
+    //       checkedChildren={formatMessage({
+    //         id: 'component.SortableClipCard.Card.Switch.checkedChildren',
+    //       })}
+    //       unCheckedChildren={formatMessage({
+    //         id: 'component.SortableClipCard.Card.Switch.unCheckedChildren',
+    //       })}
+    //     />,
+    //   ]}
+    // >
+    //   <Meta
+    //     description={
+    //       <>
+    //         {toTime(timestamp.startTime)} <Divider type="vertical" /> {toTime(timestamp.endTime)}
+    //       </>
+    //     }
+    //   />
+    // </Card>
   );
 
   return (
