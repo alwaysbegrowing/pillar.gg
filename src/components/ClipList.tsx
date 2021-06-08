@@ -51,32 +51,32 @@ const App = ({
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <SortableContext  items={itemIds} strategy={horizontalListSortingStrategy}>
-        <List
-          grid={{ gutter: 8 }}
-          dataSource={clips}
-          itemLayout="vertical"
-          
-          renderItem={(timestamp: IndividualTimestamp, i: number) => {
-            const timeRange = formatKey(timestamp);
-            return (
-              <List.Item style={{width: "100%"}}>
-                <SortableClipCard
-                  play={() => play(timestamp.startTime, timeRange)}
-                  timestamp={timestamp}
-                  key={timeRange}
-                  verifiedTwitch={timestamp.verifiedTwitch}
-                  id={timeRange}
-                  i={i}
-                  thumbnail={thumbnail}
-                  selectedClipId={selectedClipId}
-                  setClips={setClips}
-                  
-                />
-              </List.Item>
-            );
-          }}
-        />
+      <SortableContext items={itemIds} strategy={horizontalListSortingStrategy}>
+        <div style={{ height: 500, overflowY: 'scroll', overflowX: 'hidden' }}>
+          <List
+            grid={{ gutter: 8, column: 1 }}
+            dataSource={clips}
+            itemLayout="vertical"
+            renderItem={(timestamp: IndividualTimestamp, i: number) => {
+              const timeRange = formatKey(timestamp);
+              return (
+                <List.Item style={{ width: '100%' }}>
+                  <SortableClipCard
+                    play={() => play(timestamp.startTime, timeRange)}
+                    timestamp={timestamp}
+                    key={timeRange}
+                    verifiedTwitch={timestamp.verifiedTwitch}
+                    id={timeRange}
+                    i={i}
+                    thumbnail={thumbnail}
+                    selectedClipId={selectedClipId}
+                    setClips={setClips}
+                  />
+                </List.Item>
+              );
+            }}
+          />
+        </div>
       </SortableContext>
     </DndContext>
   );
