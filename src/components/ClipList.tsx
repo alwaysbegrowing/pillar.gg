@@ -1,17 +1,3 @@
-import {
-  closestCenter,
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  horizontalListSortingStrategy,
-  SortableContext,
-  sortableKeyboardCoordinates,
-} from '@dnd-kit/sortable';
 import { List } from 'antd';
 import React, { useEffect } from 'react';
 import type { IndividualTimestamp } from '../services/hooks/api';
@@ -33,13 +19,6 @@ const App = ({
   clipInfo: { clips: IndividualTimestamp[]; setClips: any };
 }) => {
   const { clips, setClips } = clipInfo;
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
-  const itemIds = clips.map((item: IndividualTimestamp) => formatKey(item)); // ["1", "2", "3"]
 
   useEffect(() => {
     if (clips) {
@@ -50,49 +29,41 @@ const App = ({
   }, [clips, play]);
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <SortableContext items={itemIds} strategy={horizontalListSortingStrategy}>
-        <div style={{ height: 500, overflowY: 'scroll', overflowX: 'hidden' }}>
-          <List
-            grid={{ gutter: 8, column: 1 }}
-            dataSource={clips}
-            itemLayout="vertical"
-            renderItem={(timestamp: IndividualTimestamp, i: number) => {
-              const timeRange = formatKey(timestamp);
-              return (
-                <List.Item style={{ width: '100%' }}>
-                  <SortableClipCard
-                    play={() => play(timestamp.startTime, timeRange)}
-                    timestamp={timestamp}
-                    key={timeRange}
-                    verifiedTwitch={timestamp.verifiedTwitch}
-                    id={timeRange}
-                    i={i}
-                    thumbnail={thumbnail}
-                    selectedClipId={selectedClipId}
-                    setClips={setClips}
-                  />
-                </List.Item>
-              );
-            }}
-          />
-        </div>
-      </SortableContext>
-    </DndContext>
+    <div
+      style={{
+        height: 600,
+        width: '100%',
+        overflowY: 'scroll',
+        backgroundColor: 'white',
+        padding: '1rem',
+      }}
+    >
+      {clips.length} Clips Found:
+      <List
+        grid={{ gutter: 8, column: 1 }}
+        dataSource={clips}
+        itemLayout="vertical"
+        renderItem={(timestamp: IndividualTimestamp, i: number) => {
+          const timeRange = formatKey(timestamp);
+          return (
+            <List.Item style={{ width: '100%' }}>
+              <SortableClipCard
+                play={() => play(timestamp.startTime, timeRange)}
+                timestamp={timestamp}
+                key={timeRange}
+                verifiedTwitch={timestamp.verifiedTwitch}
+                id={timeRange}
+                i={i}
+                thumbnail={thumbnail}
+                selectedClipId={selectedClipId}
+                setClips={setClips}
+              />
+            </List.Item>
+          );
+        }}
+      />
+    </div>
   );
-
-  function handleDragEnd(event: any) {
-    const { active, over } = event;
-
-    if (active.id !== over.id) {
-      setClips((oldItems: IndividualTimestamp[]) => {
-        const oldIndex = oldItems.findIndex((oldItem) => formatKey(oldItem) === active.id);
-        const newIndex = oldItems.findIndex((oldItem) => formatKey(oldItem) === over.id);
-
-        return arrayMove(oldItems, oldIndex, newIndex);
-      });
-    }
-  }
 };
 
 export default App;

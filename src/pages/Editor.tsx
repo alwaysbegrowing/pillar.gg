@@ -7,6 +7,7 @@ import ClipList from '../components/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
 import VideoPlayer from '../components/VideoPlayer';
+import Timeline from '../components/Timeline';
 import type { IndividualTimestamp } from '../services/hooks/api';
 import { useIntl } from 'umi';
 
@@ -239,8 +240,15 @@ export default () => {
             enterButton={'Submit'}
             onSearch={onSubmitClipFeedback}
           />
+          <Row>
+            <Col style={{ width: '100%' }}>
+              <div>
+                <Timeline />
+              </div>
+            </Col>
+          </Row>
         </Col>
-        <Col style={{alignItems: 'flex-start'}} span={8}>
+        <Col style={{ alignItems: 'flex-start' }} span={8}>
           {clips.length ? (
             <ClipList
               clipInfo={{ clips, setClips }}

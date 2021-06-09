@@ -90,7 +90,7 @@ export function SortableClipCard({
         <List.Item.Meta
           avatar={<img alt="Twitch Thumbnail" src={thumbnail} />}
           title={
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: 'flex', fontSize: 14 }}>
               {toTime(timestamp.startTime)} <Divider type="vertical" /> {toTime(timestamp.endTime)}
             </div>
           }
