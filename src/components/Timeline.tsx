@@ -1,11 +1,10 @@
 import { Slider } from 'antd';
 import React from 'react';
+import CompoundSlider  from './CompoundSlider';
+const Timeline = ({showClipHandles}) => {
 
-const Timeline = () => {
   return (
-    <div>
-      <Slider range={{ draggableTrack: true }} defaultValue={[20, 50]} />
-    </div>
+    <CompoundSlider showClipHandles={showClipHandles}/>
   );
 };
 

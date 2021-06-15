@@ -29,6 +29,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
   }
 
   const arr = []
+  console.log(twitchUsernames)
 // for each value in array, perform the below
 for (const name of twitchUsernames){
   const requestUrl = name;

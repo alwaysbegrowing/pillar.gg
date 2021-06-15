@@ -7,7 +7,7 @@ import ClipList from '../components/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
 import VideoPlayer from '../components/VideoPlayer';
-import Timeline from '../components/Timeline';
+import TimeSlider from '../components/TimeSlider/TimeSlider';
 import type { IndividualTimestamp } from '../services/hooks/api';
 import { useIntl } from 'umi';
 
@@ -49,6 +49,7 @@ export default () => {
   const [confirmLoading, setConfirmLoading] = React.useState(false);
   const { formatMessage } = useIntl();
   const [clipFeedbackText, setClipFeedbackText] = useState('');
+  const [showClipHandles, setShowClipHandles] = useState<boolean>(true);
 
   const showSuccessNotification = (successMessage: string) => {
     notification.success({
@@ -239,12 +240,13 @@ export default () => {
             value={clipFeedbackText}
             enterButton={'Submit'}
             onSearch={onSubmitClipFeedback}
+            style={{paddingBottom: "1rem", paddingTop: "1rem"}}
           />
           <Row>
             <Col style={{ width: '100%' }}>
-              <div>
-                <Timeline />
-              </div>
+                <TimeSlider showClipHandles={showClipHandles}/>
+                <Button style={{marginTop: "7rem", marginLeft: "40%"}} onClick= {() => setShowClipHandles(!showClipHandles)}>{showClipHandles ? "Adjust Clip" : "Cancel"}</Button>
+              {showClipHandles ? null : <div> <Button>Save</Button> <Button>Preview</Button> <Button>Export To Mobile</Button></div> }
             </Col>
           </Row>
         </Col>

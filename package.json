@@ -73,6 +73,7 @@
     "rc-scroll-anim": "^2.7.5",
     "rc-tween-one": "^2.7.3",
     "react": "^16.8.6",
+    "react-compound-slider": "^3.3.1",
     "react-dom": "^16.8.6",
     "react-helmet-async": "^1.0.4",
     "react-player": "^2.9.0",
