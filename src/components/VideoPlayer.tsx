@@ -4,7 +4,7 @@ import {
   PauseOutlined,
   SoundOutlined,
 } from '@ant-design/icons';
-import { Row, Slider, Space, Spin } from 'antd';
+import { Row, Space, Spin } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import ReactPlayer from 'react-player/twitch';
 
@@ -27,7 +27,6 @@ interface VideoProps {
   url: string;
   duration: number;
   progress: number;
-  onProgress: any;
   videoRef: ReactPlayer;
   controlKeys: boolean;
   playing: boolean;
@@ -37,7 +36,6 @@ const Video = ({
   url,
   duration,
   progress,
-  onProgress,
   videoRef,
   controlKeys,
   playing,
@@ -46,7 +44,6 @@ const Video = ({
   const [clickedMature, setClickedMature] = useState(false);
   const [muted, setMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [hover, setHover] = useState(false);
 
   const handleEnter = useCallback(
     (event) => {
@@ -84,15 +81,11 @@ const Video = ({
   const toggleMuted = () => {
     setMuted((isMuted) => !isMuted);
   };
-  
+
   return (
     <Spin spinning={!isLoading}>
-      <div
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        style={styles.playerWrapper}
-      >
-        {/* @ts-ignore*/}
+      <div style={styles.playerWrapper}>
+        {/* @ts-ignore */}
         <ReactPlayer
           onReady={() => setIsLoading(true)}
           style={styles.reactPlayer}
@@ -101,7 +94,6 @@ const Video = ({
           width="100%"
           playing={playing}
           muted={muted}
-          onProgress={onProgress}
           url={url}
         />
         <div
@@ -119,11 +111,11 @@ const Video = ({
             width: '100%',
             bottom: 0,
             position: 'absolute',
-            display: hover || !playing ? 'block' : 'none',
+            display: 'block',
             backgroundColor: 'rgba(0,0,0,.7)',
           }}
         >
-          <Slider
+          {/* <Slider
             style={{
               marginLeft: 8,
               marginRight: 8,
@@ -133,7 +125,7 @@ const Video = ({
             }}
             max={duration}
             value={progress}
-          />
+          /> */}
 
           <Row justify="space-between" style={{ marginLeft: 16, marginRight: 16, marginBottom: 8 }}>
             <Space size="middle">
@@ -147,7 +139,9 @@ const Video = ({
               ) : (
                 <SoundOutlined style={styles.icon} onClick={toggleMuted} />
               )}
-              <div style={{ fontSize: 12, color: 'white' }}>{`${progress} / ${duration}`}</div>
+              <div style={{ fontSize: 12, color: 'white' }}>{`${Math.round(
+                progress,
+              )} / ${duration}`}</div>
             </Space>
           </Row>
         </div>

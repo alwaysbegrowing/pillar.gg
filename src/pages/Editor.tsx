@@ -10,15 +10,9 @@ import VideoPlayer from '../components/VideoPlayer';
 import TimeSlider from '../components/TimeSlider/TimeSlider';
 import type { IndividualTimestamp } from '../services/hooks/api';
 import { useIntl } from 'umi';
+import { useTime } from '../services/hooks/playtime';
 
 const { Search } = Input;
-
-interface ProgressProps {
-  played: number;
-  playedSeconds: number;
-  loaded: number;
-  loadedSeconds: number;
-}
 
 const sendClips = async (videoId: string, clips: IndividualTimestamp[]) => {
   const data = { videoId, clips };
@@ -41,7 +35,7 @@ export default () => {
   const { thumbnail_url } = videoData || {};
   const videoRef = useRef<ReactPlayer>(null);
   const [playing, setPlaying] = useState<boolean>(false);
-  const [secondsPlayed, setSecondsPlayed] = useState<number>(0);
+  // const [secondsPlayed, setSecondsPlayed] = useState<number>(0);
   const [isCombineButtonDisabled, setIsCombineButtonDisabled] = useState<boolean>(false);
   const [selectedClipId, setSelectedClipId] = useState<string>('');
   const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId);
@@ -52,9 +46,10 @@ export default () => {
   const [showClipHandles, setShowClipHandles] = useState<boolean>(false);
   // used when user is changing start/end timestamps of a clip
   const clipLength = Math.round(endTime - startTime);
-  const clipTimePlayed = Math.round(secondsPlayed - startTime);
+  // const clipTimePlayed = Math.round(secondsPlayed - startTime);
   const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, clipLength]);
-  
+
+  const { setMsPlayed, playedSeconds } = useTime(playing, startTime);
   const showSuccessNotification = (successMessage: string) => {
     notification.success({
       message: formatMessage({
@@ -88,11 +83,11 @@ export default () => {
   const play = useCallback(
     (seekTime: number, clipId: string) => {
       seek(seekTime);
-      setSecondsPlayed(seekTime);
+      setMsPlayed(seekTime);
       setPlaying(true);
       setSelectedClipId(clipId);
     },
-    [seek, setSecondsPlayed, setPlaying, setSelectedClipId],
+    [seek, setPlaying, setSelectedClipId, setMsPlayed],
   );
 
   useEffect(() => {
@@ -115,7 +110,7 @@ export default () => {
 
   const { email } = userData;
 
-  const onChange = (event) => {
+  const onChange = (event: any) => {
     setClipFeedbackText(event.target.value);
   };
 
@@ -136,17 +131,6 @@ export default () => {
     setClipFeedbackText('');
 
     return resp.ok;
-  };
-
-  const onProgress = ({ playedSeconds }: ProgressProps) => {
-    setSecondsPlayed((seconds) => {
-      if (Math.abs(playedSeconds - seconds) > 5) return seconds;
-      if (playedSeconds > endTime) {
-        setPlaying(false);
-        return startTime;
-      }
-      return playedSeconds;
-    });
   };
 
   const combineClips = async () => {
@@ -171,18 +155,22 @@ export default () => {
   };
 
   const saveAdjustedClip = () => {
-    const clipToModify = clips.map(item => {
-      if(item.startTime === startTime && item.endTime === endTime && !isNaN(trimClipUpdateValues[0])) {
-        item.startTime = item.startTime + trimClipUpdateValues[0]
-        item.endTime = item.endTime - (clipLength - trimClipUpdateValues[1])
-        return item
-      } else{
-        return item
+    const clipToModify = clips.map((item) => {
+      if (
+        item.startTime === startTime &&
+        item.endTime === endTime &&
+        !isNaN(trimClipUpdateValues[0])
+      ) {
+        item.startTime = item.startTime + trimClipUpdateValues[0];
+        item.endTime = item.endTime - (clipLength - trimClipUpdateValues[1]);
+        return item;
+      } else {
+        return item;
       }
-     })
-    setClips(clipToModify)
-    setShowClipHandles(false)
-  }
+    });
+    setClips(clipToModify);
+    setShowClipHandles(false);
+  };
 
   return (
     <PageContainer
@@ -243,8 +231,8 @@ export default () => {
             videoRef={videoRef}
             playing={playing}
             setPlaying={setPlaying}
-            progress={clipTimePlayed}
-            onProgress={onProgress}
+            progress={playedSeconds}
+            onProgress={() => {}}
             controlKeys
             duration={clipLength}
             url={`https://twitch.tv/videos/${id}`}
@@ -255,13 +243,28 @@ export default () => {
             value={clipFeedbackText}
             enterButton={'Submit'}
             onSearch={onSubmitClipFeedback}
-            style={{paddingBottom: "1rem", paddingTop: "1rem"}}
+            style={{ paddingBottom: '1rem', paddingTop: '1rem' }}
           />
           <Row>
             <Col style={{ width: '100%' }}>
-                <TimeSlider trimClipUpdateValues={trimClipUpdateValues} setTrimClipUpdateValues={setTrimClipUpdateValues} showClipHandles={!showClipHandles} duration={clipLength} progress={clipTimePlayed} />
-                <Button style={{marginTop: "6rem", marginLeft: "35%", marginRight: "1%"}} onClick= {() => setShowClipHandles(!showClipHandles)}>{showClipHandles ? "Cancel" : "Adjust Clip"}</Button>
-              {showClipHandles ? <Button style={{marginRight: "1%"}} onClick={saveAdjustedClip}>Save</Button> : null } 
+              <TimeSlider
+                trimClipUpdateValues={trimClipUpdateValues}
+                setTrimClipUpdateValues={setTrimClipUpdateValues}
+                showClipHandles={!showClipHandles}
+                duration={clipLength}
+                progress={playedSeconds}
+              />
+              <Button
+                style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
+                onClick={() => setShowClipHandles(!showClipHandles)}
+              >
+                {showClipHandles ? 'Cancel' : 'Adjust Clip'}
+              </Button>
+              {showClipHandles ? (
+                <Button style={{ marginRight: '1%' }} onClick={saveAdjustedClip}>
+                  Save
+                </Button>
+              ) : null}
               {showClipHandles ? <Button>Preview</Button> : null}
             </Col>
           </Row>
