@@ -1,10 +1,10 @@
-import React, { Component } from 'react'
-import { Slider, Rail, Handles, Tracks } from '../Slider/src'
+import React, { Component, useState } from 'react'
+import { Slider, Rail, Handles, Tracks, Ticks } from '../Slider/src'
 import { SliderRail, Handle, Track } from './components' // example render components - source below
-import { ClipSliderRail, ClipHandle, ClipTrack } from './ClipComponents' // example render components - source below
+import { ClipSliderRail, ClipHandle, ClipTrack, ClipTick } from './ClipComponents' // example render components - source below
 import { Button, Row } from 'antd'
 
-const TimeSlider = ({showClipHandles}) => {
+const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHandles, duration, progress }) => {
 
   const onUpdate = update => {
     this.setState({ update })
@@ -13,23 +13,46 @@ const TimeSlider = ({showClipHandles}) => {
   const onChange = values => {
     this.setState({ values })
   }
+  const MINIMUM_CLIP_DURATION = 10
   const domain = [100, 500]
   const defaultValues = [150]
+
+  const [clipValues, setClipValues] = useState<number[]>();
+  const [clipUpdateValues, setClipUpdateValues] = useState<number[]>();
+  const [updatingClipDuration, setUpdatingClipDuration] = useState<number>();
 
   const sliderStyle = {
     position: 'relative',
     width: '100%',
     touchAction: 'none',
   }
+  const onClipChange = (values: number[]) => {
+    setClipValues(values);
+  }
+  
+  const convertToVodTimestamps = (values: number[]) => {
+    return
+  }
+  
+  const onClipUpdateValues = (values: number[]) => {
+    setClipUpdateValues(values)
+    setTrimClipUpdateValues(values)
+    setUpdatingClipDuration(values[1] - values[0])
+  }
 
+  const formatTicks = (d:number) => {
+    if(d == 0) return `| 00:00`
+    return `| 00:${d}`
+  }
+  // console.log(clips, setClips, selectedClipId, selectedClipStartTime, selectedClipEndTime)
   return (
     <div>
       {/* top line slider. SeekingSlider */}
       <div style={{display: "flex"}}>
         <Slider
           rootStyle={sliderStyle}
-          domain={[0, 100]} // [min, max]
-          values={[{value: 30, num: 1 }]} // slider values
+          domain={[0, duration]} // [min, max]
+          values={[{value: progress, num: 1 }]} // slider values
         >
           <Rail>
             {({ getRailProps }) => <SliderRail getRailProps={getRailProps} />}
@@ -68,12 +91,15 @@ const TimeSlider = ({showClipHandles}) => {
       </div>
        {/*ClipSlider */}
       <div style={{display: "flex"}}>
+        {/* @ts-ignore*/}
         <Slider
           rootStyle={sliderStyle}
           mode={2}
-          domain={[0, 100]} // [min, max]
-          values={[{value: 10, num: 1 }, {value: 80, num: 1}]} // slider values
+          domain={[0, duration]} // [min, max]
+          values={[{value: 0, num: 1 }, {value: duration, num: 1}]} // slider values
           disabled={showClipHandles}
+          onChange={onClipChange}
+          onUpdate={onClipUpdateValues}
         >
           <Rail>
             {({ getRailProps }) => <ClipSliderRail getRailProps={getRailProps} />}
@@ -104,12 +130,22 @@ const TimeSlider = ({showClipHandles}) => {
                     target={target}
                     getTrackProps={getTrackProps}
                     disabled={showClipHandles}
+                    updatingClipDuration={updatingClipDuration}
+                    clipLength={duration}
                   />
                 ))}
               </div>
             )}
           </Tracks>
-
+          <Ticks count={4}>
+            {({ ticks }) => (
+              <div className="slider-ticks">
+                {ticks.map(tick => (
+                  <ClipTick key={tick.id} tick={tick} count={ticks.length} format={formatTicks} />
+                ))}
+              </div>
+            )}
+          </Ticks>
         </Slider>
       </div>
     </div>

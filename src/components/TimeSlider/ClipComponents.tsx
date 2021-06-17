@@ -8,7 +8,7 @@ const railOuterStyle = {
   position: 'absolute',
   width: '100%',
   height: "5rem",
-  backgroundColor: "gray",
+  backgroundColor: "#8c8c8c",
   transform: 'translate(0%, 0%)',
   borderRadius: 7,
   cursor: 'pointer',
@@ -21,9 +21,10 @@ const railInnerStyle = {
   width: '100%',
   height: "1rem",
   transform: 'translate(0%, -50%)',
-  borderRadius: 7,
+  borderTopLeftRadius: 7,
+  borderTopRightRadius: 7,
   pointerEvents: 'none',
-  backgroundColor: 'rgb(155,155,155)',
+  backgroundColor: '#bfbfbf',
   zIndex: 0
 }
 
@@ -55,11 +56,12 @@ export function ClipHandle({
         style={{
           left: `${percent}%`,
           position: 'absolute',
-          transform: 'translate(-50%, -50%)',
+          transform: 'translate(-50%, 30%)',
+          // borderRadius: 7,
           WebkitTapHighlightColor: 'rgba(0,0,0,0)',
           zIndex: 5,
-          width: 28,
-          height: 150,
+          width: '.7rem',
+          height: '3.5rem',
           cursor: 'pointer',
           backgroundColor: 'none',
           display: disabled? 'none' : 'block'
@@ -74,16 +76,17 @@ export function ClipHandle({
         style={{
           left: `${percent}%`,
           position: 'absolute',
-          transform: 'translate(-50%, 0%)',
+          transform: 'translate(-50%, 30%)',
+          borderRadius: 7,
           zIndex: 1,
-          width: 8,
-          height: 150,
+          width: '.7rem',
+          height: '3.5rem',
           // borderRadius: '50%',
-          boxShadow: '1px 1px 1px 1px rgba(0, 0, 0, 0.3)',
-          backgroundColor: '#b28900',
+          // boxShadow: '1px 1px 1px 1px rgba(0, 0, 0, 0.3)',
+          backgroundColor: '#ffec3d',
           display: disabled? 'none' : 'block'
         }}
-      />
+      ><div style={{height: "1rem", width: ".2rem", backgroundColor: "#d4b106", position: 'relative', top: "40%", borderRadius: 7, margin: "0 auto" }}/></div>
     </Fragment>
   )
 }
@@ -106,21 +109,20 @@ ClipHandle.defaultProps = {
 // *******************************************************
 // TRACK COMPONENT
 // *******************************************************
-export function ClipTrack({ source, target, getTrackProps, disabled }) {
+export function ClipTrack({ source, target, getTrackProps, updatingClipDuration, clipLength, disabled }) {
   return (
     <div
       style={{
         position: 'absolute',
-        transform: 'translate(0%, 0%)',
-        height: 80,
+        transform: 'translate(0%, 19%)',
+        height: '4rem',
         zIndex: 0,
-        backgroundColor: '#b28900',
+        backgroundColor: '#ffec3d',
         opacity: 0.5,
-        border: '4px solid rgb(178, 137, 0)',
-        border: '4px solid rgba(178, 137, 0, 1)',
-        // borderRadius: 7,
-        // borderStyle: 'solid',
-        // borderWidth: 4,
+        borderColor: '#fadb14',
+        borderRadius: 7,
+        borderStyle: 'solid',
+        borderWidth: '.5rem',
         // borderColor: '#ffc400',
         cursor: 'pointer',
         left: `${source.percent}%`,
@@ -128,7 +130,17 @@ export function ClipTrack({ source, target, getTrackProps, disabled }) {
         display: disabled? 'none' : 'block'
       }}
       {...getTrackProps()}
-    ><div style={{textAlign: "center", transform: "translate(0, 100%)", color: "white", fontWeight: "bold", zIndex: 2}}>100s</div></div>
+    >
+      <div style={{
+        textAlign: "center", 
+        transform: "translate(0, 70%)", 
+        color: "black", 
+        fontWeight: "bold", 
+        zIndex: 2
+      }}>
+        {updatingClipDuration !== undefined && !isNaN(updatingClipDuration) ? Math.floor(updatingClipDuration) + 's' : clipLength + 's' }
+      </div>
+    </div>
   )
 }
 
@@ -163,9 +175,10 @@ export function ClipTick({ tick, count, format }) {
           marginTop: 14,
           width: 1,
           height: 5,
-          backgroundColor: 'rgb(200,200,200)',
+          backgroundColor: 'rgb(200,200,200, 0)',
           left: `${tick.percent}%`,
-          zIndex: 10
+          transform: 'translate(0%, -200%)',
+          zIndex: 3
         }}
       />
       <div
@@ -174,10 +187,12 @@ export function ClipTick({ tick, count, format }) {
           marginTop: 22,
           fontSize: 10,
           textAlign: 'center',
-          marginLeft: `${-(100 / count) / 2}%`,
-          width: `${100 / count}%`,
+          color: '#f0f0f0',
+          // marginLeft: `${-(80 / count) / 2}%`,
+          // width: `${100 / count-9}%`,
           left: `${tick.percent}%`,
-          zIndex: 10
+          transform: 'translate(0%, -200%)',
+          zIndex: 3
         }}
       >
         {format(tick.value)}
