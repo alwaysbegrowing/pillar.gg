@@ -49,8 +49,12 @@ export default () => {
   const [confirmLoading, setConfirmLoading] = React.useState(false);
   const { formatMessage } = useIntl();
   const [clipFeedbackText, setClipFeedbackText] = useState('');
-  const [showClipHandles, setShowClipHandles] = useState<boolean>(true);
-
+  const [showClipHandles, setShowClipHandles] = useState<boolean>(false);
+  // used when user is changing start/end timestamps of a clip
+  const clipLength = Math.round(endTime - startTime);
+  const clipTimePlayed = Math.round(secondsPlayed - startTime);
+  const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, clipLength]);
+  
   const showSuccessNotification = (successMessage: string) => {
     notification.success({
       message: formatMessage({
@@ -145,9 +149,6 @@ export default () => {
     });
   };
 
-  const clipLength = Math.round(endTime - startTime);
-  const clipTimePlayed = Math.round(secondsPlayed - startTime);
-
   const combineClips = async () => {
     const successMessage = formatMessage({ id: 'pages.editor.combineClips.successMessage' });
     if (clips) {
@@ -168,6 +169,27 @@ export default () => {
       }
     }
   };
+
+  const saveAdjustedClip = () => {
+
+    console.log(clips)
+    const clipToModify = clips.map(item => {
+      if(item.startTime === startTime && item.endTime === endTime && !isNaN(trimClipUpdateValues[0])) {
+        item.startTime = item.startTime + trimClipUpdateValues[0]
+        item.endTime = item.endTime - (clipLength - trimClipUpdateValues[1])
+        return item
+      } else{
+        return item
+      }
+
+     })
+
+    console.log(clipToModify)
+    // setClips((prev) => [...prev, ...clipsDefaultChecked]);
+    setClips(clipToModify)
+    setShowClipHandles(false)
+    // console.log(startTime)
+  }
 
   return (
     <PageContainer
@@ -244,9 +266,10 @@ export default () => {
           />
           <Row>
             <Col style={{ width: '100%' }}>
-                <TimeSlider showClipHandles={showClipHandles}/>
-                <Button style={{marginTop: "7rem", marginLeft: "40%"}} onClick= {() => setShowClipHandles(!showClipHandles)}>{showClipHandles ? "Adjust Clip" : "Cancel"}</Button>
-              {showClipHandles ? null : <div> <Button>Save</Button> <Button>Preview</Button> <Button>Export To Mobile</Button></div> }
+                <TimeSlider trimClipUpdateValues={trimClipUpdateValues} setTrimClipUpdateValues={setTrimClipUpdateValues} showClipHandles={!showClipHandles} duration={clipLength} progress={clipTimePlayed} />
+                <Button style={{marginTop: "6rem", marginLeft: "35%", marginRight: "1%"}} onClick= {() => setShowClipHandles(!showClipHandles)}>{showClipHandles ? "Cancel" : "Adjust Clip"}</Button>
+              {showClipHandles ? <Button style={{marginRight: "1%"}} onClick={saveAdjustedClip}>Save</Button> : null } 
+              {showClipHandles ? <Button>Preview</Button> : null}
             </Col>
           </Row>
         </Col>
