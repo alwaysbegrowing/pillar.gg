@@ -171,8 +171,6 @@ export default () => {
   };
 
   const saveAdjustedClip = () => {
-
-    console.log(clips)
     const clipToModify = clips.map(item => {
       if(item.startTime === startTime && item.endTime === endTime && !isNaN(trimClipUpdateValues[0])) {
         item.startTime = item.startTime + trimClipUpdateValues[0]
@@ -181,14 +179,9 @@ export default () => {
       } else{
         return item
       }
-
      })
-
-    console.log(clipToModify)
-    // setClips((prev) => [...prev, ...clipsDefaultChecked]);
     setClips(clipToModify)
     setShowClipHandles(false)
-    // console.log(startTime)
   }
 
   return (
