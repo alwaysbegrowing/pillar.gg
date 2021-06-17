@@ -49,7 +49,7 @@ export default () => {
   // const clipTimePlayed = Math.round(secondsPlayed - startTime);
   const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, clipLength]);
 
-  const { setMsPlayed, playedSeconds } = useTime(playing, startTime);
+  const { setSecPlayed, playedSeconds } = useTime(playing, startTime);
   const showSuccessNotification = (successMessage: string) => {
     notification.success({
       message: formatMessage({
@@ -58,6 +58,8 @@ export default () => {
       description: successMessage,
     });
   };
+
+
 
   const showPopconfirm = () => {
     setVisible(true);
@@ -80,14 +82,24 @@ export default () => {
     [videoRef],
   );
 
+
+  const setPlaytime = (playtime: number) => {
+    const newTime = startTime + playtime
+    setSecPlayed(newTime)
+    seek(newTime)
+    
+    setPlaying(true)
+  }
+
+
   const play = useCallback(
     (seekTime: number, clipId: string) => {
       seek(seekTime);
-      setMsPlayed(seekTime);
+      setSecPlayed(seekTime);
       setPlaying(true);
       setSelectedClipId(clipId);
     },
-    [seek, setPlaying, setSelectedClipId, setMsPlayed],
+    [seek, setPlaying, setSelectedClipId, setSecPlayed],
   );
 
   useEffect(() => {
@@ -253,6 +265,8 @@ export default () => {
                 showClipHandles={!showClipHandles}
                 duration={clipLength}
                 progress={playedSeconds}
+                setPlaytime={setPlaytime}
+                setPlaying={setPlaying}
               />
               <Button
                 style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}

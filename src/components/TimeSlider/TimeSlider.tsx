@@ -3,9 +3,8 @@ import { Slider, Rail, Handles, Tracks, Ticks } from '../Slider/src'
 // import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider'
 import { SliderRail, Handle, Track } from './components' // example render components - source below
 import { ClipSliderRail, ClipHandle, ClipTrack, ClipTick } from './ClipComponents' // example render components - source below
-import { Button, Row } from 'antd'
 
-const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHandles, duration, progress }) => {
+const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHandles, duration, progress, setPlaying, setPlaytime }) => {
 
   const onUpdate = update => {
     this.setState({ update })
@@ -50,6 +49,9 @@ const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHand
           rootStyle={sliderStyle}
           domain={[0, duration]} // [min, max]
           values={[progress]} // slider values
+          onSlideStart={() => setPlaying(false)}
+          onSlideEnd={values => setPlaytime(values[0])}
+
         >
           <Rail>
             {({ getRailProps }) => <SliderRail getRailProps={getRailProps} />}
