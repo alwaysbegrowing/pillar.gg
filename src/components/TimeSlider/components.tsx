@@ -45,11 +45,10 @@ SliderRail.propTypes = {
 // *******************************************************
 export function Handle({
                          domain: [min, max],
-                         handle: { id, value, percent, metadata },
+                         handle: { id, value, percent },
                          disabled,
                          getHandleProps,
                        }) {
-  // console.log(metadata.num)
   return (
     <Fragment>
       <div
@@ -93,7 +92,6 @@ Handle.propTypes = {
   handle: PropTypes.shape({
     id: PropTypes.string.isRequired,
     value: PropTypes.number.isRequired,
-    metadata: PropTypes.object.isRequired,
     percent: PropTypes.number.isRequired,
   }).isRequired,
   getHandleProps: PropTypes.func.isRequired,

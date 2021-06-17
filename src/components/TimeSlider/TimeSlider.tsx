@@ -1,5 +1,6 @@
 import React, { Component, useState } from 'react'
 import { Slider, Rail, Handles, Tracks, Ticks } from '../Slider/src'
+// import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider'
 import { SliderRail, Handle, Track } from './components' // example render components - source below
 import { ClipSliderRail, ClipHandle, ClipTrack, ClipTick } from './ClipComponents' // example render components - source below
 import { Button, Row } from 'antd'
@@ -30,10 +31,6 @@ const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHand
     setClipValues(values);
   }
   
-  const convertToVodTimestamps = (values: number[]) => {
-    return
-  }
-  
   const onClipUpdateValues = (values: number[]) => {
     setClipUpdateValues(values)
     setTrimClipUpdateValues(values)
@@ -52,7 +49,7 @@ const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHand
         <Slider
           rootStyle={sliderStyle}
           domain={[0, duration]} // [min, max]
-          values={[{value: progress, num: 1 }]} // slider values
+          values={[progress]} // slider values
         >
           <Rail>
             {({ getRailProps }) => <SliderRail getRailProps={getRailProps} />}
@@ -64,7 +61,6 @@ const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHand
                   <Handle
                     key={handle.id}
                     handle={handle}
-                    metadata={handle.metadata}
                     domain={domain}
                     getHandleProps={getHandleProps}
                   />
@@ -111,7 +107,6 @@ const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHand
                   <ClipHandle
                     key={handle.id}
                     handle={handle}
-                    metadata={handle.metadata}
                     domain={domain}
                     getHandleProps={getHandleProps}
                     disabled={showClipHandles}
