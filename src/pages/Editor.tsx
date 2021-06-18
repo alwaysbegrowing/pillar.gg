@@ -51,7 +51,7 @@ export default () => {
   const [isReady, setIsReady] = useState(false);
 
   const isPlaying = playing && isReady;
-  const { setSecPlayed, playedSeconds } = useTime(isPlaying, startTime);
+  const { setSecPlayed, playedSeconds, isClipOver } = useTime(isPlaying, startTime, endTime);
   const showSuccessNotification = (successMessage: string) => {
     notification.success({
       message: formatMessage({
@@ -60,6 +60,12 @@ export default () => {
       description: successMessage,
     });
   };
+
+  useEffect(() => {
+    if (isClipOver) {
+      setPlaying(false)
+    }
+  }, [setPlaying, isClipOver])
 
   const showPopconfirm = () => {
     setVisible(true);
@@ -87,6 +93,8 @@ export default () => {
     },
     [videoRef],
   );
+
+  
 
 
   const setPlaytime = (playtime: number) => {
