@@ -75,8 +75,10 @@ export default () => {
 
   const seek = useCallback(
     (seekTime: number) => {
+      console.log({seek: videoRef.current?.seekTo})
       if (videoRef.current?.seekTo) {
-        videoRef.current.seekTo(seekTime);
+        const b = videoRef.current.seekTo(seekTime);
+        console.log({b, seekTime})
       }
     },
     [videoRef],
@@ -85,9 +87,9 @@ export default () => {
   const setPlaytime = (playtime: number) => {
     const newTime = startTime + playtime;
     setSecPlayed(newTime);
+    setPlaying(true);
     seek(newTime);
 
-    setPlaying(true);
   };
 
   const play = useCallback(
@@ -243,7 +245,6 @@ export default () => {
             setPlaying={setPlaying}
             progress={playedSeconds}
             onProgress={() => {}}
-            controlKeys
             duration={clipLength}
             onReady={() => setIsReady(true)}
             url={`https://twitch.tv/videos/${id}`}
