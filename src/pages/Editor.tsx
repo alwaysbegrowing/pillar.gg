@@ -48,8 +48,10 @@ export default () => {
   const clipLength = Math.round(endTime - startTime);
   // const clipTimePlayed = Math.round(secondsPlayed - startTime);
   const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, clipLength]);
+  const [isReady, setIsReady] = useState(false);
 
-  const { setSecPlayed, playedSeconds } = useTime(playing, startTime);
+  const isPlaying = playing && isReady;
+  const { setSecPlayed, playedSeconds } = useTime(isPlaying, startTime);
   const showSuccessNotification = (successMessage: string) => {
     notification.success({
       message: formatMessage({
@@ -58,8 +60,6 @@ export default () => {
       description: successMessage,
     });
   };
-
-
 
   const showPopconfirm = () => {
     setVisible(true);
@@ -82,15 +82,13 @@ export default () => {
     [videoRef],
   );
 
-
   const setPlaytime = (playtime: number) => {
-    const newTime = startTime + playtime
-    setSecPlayed(newTime)
-    seek(newTime)
-    
-    setPlaying(true)
-  }
+    const newTime = startTime + playtime;
+    setSecPlayed(newTime);
+    seek(newTime);
 
+    setPlaying(true);
+  };
 
   const play = useCallback(
     (seekTime: number, clipId: string) => {
@@ -120,7 +118,7 @@ export default () => {
   if (isError) return formatMessage({ id: 'pages.editor.error' });
   if (!data) return formatMessage({ id: 'pages.editor.noData' });
 
-  const { email } = userData;
+  const { email } = userData || {};
 
   const onChange = (event: any) => {
     setClipFeedbackText(event.target.value);
@@ -247,6 +245,7 @@ export default () => {
             onProgress={() => {}}
             controlKeys
             duration={clipLength}
+            onReady={() => setIsReady(true)}
             url={`https://twitch.tv/videos/${id}`}
           />
           <Search

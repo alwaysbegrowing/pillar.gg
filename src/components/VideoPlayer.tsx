@@ -31,6 +31,7 @@ interface VideoProps {
   controlKeys: boolean;
   playing: boolean;
   setPlaying: React.Dispatch<React.SetStateAction<boolean>>;
+  onReady: any;
 }
 const Video = ({
   url,
@@ -40,10 +41,11 @@ const Video = ({
   controlKeys,
   playing,
   setPlaying,
+  onReady,
 }: VideoProps) => {
   const [clickedMature, setClickedMature] = useState(false);
   const [muted, setMuted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleEnter = useCallback(
     (event) => {
@@ -62,7 +64,7 @@ const Video = ({
   }, [controlKeys, handleEnter]);
 
   useEffect(() => {
-    setIsLoading(false);
+    setIsLoading(true);
   }, [url]);
 
   // Silly hack to see if the iframe has been clicked into to accept the mature
@@ -82,12 +84,17 @@ const Video = ({
     setMuted((isMuted) => !isMuted);
   };
 
+  const onPlayReady = () => {
+    onReady();
+    setIsLoading(false);
+  };
+
   return (
-    <Spin spinning={!isLoading}>
+    <Spin spinning={isLoading}>
       <div style={styles.playerWrapper}>
         {/* @ts-ignore */}
         <ReactPlayer
-          onReady={() => setIsLoading(true)}
+          onReady={onPlayReady}
           style={styles.reactPlayer}
           ref={videoRef}
           height="100%"
