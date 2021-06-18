@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 const msToSec = (ms: number) => ms / 1000;
 export const useTime = (isPlaying: boolean, startTime: number, endTime: number) => {
-  const intervalInMs = 14;
+  const intervalInMs = 300;
   const [secPlayed, setSecPlayed] = useState(0);
 
   const playedSeconds = secPlayed - startTime;
@@ -20,6 +20,6 @@ export const useTime = (isPlaying: boolean, startTime: number, endTime: number) 
     };
   }, [isPlaying]);
 
-  const isClipOver = secPlayed >= endTime
+  const isClipOver = secPlayed >= endTime;
   return { secPlayed, setSecPlayed, playedSeconds, isClipOver };
 };
