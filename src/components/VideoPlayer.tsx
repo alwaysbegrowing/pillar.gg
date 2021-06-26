@@ -32,6 +32,9 @@ interface VideoProps {
   playing: boolean;
   setPlaying: React.Dispatch<React.SetStateAction<boolean>>;
   onReady: any;
+  onPlay: any;
+  onBuffer: any;
+  selectedClipId: string;
 }
 const Video = ({
   url,
@@ -41,6 +44,8 @@ const Video = ({
   playing,
   setPlaying,
   onReady,
+  selectedClipId
+  
 }: VideoProps) => {
   const [muted, setMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -67,6 +72,7 @@ const Video = ({
       <div style={styles.playerWrapper}>
         {/* @ts-ignore */}
         <ReactPlayer
+        key={selectedClipId}
           onReady={onPlayReady}
           style={styles.reactPlayer}
           ref={videoRef}

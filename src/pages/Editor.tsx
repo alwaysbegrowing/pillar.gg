@@ -64,9 +64,9 @@ export default () => {
 
   useEffect(() => {
     if (isClipOver) {
-      setPlaying(false)
+      setPlaying(false);
     }
-  }, [setPlaying, isClipOver])
+  }, [setPlaying, isClipOver]);
 
   const showPopconfirm = () => {
     setVisible(true);
@@ -82,12 +82,12 @@ export default () => {
 
   const seek = useCallback(
     async (seekTime: number) => {
-      setPlaying(true)
+      setPlaying(true);
 
       // this pointless line is to hack a fix twitch bug where you can't seek while paused
       // this is the same reason we are calling setPlaying before seeking
       // https://github.com/cookpete/react-player/issues/924
-      await new Promise(resolve => setTimeout(resolve, 100))
+      await new Promise((resolve) => setTimeout(resolve, 1));
       if (videoRef.current?.seekTo) {
         videoRef.current.seekTo(seekTime);
       }
@@ -95,18 +95,15 @@ export default () => {
     [videoRef],
   );
 
-  
-
-
   const setPlaytime = (playtime: number) => {
     const newTime = startTime + playtime;
     setSecPlayed(newTime);
     seek(newTime);
-
   };
 
   const play = useCallback(
     (seekTime: number, clipId: string) => {
+      setIsReady(false)
       seek(seekTime);
       setSecPlayed(seekTime);
       setSelectedClipId(clipId);
@@ -262,6 +259,7 @@ export default () => {
             onProgress={() => {}}
             duration={clipLength}
             onReady={() => setIsReady(true)}
+            selectedClipId={selectedClipId}
             url={`https://twitch.tv/videos/${id}`}
           />
           <Search
