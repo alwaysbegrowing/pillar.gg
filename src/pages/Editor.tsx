@@ -86,7 +86,7 @@ export default () => {
       // this pointless line is to hack a fix twitch bug where you can't seek while paused
       // this is the same reason we are calling setPlaying before seeking
       // https://github.com/cookpete/react-player/issues/924
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 1));
       if (videoRef.current?.seekTo) {
         videoRef.current.seekTo(seekTime);
       }
