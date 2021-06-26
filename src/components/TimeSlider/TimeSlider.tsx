@@ -49,7 +49,9 @@ const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHand
           rootStyle={sliderStyle}
           domain={[0, duration]} // [min, max]
           values={[progress]} // slider values
-          onSlideStart={() => setPlaying(false)}
+          onSlideStart={() => {
+            setPlaying(false)
+          }}
           onSlideEnd={values => setPlaytime(values[0])}
 
         >
