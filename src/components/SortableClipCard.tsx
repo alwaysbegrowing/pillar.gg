@@ -88,7 +88,7 @@ export function SortableClipCard({
       <CardNumber />
       <div>
         <List.Item.Meta
-          avatar={<img alt="Twitch Thumbnail" src={thumbnail} />}
+          avatar={<img alt="Twitch Thumbnail" src={thumbnail} style={{width: "12rem", height: "6.66rem"}}/>}
           title={
             <div style={{ display: 'flex', fontSize: 14 }}>
               {toTime(timestamp.startTime)} <Divider type="vertical" /> {toTime(timestamp.endTime)}

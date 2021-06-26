@@ -7,16 +7,24 @@ const formatKey = (timestamp: IndividualTimestamp) => {
   return `${timestamp.startTime}-${timestamp.endTime}`;
 };
 
+const formatClipId = (timestamp: IndividualTimestamp, videoId: string) => {
+  return `${videoId}-${timestamp.startTime}-${timestamp.endTime}`;
+};
+
 const App = ({
   thumbnail,
   play,
   selectedClipId,
   clipInfo,
+  videoId,
+  thumbnails
 }: {
   selectedClipId: string;
   play: (timestamp: number, clipId: string) => any;
   thumbnail: string;
   clipInfo: { clips: IndividualTimestamp[]; setClips: any };
+  videoId: string;
+  thumbnails: any[];
 }) => {
   const { clips, setClips } = clipInfo;
 
@@ -54,7 +62,8 @@ const App = ({
                 verifiedTwitch={timestamp.verifiedTwitch}
                 id={timeRange}
                 i={i}
-                thumbnail={thumbnail}
+                /* TODO potential bug: if s3 upload failed and image does not exist in thumbnails array, this will probably error out */
+                thumbnail={thumbnails === undefined ? thumbnail : thumbnails[formatClipId(timestamp, videoId)] }
                 selectedClipId={selectedClipId}
                 setClips={setClips}
               />

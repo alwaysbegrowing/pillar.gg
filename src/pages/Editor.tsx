@@ -44,6 +44,7 @@ export default () => {
   const { formatMessage } = useIntl();
   const [clipFeedbackText, setClipFeedbackText] = useState('');
   const [showClipHandles, setShowClipHandles] = useState<boolean>(false);
+  const [thumbnailData, setThumbnailData] = useState<any[]>();
   // used when user is changing start/end timestamps of a clip
   const clipLength = Math.round(endTime - startTime);
   // const clipTimePlayed = Math.round(secondsPlayed - startTime);
@@ -125,6 +126,9 @@ export default () => {
       }));
       setClips((prev) => [...prev, ...append]);
     }
+    if(data?.thumbnails) {
+      setThumbnailData(data.thumbnails)
+    }
   }, [data]);
 
   if (isLoading) return formatMessage({ id: 'pages.editor.loading' });
@@ -178,7 +182,7 @@ export default () => {
   };
 
   const saveAdjustedClip = () => {
-    const clipToModify = clips.map((item) => {
+    const clipToModify = clips.map((item: { startTime: number; endTime: number; }) => {
       if (
         item.startTime === startTime &&
         item.endTime === endTime &&
@@ -301,6 +305,8 @@ export default () => {
               selectedClipId={selectedClipId}
               play={play}
               thumbnail={thumbnail}
+              videoId={id}
+              thumbnails={thumbnailData}
             />
           ) : (
             <Empty
