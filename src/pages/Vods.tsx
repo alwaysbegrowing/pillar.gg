@@ -5,6 +5,15 @@ import { useVideos } from '../services/hooks/api';
 import VodCard from '../components/VodCard';
 import SelectUser from '../components/SelectUser';
 
+const shouldRenderExtra = () => {
+  const { NODE_ENV } = process.env;
+  const code = new URLSearchParams(window.location.search).get('debug') || false;
+  if (NODE_ENV === 'development' || code === 'true') {
+    return <SelectUser />;
+  }
+  return null;
+};
+
 const Videos = () => {
   const { data: videos, isLoading, isError } = useVideos();
 
@@ -12,7 +21,7 @@ const Videos = () => {
   if (isError) return 'error';
 
   return (
-    <PageContainer extra={<SelectUser />}>
+    <PageContainer extra={shouldRenderExtra()}>
       <List
         itemLayout="vertical"
         size="large"
