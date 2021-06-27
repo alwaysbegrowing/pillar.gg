@@ -75,6 +75,7 @@ export interface IndividualTimestamp {
   endTime: number;
   selected?: boolean;
   verifiedTwitch?: boolean;
+  id: string;
 }
 
 interface Algorithm {
