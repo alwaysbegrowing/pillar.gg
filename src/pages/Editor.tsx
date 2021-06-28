@@ -24,7 +24,10 @@ const sendClips = async (videoId: string, clips: IndividualTimestamp[]) => {
   return resp.ok;
 };
 
-const getStartEndTimeFromClipId = (clipId: string): number[] => { let arr = clipId.split('-').map(Number); return [arr[1], arr[2]]}
+const getStartEndTimeFromClipId = (clipId: string): number[] => {
+  let arr = clipId.split('-').map(Number);
+  return [arr[1], arr[2]];
+};
 
 export default () => {
   const { id: videoId } = useParams<{ id: string }>();
@@ -52,7 +55,10 @@ export default () => {
   const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, clipLength]);
   const [isReady, setIsReady] = useState(false);
 
-  const getClipById = (clipId: string): IndividualTimestamp =>  { let clip = clips.filter(clip => clip['id'] === clipId); return clip[0];}
+  const getClipById = (clipId: string): IndividualTimestamp => {
+    let clip = clips.filter((clip) => clip['id'] === clipId);
+    return clip[0];
+  };
 
   const isPlaying = playing && isReady;
   const { setSecPlayed, playedSeconds, isClipOver } = useTime(isPlaying, startTime, endTime);
@@ -64,7 +70,6 @@ export default () => {
       description: successMessage,
     });
   };
-
 
   useEffect(() => {
     if (isClipOver) {
@@ -86,13 +91,15 @@ export default () => {
 
   const seek = useCallback(
     async (seekTime: number) => {
+      console.log({ seekTime });
       setPlaying(true);
 
       // this pointless line is to hack a fix twitch bug where you can't seek while paused
       // this is the same reason we are calling setPlaying before seeking
       // https://github.com/cookpete/react-player/issues/924
-      await new Promise((resolve) => setTimeout(resolve, 1));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       if (videoRef.current?.seekTo) {
+        console.log({ seek: 's' });
         videoRef.current.seekTo(seekTime);
       }
     },
@@ -107,7 +114,7 @@ export default () => {
 
   const play = useCallback(
     (seekTime: number, clipId: string) => {
-      setIsReady(false)
+      setIsReady(false);
       seek(seekTime);
       setSecPlayed(seekTime);
       setSelectedClipId(clipId);
@@ -127,8 +134,8 @@ export default () => {
       }));
       setClips((prev) => [...prev, ...append]);
     }
-    if(data?.thumbnails) {
-      setThumbnailData(data.thumbnails)
+    if (data?.thumbnails) {
+      setThumbnailData(data.thumbnails);
     }
   }, [data]);
 
@@ -183,7 +190,7 @@ export default () => {
   };
 
   const saveAdjustedClip = () => {
-    const clipToModify = clips.map((item: { startTime: number; endTime: number; }) => {
+    const clipToModify = clips.map((item: { startTime: number; endTime: number }) => {
       if (
         item.startTime === startTime &&
         item.endTime === endTime &&
@@ -199,7 +206,9 @@ export default () => {
     setClips(clipToModify);
     setShowClipHandles(false);
   };
-  const seekToStartTime = () => {seek(startTime)}
+  const seekToStartTime = () => {
+    setPlaytime(0);
+  };
   return (
     <PageContainer
       content={formatMessage({
