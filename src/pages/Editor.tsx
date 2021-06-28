@@ -24,14 +24,14 @@ const sendClips = async (videoId: string, clips: IndividualTimestamp[]) => {
   return resp.ok;
 };
 
-const getStartEndTimeFromClipId = (clipId: string): number[] => clipId.split('-').map(Number);
+const getStartEndTimeFromClipId = (clipId: string): number[] => { let arr = clipId.split('-').map(Number); return [arr[1], arr[2]]}
 
 export default () => {
-  const { id } = useParams<{ id: string }>();
+  const { id: videoId } = useParams<{ id: string }>();
   const { data: userData } = useUser();
-  const { data, isLoading, isError } = useClips(id);
+  const { data, isLoading, isError } = useClips(videoId);
   const [clips, setClips] = useState<IndividualTimestamp[] | []>([]);
-  const { data: videoData } = useVideo(id);
+  const { data: videoData } = useVideo(videoId);
   const { thumbnail_url } = videoData || {};
   const videoRef = useRef<ReactPlayer>(null);
   const [playing, setPlaying] = useState<boolean>(false);
@@ -45,11 +45,14 @@ export default () => {
   const [clipFeedbackText, setClipFeedbackText] = useState('');
   const [showClipHandles, setShowClipHandles] = useState<boolean>(false);
   const [thumbnailData, setThumbnailData] = useState<any[]>();
+
   // used when user is changing start/end timestamps of a clip
   const clipLength = Math.round(endTime - startTime);
   // const clipTimePlayed = Math.round(secondsPlayed - startTime);
   const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, clipLength]);
   const [isReady, setIsReady] = useState(false);
+
+  const getClipById = (clipId: string): IndividualTimestamp =>  { let clip = clips.filter(clip => clip['id'] === clipId); return clip[0];}
 
   const isPlaying = playing && isReady;
   const { setSecPlayed, playedSeconds, isClipOver } = useTime(isPlaying, startTime, endTime);
@@ -61,6 +64,7 @@ export default () => {
       description: successMessage,
     });
   };
+
 
   useEffect(() => {
     if (isClipOver) {
@@ -143,7 +147,7 @@ export default () => {
     const resp = await fetch('/api/submitClipFeedback', {
       method: 'POST',
       body: JSON.stringify({
-        videoId: id,
+        videoId: videoId,
         feedbackText: clipFeedbackText,
         clip: { startTime: clipData[0], endTime: clipData[1] },
       }),
@@ -163,7 +167,7 @@ export default () => {
       const selectedClips = clips.filter((clip) => clip.selected);
       setIsCombineButtonDisabled(true);
       setConfirmLoading(true);
-      const success = await sendClips(id, selectedClips);
+      const success = await sendClips(videoId, selectedClips);
       setConfirmLoading(false);
       setVisible(false);
       if (success) {
@@ -260,7 +264,7 @@ export default () => {
             duration={clipLength}
             onReady={() => setIsReady(true)}
             selectedClipId={selectedClipId}
-            url={`https://twitch.tv/videos/${id}`}
+            url={`https://twitch.tv/videos/${videoId}`}
           />
           <Search
             placeholder={'This clip was good/ok/bad because...'}
@@ -303,7 +307,7 @@ export default () => {
               selectedClipId={selectedClipId}
               play={play}
               thumbnail={thumbnail}
-              videoId={id}
+              videoId={videoId}
               thumbnails={thumbnailData}
             />
           ) : (

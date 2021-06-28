@@ -3,14 +3,6 @@ import React, { useEffect } from 'react';
 import type { IndividualTimestamp } from '../services/hooks/api';
 import { SortableClipCard } from './SortableClipCard';
 
-const formatKey = (timestamp: IndividualTimestamp) => {
-  return `${timestamp.startTime}-${timestamp.endTime}`;
-};
-
-const formatClipId = (timestamp: IndividualTimestamp, videoId: string) => {
-  return `${videoId}-${timestamp.startTime}-${timestamp.endTime}`;
-};
-
 const App = ({
   thumbnail,
   play,
@@ -30,9 +22,8 @@ const App = ({
 
   useEffect(() => {
     if (clips) {
-      const [firstTimeStamp] = clips;
-      const timeRange = formatKey(firstTimeStamp);
-      play(firstTimeStamp.startTime, timeRange);
+      const [firstClip] = clips;
+      play(firstClip.startTime, firstClip.id);
     }
   }, [clips, play]);
 
@@ -52,18 +43,17 @@ const App = ({
         dataSource={clips}
         itemLayout="vertical"
         renderItem={(timestamp: IndividualTimestamp, i: number) => {
-          const timeRange = formatKey(timestamp);
           return (
             <List.Item style={{ width: '100%' }}>
               <SortableClipCard
-                play={() => play(timestamp.startTime, timeRange)}
+                play={() => play(timestamp.startTime, timestamp.id)}
                 timestamp={timestamp}
-                key={timeRange}
+                key={timestamp.id}
                 verifiedTwitch={timestamp.verifiedTwitch}
-                id={timeRange}
+                id={timestamp.id}
                 i={i}
                 /* TODO potential bug: if s3 upload failed and image does not exist in thumbnails array, this will probably error out */
-                thumbnail={thumbnails === undefined ? thumbnail : thumbnails[formatClipId(timestamp, videoId)] }
+                thumbnail={thumbnails === undefined ? thumbnail : thumbnails[timestamp.id] }
                 selectedClipId={selectedClipId}
                 setClips={setClips}
               />
