@@ -199,7 +199,7 @@ export default () => {
     setClips(clipToModify);
     setShowClipHandles(false);
   };
-
+  const seekToStartTime = () => {seek(startTime)}
   return (
     <PageContainer
       content={formatMessage({
@@ -296,7 +296,7 @@ export default () => {
                   Save
                 </Button>
               ) : null}
-              {showClipHandles ? <Button>Preview</Button> : null}
+              {showClipHandles ? <Button onClick={seekToStartTime}>Preview</Button> : null}
             </Col>
           </Row>
         </Col>
