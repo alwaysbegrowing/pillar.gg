@@ -142,6 +142,7 @@ export default () => {
   if (isLoading) return formatMessage({ id: 'pages.editor.loading' });
   if (isError) return formatMessage({ id: 'pages.editor.error' });
   if (!data) return formatMessage({ id: 'pages.editor.noData' });
+  // if(!data.brain || data.brain.length === 0) return formatMessage({ id: 'pages.editor.error'})
 
   const { email } = userData || {};
 
@@ -262,6 +263,8 @@ export default () => {
         </Popconfirm>
       }
     >
+      {clips.length !== 0 ? (
+        <div>
       <Row gutter={24}>
         <Col span={14} style={{ marginBottom: 24 }}>
           <VideoPlayer
@@ -285,21 +288,23 @@ export default () => {
           />
           <Row>
             <Col style={{ width: '100%' }}>
-              <TimeSlider
-                trimClipUpdateValues={trimClipUpdateValues}
-                setTrimClipUpdateValues={setTrimClipUpdateValues}
-                showClipHandles={!showClipHandles}
-                duration={clipLength}
-                progress={playedSeconds}
-                setPlaytime={setPlaytime}
-                setPlaying={setPlaying}
-              />
-              <Button
-                style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
-                onClick={() => setShowClipHandles(!showClipHandles)}
-              >
-                {showClipHandles ? 'Cancel' : 'Adjust Clip'}
-              </Button>
+
+                  <TimeSlider
+                    trimClipUpdateValues={trimClipUpdateValues}
+                    setTrimClipUpdateValues={setTrimClipUpdateValues}
+                    showClipHandles={!showClipHandles}
+                    duration={clipLength}
+                    progress={playedSeconds}
+                    setPlaytime={setPlaytime}
+                    setPlaying={setPlaying}
+                  />
+                <Button
+                  style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
+                  onClick={() => setShowClipHandles(!showClipHandles)}
+                >
+                  {showClipHandles ? 'Cancel' : 'Adjust Clip'}
+                </Button>
+
               {showClipHandles ? (
                 <Button style={{ marginRight: '1%' }} onClick={saveAdjustedClip}>
                   Save
@@ -328,6 +333,8 @@ export default () => {
           )}
         </Col>
       </Row>
+        </div>
+      ) : "No clips found! Please select another VOD. "}
     </PageContainer>
   );
 };
