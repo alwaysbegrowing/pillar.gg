@@ -15,10 +15,7 @@ const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHand
   }
   const MINIMUM_CLIP_DURATION = 10
   const domain = [100, 500]
-  const defaultValues = [150]
 
-  const [clipValues, setClipValues] = useState<number[]>();
-  const [clipUpdateValues, setClipUpdateValues] = useState<number[]>();
   const [updatingClipDuration, setUpdatingClipDuration] = useState<number>();
 
   const sliderStyle = {
@@ -26,12 +23,8 @@ const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHand
     width: '100%',
     touchAction: 'none',
   }
-  const onClipChange = (values: number[]) => {
-    setClipValues(values);
-  }
-  
+
   const onClipUpdateValues = (values: number[]) => {
-    setClipUpdateValues(values)
     setTrimClipUpdateValues(values)
     setUpdatingClipDuration(values[1] - values[0])
   }
@@ -43,7 +36,7 @@ const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHand
   // console.log(clips, setClips, selectedClipId, selectedClipStartTime, selectedClipEndTime)
   return (
     <div>
-      {/* top line slider. SeekingSlider */}
+      {/* top line slider. SeekingSlider. has no visual components */}
       <div style={{display: "flex"}}>
         <Slider
           rootStyle={sliderStyle}
@@ -98,7 +91,6 @@ const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHand
           domain={[0, duration]} // [min, max]
           values={[{value: 0, num: 1 }, {value: duration, num: 1}]} // slider values
           disabled={showClipHandles}
-          onChange={onClipChange}
           onUpdate={onClipUpdateValues}
         >
           <Rail>

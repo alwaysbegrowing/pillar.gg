@@ -6,24 +6,35 @@ import { SortableClipCard } from './SortableClipCard';
 const App = ({
   thumbnail,
   play,
-  selectedClipId,
+  clipIdInfo,
   clipInfo,
   videoId,
   thumbnails
 }: {
-  selectedClipId: string;
+  clipIdInfo: {selectedClipId: string, setSelectedClipId: any};
   play: (timestamp: number, clipId: string) => any;
   thumbnail: string;
   clipInfo: { clips: IndividualTimestamp[]; setClips: any };
   videoId: string;
   thumbnails: any[];
 }) => {
+  const {selectedClipId, setSelectedClipId } = clipIdInfo;
   const { clips, setClips } = clipInfo;
 
+  const getClipById = (clipId: string): IndividualTimestamp => {
+    let clip = clips.filter((clip) => clip['id'] === clipId);
+    return clip[0];
+  };
+
   useEffect(() => {
-    if (clips) {
+    if (clips && selectedClipId == null) {
       const [firstClip] = clips;
-      play(firstClip.startTime, firstClip.id);
+      setSelectedClipId(firstClip.id)
+      let currentClip = firstClip
+      if(selectedClipId != null){
+        currentClip = getClipById(selectedClipId)
+      }
+      play(currentClip.startTime, currentClip.id);
     }
   }, [clips, play]);
 

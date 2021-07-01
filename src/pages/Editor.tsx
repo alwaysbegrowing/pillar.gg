@@ -25,7 +25,8 @@ const sendClips = async (videoId: string, clips: IndividualTimestamp[]) => {
 };
 
 const getStartEndTimeFromClipId = (clipId: string): number[] => {
-  let arr = clipId.split('-').map(Number);
+  if(clipId == null) return [0,0]
+  const arr = clipId.split('-').map(Number);
   return [arr[1], arr[2]];
 };
 
@@ -40,58 +41,28 @@ export default () => {
   const [playing, setPlaying] = useState<boolean>(false);
   // const [secondsPlayed, setSecondsPlayed] = useState<number>(0);
   const [isCombineButtonDisabled, setIsCombineButtonDisabled] = useState<boolean>(false);
-  const [selectedClipId, setSelectedClipId] = useState<string>('');
-  const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId);
+  const [selectedClipId, setSelectedClipId] = useState<string>();
   const [visible, setVisible] = React.useState(false);
   const [confirmLoading, setConfirmLoading] = React.useState(false);
   const { formatMessage } = useIntl();
   const [clipFeedbackText, setClipFeedbackText] = useState('');
   const [showClipHandles, setShowClipHandles] = useState<boolean>(false);
   const [thumbnailData, setThumbnailData] = useState<any[]>();
-
-  // used when user is changing start/end timestamps of a clip
-  const clipLength = Math.round(endTime - startTime);
-  // const clipTimePlayed = Math.round(secondsPlayed - startTime);
-  const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, clipLength]);
+  const [newClipLength, setNewClipLength] = useState<number>();
   const [isReady, setIsReady] = useState(false);
-
-  const getClipById = (clipId: string): IndividualTimestamp => {
-    let clip = clips.filter((clip) => clip['id'] === clipId);
-    return clip[0];
-  };
+  const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0,0]);
 
   const isPlaying = playing && isReady;
+  const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId);
   const { setSecPlayed, playedSeconds, isClipOver } = useTime(isPlaying, startTime, endTime);
-  const showSuccessNotification = (successMessage: string) => {
-    notification.success({
-      message: formatMessage({
-        id: 'pages.editor.successNotification.message',
-      }),
-      description: successMessage,
-    });
-  };
-
   useEffect(() => {
     if (isClipOver) {
       setPlaying(false);
     }
   }, [setPlaying, isClipOver]);
 
-  const showPopconfirm = () => {
-    setVisible(true);
-  };
-
-  const handleCancel = () => {
-    setVisible(false);
-  };
-
-  const thumbnail = thumbnail_url
-    ? thumbnail_url.replace('%{width}', '195').replace('%{height}', '108')
-    : '';
-
   const seek = useCallback(
     async (seekTime: number) => {
-      console.log({ seekTime });
       setPlaying(true);
 
       // this pointless line is to hack a fix twitch bug where you can't seek while paused
@@ -99,18 +70,12 @@ export default () => {
       // https://github.com/cookpete/react-player/issues/924
       await new Promise((resolve) => setTimeout(resolve, 1000));
       if (videoRef.current?.seekTo) {
-        console.log({ seek: 's' });
         videoRef.current.seekTo(seekTime);
       }
     },
     [videoRef],
   );
 
-  const setPlaytime = (playtime: number) => {
-    const newTime = startTime + playtime;
-    setSecPlayed(newTime);
-    seek(newTime);
-  };
 
   const play = useCallback(
     (seekTime: number, clipId: string) => {
@@ -142,14 +107,37 @@ export default () => {
   if (isLoading) return formatMessage({ id: 'pages.editor.loading' });
   if (isError) return formatMessage({ id: 'pages.editor.error' });
   if (!data) return formatMessage({ id: 'pages.editor.noData' });
-  // if(!data.brain || data.brain.length === 0) return formatMessage({ id: 'pages.editor.error'})
-
+  // used when user is changing start/end timestamps of a clip
+  let clipLength = Math.round(endTime - startTime);
+  const showSuccessNotification = (successMessage: string) => {
+    notification.success({
+      message: formatMessage({
+        id: 'pages.editor.successNotification.message',
+      }),
+      description: successMessage,
+    });
+  };
+  const thumbnail = thumbnail_url
+    ? thumbnail_url.replace('%{width}', '195').replace('%{height}', '108')
+    : '';
+  const setPlaytime = (playtime: number) => {
+    const newTime = startTime + playtime;
+    setSecPlayed(newTime);
+    seek(newTime);
+  };
   const { email } = userData || {};
 
   const onChange = (event: any) => {
     setClipFeedbackText(event.target.value);
   };
 
+  const showPopconfirm = () => {
+    setVisible(true);
+  };
+
+  const handleCancel = () => {
+    setVisible(false);
+  };
   const onSubmitClipFeedback = async () => {
     const clipData = getStartEndTimeFromClipId(selectedClipId);
     const resp = await fetch('/api/submitClipFeedback', {
@@ -191,20 +179,22 @@ export default () => {
   };
 
   const saveAdjustedClip = () => {
-    const clipToModify = clips.map((item: { startTime: number; endTime: number }) => {
+    const clipsWithAdjustedClip = clips.map((item: IndividualTimestamp) => {
       if (
-        item.startTime === startTime &&
-        item.endTime === endTime &&
+        item.id === selectedClipId &&
         !isNaN(trimClipUpdateValues[0])
       ) {
+        console.log("clip to modify: ", item)
         item.startTime = item.startTime + trimClipUpdateValues[0];
         item.endTime = item.endTime - (clipLength - trimClipUpdateValues[1]);
-        return item;
-      } else {
-        return item;
+        setNewClipLength(Math.round(item.endTime - item.startTime));
+
+        console.log("after modification: ", item)
       }
+        return item;
     });
-    setClips(clipToModify);
+    console.log(clipsWithAdjustedClip)
+    setClips(clipsWithAdjustedClip);
     setShowClipHandles(false);
   };
   const seekToStartTime = () => {
@@ -273,7 +263,7 @@ export default () => {
             setPlaying={setPlaying}
             progress={playedSeconds}
             onProgress={() => {}}
-            duration={clipLength}
+            duration={newClipLength}
             onReady={() => setIsReady(true)}
             selectedClipId={selectedClipId}
             url={`https://twitch.tv/videos/${videoId}`}
@@ -293,7 +283,7 @@ export default () => {
                     trimClipUpdateValues={trimClipUpdateValues}
                     setTrimClipUpdateValues={setTrimClipUpdateValues}
                     showClipHandles={!showClipHandles}
-                    duration={clipLength}
+                    duration={newClipLength}
                     progress={playedSeconds}
                     setPlaytime={setPlaytime}
                     setPlaying={setPlaying}
@@ -318,11 +308,12 @@ export default () => {
           {clips.length ? (
             <ClipList
               clipInfo={{ clips, setClips }}
-              selectedClipId={selectedClipId}
+              clipIdInfo={{selectedClipId, setSelectedClipId}}
               play={play}
               thumbnail={thumbnail}
               videoId={videoId}
               thumbnails={thumbnailData}
+
             />
           ) : (
             <Empty
