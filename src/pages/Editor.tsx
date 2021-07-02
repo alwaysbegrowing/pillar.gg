@@ -24,10 +24,11 @@ const sendClips = async (videoId: string, clips: IndividualTimestamp[]) => {
   return resp.ok;
 };
 
-const getStartEndTimeFromClipId = (clipId: string): number[] => {
-  if(clipId == null) return [0,1]
-  const arr = clipId.split('-').map(Number);
-  return [arr[1], arr[2]];
+const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[]): number[] => {
+  if (clipId == null) return [0, 1];
+  const selectedClip = clips.find((clip) => clip.id === clipId);
+  if (!selectedClip) return [0, 1];
+  return [selectedClip.startTime, selectedClip.endTime];
 };
 
 export default () => {
@@ -39,7 +40,6 @@ export default () => {
   const { thumbnail_url } = videoData || {};
   const videoRef = useRef<ReactPlayer>(null);
   const [playing, setPlaying] = useState<boolean>(false);
-  // const [secondsPlayed, setSecondsPlayed] = useState<number>(0);
   const [isCombineButtonDisabled, setIsCombineButtonDisabled] = useState<boolean>(false);
   const [selectedClipId, setSelectedClipId] = useState<string>('');
   const [visible, setVisible] = React.useState(false);
@@ -48,12 +48,11 @@ export default () => {
   const [clipFeedbackText, setClipFeedbackText] = useState('');
   const [showClipHandles, setShowClipHandles] = useState<boolean>(false);
   const [thumbnailData, setThumbnailData] = useState<any[]>();
-  const [newClipLength, setNewClipLength] = useState<number>();
   const [isReady, setIsReady] = useState(false);
-  const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0,0]);
+  const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, 0]);
 
   const isPlaying = playing && isReady;
-  const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId);
+  const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId, clips);
   const { setSecPlayed, playedSeconds, isClipOver } = useTime(isPlaying, startTime, endTime);
   useEffect(() => {
     if (isClipOver) {
@@ -89,9 +88,7 @@ export default () => {
     if (data?.brain) {
       const clipsDefaultChecked = data.brain.map((timestamp) => ({ ...timestamp, selected: true }));
       setClips((prev) => [...prev, ...clipsDefaultChecked]);
-      setSelectedClipId(clipsDefaultChecked[0].id)
-      console.log(clipsDefaultChecked[0].endTime, clipsDefaultChecked[0].startTime)
-      setNewClipLength(Math.round(clipsDefaultChecked[0].endTime  - clipsDefaultChecked[0].startTime))
+      setSelectedClipId(clipsDefaultChecked[0].id);
     }
     if (data?.ccc) {
       const append = data.ccc.map((d) => ({
@@ -114,7 +111,7 @@ export default () => {
     seek(newTime);
   };
   // used when user is changing start/end timestamps of a clip
-  let clipLength = Math.round(endTime - startTime);
+  const clipLength = Math.round(endTime - startTime);
   const showSuccessNotification = (successMessage: string) => {
     notification.success({
       message: formatMessage({
@@ -140,11 +137,11 @@ export default () => {
     setVisible(false);
   };
   const onSubmitClipFeedback = async () => {
-    const clipData = getStartEndTimeFromClipId(selectedClipId);
+    const clipData = getStartEndTimeFromClipId(selectedClipId, clips);
     const resp = await fetch('/api/submitClipFeedback', {
       method: 'POST',
       body: JSON.stringify({
-        videoId: videoId,
+        videoId,
         feedbackText: clipFeedbackText,
         clip: { startTime: clipData[0], endTime: clipData[1] },
       }),
@@ -179,28 +176,34 @@ export default () => {
     }
   };
 
-  const saveAdjustedClip = () => {
-    const clipsWithAdjustedClip = clips.map((item: IndividualTimestamp) => {
-      if (
-        item.id === selectedClipId &&
-        !isNaN(trimClipUpdateValues[0])
-      ) {
-        console.log("clip to modify: ", item)
-        item.startTime = item.startTime + trimClipUpdateValues[0];
-        item.endTime = item.endTime - (clipLength - trimClipUpdateValues[1]);
-        setNewClipLength(Math.round(item.endTime - item.startTime));
-
-        console.log("after modification: ", item)
-      }
-        return item;
-    });
-    console.log(clipsWithAdjustedClip)
-    setClips(clipsWithAdjustedClip);
-    setShowClipHandles(false);
-  };
   const seekToStartTime = () => {
     setPlaytime(trimClipUpdateValues[0]);
   };
+
+  const saveAdjustedClip = () => {
+    if (!trimClipUpdateValues[0]) return null;
+    const indexOfClipToAdjust = clips.findIndex((clip) => clip.id === selectedClipId);
+
+    clips[indexOfClipToAdjust].startTime += trimClipUpdateValues[0];
+    clips[indexOfClipToAdjust].endTime -= clipLength - trimClipUpdateValues[1];
+    // setNewClipLength(Math.round(clips[indexOfClipToAdjust].endTime - clips[indexOfClipToAdjust].startTime));
+    // const clipsWithAdjustedClip = clips.map((item: IndividualTimestamp) => {
+    //   if (item.id === selectedClipId && !isNaN(trimClipUpdateValues[0])) {
+    //     console.log('clip to modify: ', item);
+    //     item.startTime = item.startTime + trimClipUpdateValues[0];
+    //     item.endTime = item.endTime - (clipLength - trimClipUpdateValues[1]);
+    //     setNewClipLength(Math.round(item.endTime - item.startTime));
+
+    //     console.log('after modification: ', item);
+    //   }
+    //   return item;
+    // });
+    setClips([...clips]);
+    setShowClipHandles(false);
+    seekToStartTime();
+    return true;
+  };
+
   return (
     <PageContainer
       content={formatMessage({
@@ -256,77 +259,77 @@ export default () => {
     >
       {clips.length !== 0 ? (
         <div>
-      <Row gutter={24}>
-        <Col span={14} style={{ marginBottom: 24 }}>
-          <VideoPlayer
-            videoRef={videoRef}
-            playing={playing}
-            setPlaying={setPlaying}
-            progress={playedSeconds}
-            onProgress={() => {}}
-            duration={newClipLength}
-            onReady={() => setIsReady(true)}
-            selectedClipId={selectedClipId}
-            url={`https://twitch.tv/videos/${videoId}`}
-          />
-          <Search
-            placeholder={'This clip was good/ok/bad because...'}
-            onChange={onChange}
-            value={clipFeedbackText}
-            enterButton={'Submit'}
-            onSearch={onSubmitClipFeedback}
-            style={{ paddingBottom: '1rem', paddingTop: '1rem' }}
-          />
-          <Row>
-            <Col style={{ width: '100%' }}>
-
+          <Row gutter={24}>
+            <Col span={14} style={{ marginBottom: 24 }}>
+              <VideoPlayer
+                videoRef={videoRef}
+                playing={playing}
+                setPlaying={setPlaying}
+                progress={playedSeconds}
+                onProgress={() => {}}
+                duration={clipLength}
+                onReady={() => setIsReady(true)}
+                selectedClipId={selectedClipId}
+                url={`https://twitch.tv/videos/${videoId}`}
+              />
+              <Search
+                placeholder={'This clip was good/ok/bad because...'}
+                onChange={onChange}
+                value={clipFeedbackText}
+                enterButton={'Submit'}
+                onSearch={onSubmitClipFeedback}
+                style={{ paddingBottom: '1rem', paddingTop: '1rem' }}
+              />
+              <Row>
+                <Col style={{ width: '100%' }}>
                   <TimeSlider
                     trimClipUpdateValues={trimClipUpdateValues}
                     setTrimClipUpdateValues={setTrimClipUpdateValues}
                     showClipHandles={!showClipHandles}
-                    duration={newClipLength}
+                    duration={clipLength}
                     progress={playedSeconds}
                     setPlaytime={setPlaytime}
                     setPlaying={setPlaying}
                   />
-                <Button
-                  style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
-                  onClick={() => setShowClipHandles(!showClipHandles)}
-                >
-                  {showClipHandles ? 'Cancel' : 'Adjust Clip'}
-                </Button>
+                  <Button
+                    style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
+                    onClick={() => setShowClipHandles(!showClipHandles)}
+                  >
+                    {showClipHandles ? 'Cancel' : 'Adjust Clip'}
+                  </Button>
 
-              {showClipHandles ? (
-                <Button style={{ marginRight: '1%' }} onClick={saveAdjustedClip}>
-                  Save
-                </Button>
-              ) : null}
-              {showClipHandles ? <Button onClick={seekToStartTime}>Preview</Button> : null}
+                  {showClipHandles ? (
+                    <Button style={{ marginRight: '1%' }} onClick={saveAdjustedClip}>
+                      Clip Now
+                    </Button>
+                  ) : null}
+                  {showClipHandles ? <Button onClick={seekToStartTime}>Preview</Button> : null}
+                </Col>
+              </Row>
+            </Col>
+            <Col style={{ alignItems: 'flex-start' }} span={8}>
+              {clips.length ? (
+                <ClipList
+                  clipInfo={{ clips, setClips }}
+                  clipIdInfo={{ selectedClipId, setSelectedClipId }}
+                  play={play}
+                  thumbnail={thumbnail}
+                  videoId={videoId}
+                  thumbnails={thumbnailData}
+                />
+              ) : (
+                <Empty
+                  description={formatMessage({
+                    id: 'pages.editor.noClips',
+                  })}
+                />
+              )}
             </Col>
           </Row>
-        </Col>
-        <Col style={{ alignItems: 'flex-start' }} span={8}>
-          {clips.length ? (
-            <ClipList
-              clipInfo={{ clips, setClips }}
-              clipIdInfo={{selectedClipId, setSelectedClipId}}
-              play={play}
-              thumbnail={thumbnail}
-              videoId={videoId}
-              thumbnails={thumbnailData}
-
-            />
-          ) : (
-            <Empty
-              description={formatMessage({
-                id: 'pages.editor.noClips',
-              })}
-            />
-          )}
-        </Col>
-      </Row>
         </div>
-      ) : "No clips found! Please select another VOD. "}
+      ) : (
+        'No clips found! Please select another VOD. '
+      )}
     </PageContainer>
   );
 };

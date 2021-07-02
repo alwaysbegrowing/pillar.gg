@@ -15,7 +15,7 @@ const App = ({
   thumbnail: string;
   clipInfo: { clips: IndividualTimestamp[]; setClips: any };
   videoId: string;
-  thumbnails: any[];
+  thumbnails?: any[];
 }) => {
   const { selectedClipId } = clipIdInfo;
   const { clips, setClips } = clipInfo;
