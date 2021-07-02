@@ -2,7 +2,7 @@ import {
   CaretRightOutlined,
   NotificationOutlined,
   PauseOutlined,
-  SoundOutlined
+  SoundOutlined,
 } from '@ant-design/icons';
 import { Row, Space, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
@@ -44,15 +44,14 @@ const Video = ({
   playing,
   setPlaying,
   onReady,
-  selectedClipId
-
+  selectedClipId,
 }: VideoProps) => {
   const [muted, setMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
-    console.log(progress, selectedClipId, duration)
+    console.log(progress, selectedClipId, duration);
   }, [url]);
 
   const togglePlaying = () => {
@@ -72,7 +71,7 @@ const Video = ({
       <div style={styles.playerWrapper}>
         {/* @ts-ignore */}
         <ReactPlayer
-        key={selectedClipId}
+          key={selectedClipId}
           onReady={onPlayReady}
           style={styles.reactPlayer}
           ref={videoRef}
@@ -81,6 +80,7 @@ const Video = ({
           playing={playing}
           muted={muted}
           url={url}
+          onPlay={() => setPlaying(true)}
         />
         <div
           style={{
@@ -91,7 +91,6 @@ const Video = ({
             backgroundColor: 'rgba(0,0,0,.7)',
           }}
         >
-
           <Row justify="space-between" style={{ marginLeft: 16, marginRight: 16, marginBottom: 8 }}>
             <Space size="middle">
               {playing ? (
