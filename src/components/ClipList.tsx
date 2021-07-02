@@ -1,5 +1,5 @@
 import { List } from 'antd';
-import React, { useEffect } from 'react';
+import React from 'react';
 import type { IndividualTimestamp } from '../services/hooks/api';
 import { SortableClipCard } from './SortableClipCard';
 
@@ -19,13 +19,6 @@ const App = ({
 }) => {
   const { selectedClipId } = clipIdInfo;
   const { clips, setClips } = clipInfo;
-
-  useEffect(() => {
-    if (clips && selectedClipId == null) {
-      const [firstClip] = clips;
-      play(firstClip.startTime, firstClip.id);
-    }
-  }, [clips, play, selectedClipId]);
 
   return (
     <div

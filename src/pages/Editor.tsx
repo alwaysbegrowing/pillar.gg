@@ -47,10 +47,8 @@ export default () => {
   const { formatMessage } = useIntl();
   const [clipFeedbackText, setClipFeedbackText] = useState('');
   const [showClipHandles, setShowClipHandles] = useState<boolean>(false);
-  const [thumbnailData, setThumbnailData] = useState<any[]>();
   const [isReady, setIsReady] = useState(false);
   const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, 0]);
-
   const isPlaying = playing && isReady;
   const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId, clips);
   const { setSecPlayed, playedSeconds, isClipOver } = useTime(isPlaying, startTime, endTime);
@@ -67,9 +65,9 @@ export default () => {
       // this pointless line is to hack a fix twitch bug where you can't seek while paused
       // this is the same reason we are calling setPlaying before seeking
       // https://github.com/cookpete/react-player/issues/924
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 10));
       if (videoRef.current?.seekTo) {
-        videoRef.current.seekTo(seekTime);
+        videoRef.current.seekTo(seekTime, 'seconds');
       }
     },
     [videoRef],
@@ -88,7 +86,8 @@ export default () => {
     if (data?.brain) {
       const clipsDefaultChecked = data.brain.map((timestamp) => ({ ...timestamp, selected: true }));
       setClips((prev) => [...prev, ...clipsDefaultChecked]);
-      setSelectedClipId(clipsDefaultChecked[0].id);
+      // setSelectedClipId(clipsDefaultChecked[0].id);
+      play(clipsDefaultChecked[0].startTime, clipsDefaultChecked[0].id);
     }
     if (data?.ccc) {
       const append = data.ccc.map((d) => ({
@@ -96,9 +95,6 @@ export default () => {
         verifiedTwitch: true,
       }));
       setClips((prev) => [...prev, ...append]);
-    }
-    if (data?.thumbnails) {
-      setThumbnailData(data.thumbnails);
     }
   }, [data]);
 
@@ -110,8 +106,10 @@ export default () => {
     setSecPlayed(newTime);
     seek(newTime);
   };
-  // used when user is changing start/end timestamps of a clip
+
   const clipLength = Math.round(endTime - startTime);
+  const { thumbnails } = data || {};
+
   const showSuccessNotification = (successMessage: string) => {
     notification.success({
       message: formatMessage({
@@ -186,18 +184,7 @@ export default () => {
 
     clips[indexOfClipToAdjust].startTime += trimClipUpdateValues[0];
     clips[indexOfClipToAdjust].endTime -= clipLength - trimClipUpdateValues[1];
-    // setNewClipLength(Math.round(clips[indexOfClipToAdjust].endTime - clips[indexOfClipToAdjust].startTime));
-    // const clipsWithAdjustedClip = clips.map((item: IndividualTimestamp) => {
-    //   if (item.id === selectedClipId && !isNaN(trimClipUpdateValues[0])) {
-    //     console.log('clip to modify: ', item);
-    //     item.startTime = item.startTime + trimClipUpdateValues[0];
-    //     item.endTime = item.endTime - (clipLength - trimClipUpdateValues[1]);
-    //     setNewClipLength(Math.round(item.endTime - item.startTime));
 
-    //     console.log('after modification: ', item);
-    //   }
-    //   return item;
-    // });
     setClips([...clips]);
     setShowClipHandles(false);
     seekToStartTime();
@@ -315,7 +302,7 @@ export default () => {
                   play={play}
                   thumbnail={thumbnail}
                   videoId={videoId}
-                  thumbnails={thumbnailData}
+                  thumbnails={thumbnails}
                 />
               ) : (
                 <Empty
