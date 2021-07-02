@@ -25,7 +25,7 @@ const sendClips = async (videoId: string, clips: IndividualTimestamp[]) => {
 };
 
 const getStartEndTimeFromClipId = (clipId: string): number[] => {
-  if(clipId == null) return [0,0]
+  if(clipId == null) return [0,1]
   const arr = clipId.split('-').map(Number);
   return [arr[1], arr[2]];
 };
@@ -41,7 +41,7 @@ export default () => {
   const [playing, setPlaying] = useState<boolean>(false);
   // const [secondsPlayed, setSecondsPlayed] = useState<number>(0);
   const [isCombineButtonDisabled, setIsCombineButtonDisabled] = useState<boolean>(false);
-  const [selectedClipId, setSelectedClipId] = useState<string>();
+  const [selectedClipId, setSelectedClipId] = useState<string>('');
   const [visible, setVisible] = React.useState(false);
   const [confirmLoading, setConfirmLoading] = React.useState(false);
   const { formatMessage } = useIntl();
@@ -75,8 +75,6 @@ export default () => {
     },
     [videoRef],
   );
-
-
   const play = useCallback(
     (seekTime: number, clipId: string) => {
       setIsReady(false);
@@ -91,6 +89,9 @@ export default () => {
     if (data?.brain) {
       const clipsDefaultChecked = data.brain.map((timestamp) => ({ ...timestamp, selected: true }));
       setClips((prev) => [...prev, ...clipsDefaultChecked]);
+      setSelectedClipId(clipsDefaultChecked[0].id)
+      console.log(clipsDefaultChecked[0].endTime, clipsDefaultChecked[0].startTime)
+      setNewClipLength(Math.round(clipsDefaultChecked[0].endTime  - clipsDefaultChecked[0].startTime))
     }
     if (data?.ccc) {
       const append = data.ccc.map((d) => ({
@@ -107,6 +108,11 @@ export default () => {
   if (isLoading) return formatMessage({ id: 'pages.editor.loading' });
   if (isError) return formatMessage({ id: 'pages.editor.error' });
   if (!data) return formatMessage({ id: 'pages.editor.noData' });
+  const setPlaytime = (playtime: number) => {
+    const newTime = startTime + playtime;
+    setSecPlayed(newTime);
+    seek(newTime);
+  };
   // used when user is changing start/end timestamps of a clip
   let clipLength = Math.round(endTime - startTime);
   const showSuccessNotification = (successMessage: string) => {
@@ -120,11 +126,6 @@ export default () => {
   const thumbnail = thumbnail_url
     ? thumbnail_url.replace('%{width}', '195').replace('%{height}', '108')
     : '';
-  const setPlaytime = (playtime: number) => {
-    const newTime = startTime + playtime;
-    setSecPlayed(newTime);
-    seek(newTime);
-  };
   const { email } = userData || {};
 
   const onChange = (event: any) => {
@@ -198,7 +199,7 @@ export default () => {
     setShowClipHandles(false);
   };
   const seekToStartTime = () => {
-    setPlaytime(0);
+    setPlaytime(trimClipUpdateValues[0]);
   };
   return (
     <PageContainer

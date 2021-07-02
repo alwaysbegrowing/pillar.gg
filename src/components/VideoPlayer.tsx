@@ -45,14 +45,14 @@ const Video = ({
   setPlaying,
   onReady,
   selectedClipId
-  
+
 }: VideoProps) => {
   const [muted, setMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-
   useEffect(() => {
     setIsLoading(true);
+    console.log(progress, selectedClipId, duration)
   }, [url]);
 
   const togglePlaying = () => {
