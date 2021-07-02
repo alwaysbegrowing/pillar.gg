@@ -8,35 +8,24 @@ const App = ({
   play,
   clipIdInfo,
   clipInfo,
-  videoId,
-  thumbnails
+  thumbnails,
 }: {
-  clipIdInfo: {selectedClipId: string, setSelectedClipId: any};
+  clipIdInfo: { selectedClipId: string; setSelectedClipId: any };
   play: (timestamp: number, clipId: string) => any;
   thumbnail: string;
   clipInfo: { clips: IndividualTimestamp[]; setClips: any };
   videoId: string;
   thumbnails: any[];
 }) => {
-  const {selectedClipId, setSelectedClipId } = clipIdInfo;
+  const { selectedClipId } = clipIdInfo;
   const { clips, setClips } = clipInfo;
-
-  const getClipById = (clipId: string): IndividualTimestamp => {
-    let clip = clips.filter((clip) => clip['id'] === clipId);
-    return clip[0];
-  };
 
   useEffect(() => {
     if (clips && selectedClipId == null) {
       const [firstClip] = clips;
-      setSelectedClipId(firstClip.id)
-      let currentClip = firstClip
-      if(selectedClipId != null){
-        currentClip = getClipById(selectedClipId)
-      }
-      play(currentClip.startTime, currentClip.id);
+      play(firstClip.startTime, firstClip.id);
     }
-  }, [clips, play]);
+  }, [clips, play, selectedClipId]);
 
   return (
     <div
@@ -64,7 +53,7 @@ const App = ({
                 id={timestamp.id}
                 i={i}
                 /* TODO potential bug: if s3 upload failed and image does not exist in thumbnails array, this will probably error out */
-                thumbnail={thumbnails === undefined ? thumbnail : thumbnails[timestamp.id] }
+                thumbnail={thumbnails === undefined ? thumbnail : thumbnails[timestamp.id]}
                 selectedClipId={selectedClipId}
                 setClips={setClips}
               />

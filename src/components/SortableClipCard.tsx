@@ -43,7 +43,7 @@ export function SortableClipCard({
   i,
 }: {
   play: () => any;
-  verifiedTwitch: boolean;
+  verifiedTwitch?: boolean;
   selectedClipId: string;
   id: string;
   setClips: any;
@@ -88,7 +88,13 @@ export function SortableClipCard({
       <CardNumber />
       <div>
         <List.Item.Meta
-          avatar={<img alt="Twitch Thumbnail" src={thumbnail} style={{width: "12rem", height: "6.66rem"}}/>}
+          avatar={
+            <img
+              alt="Twitch Thumbnail"
+              src={thumbnail}
+              style={{ width: '12rem', height: '6.66rem' }}
+            />
+          }
           title={
             <div style={{ display: 'flex', fontSize: 14 }}>
               {toTime(timestamp.startTime)} <Divider type="vertical" /> {toTime(timestamp.endTime)}
