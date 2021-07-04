@@ -22,7 +22,7 @@ interface ProgressProps {
 const sendClips = async (videoId: string, clips: IndividualTimestamp[]) => {
   const data = { videoId, clips };
 
-  const resp = await fetch('https://5i9oqay4hh.execute-api.us-east-1.amazonaws.com/prod/clips', {
+  const resp = await fetch('https://lfh9xm104e.execute-api.us-east-1.amazonaws.com/prod/clips', {
     method: 'POST',
     body: JSON.stringify(data),
   });
