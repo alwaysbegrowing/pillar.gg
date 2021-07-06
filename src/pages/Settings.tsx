@@ -13,9 +13,9 @@ const Settings = () => {
     return (
       <PageContainer>
         <Card title={"Wakeword"}>
-          <div><Input placeholder="CLIPIT"/></div>
+          <div>Your wakeword: <b>CLIPIT</b></div>
           <br/>
-          <div>Pillar will automatically create a clip when it finds a wakeword in your chat. <br/><br/>Example: You send a message "CLIPIT" to your chat, and we will analyze that moment of your VOD and create a clip that contains your chat message.<br/><br/>Use wakewords to create clips manually, and have those clips be easily editable + exportable inside the Pillar editor.
+          <div>Pillar will automatically create a clip when it finds a wakeword in your chat. <br/><br/>Example: You send a message "CLIPIT" to your chat while streaming, and Pillar automatically finds your wakeword and creates a clip that contains your chat message.<br/><br/>Use wakewords to create clips manually, and have those clips be easily editable + exportable inside the Pillar editor.
           </div>
         </Card>
       </PageContainer>
