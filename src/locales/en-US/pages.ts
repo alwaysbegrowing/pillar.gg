@@ -19,5 +19,5 @@ export default {
   'pages.editor.onSubmitClipFeedback.successMessage':
     'Successfully submitted your clip feedback. Thank you! ',
   'pages.editor.combineClips.successMessage':
-    'our video has successfully started exporting! The link to download your video will be emailed to you in 5-10 minutes. ',
+    'Your video has successfully started exporting! The link to download your video will be emailed to you in 5-10 minutes. ',
 };
