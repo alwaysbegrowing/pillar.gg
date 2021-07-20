@@ -1,8 +1,8 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
 import { useClips, useVideo, useUser } from '../services/hooks/api';
-import { Button, Row, Col, Popconfirm, notification, message, Empty, Input } from 'antd';
-import { DownloadOutlined } from '@ant-design/icons';
+import { Button, Row, Col, Popconfirm, notification, message, Empty, Input, Tooltip } from 'antd';
+import { DislikeTwoTone, DownloadOutlined, LikeTwoTone } from '@ant-design/icons';
 import ClipList from '../components/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
@@ -135,6 +135,7 @@ export default () => {
   const handleCancel = () => {
     setVisible(false);
   };
+
   const onSubmitClipFeedback = async () => {
     const clipData = getStartEndTimeFromClipId(selectedClipId, clips);
     const resp = await fetch('/api/submitClipFeedback', {
@@ -216,6 +217,30 @@ export default () => {
     return true;
   };
 
+  const onSubmitBinaryFeedback = async (binaryFeedback) => {
+    const clipData = getStartEndTimeFromClipId(selectedClipId, clips);
+    const resp = await fetch('/api/submitClipFeedback', {
+      method: 'POST',
+      body: JSON.stringify({
+        videoId,
+        binaryFeedback: binaryFeedback,
+        clip: { startTime: clipData[0], endTime: clipData[1] },
+      }),
+    });
+    // const successMessage = formatMessage({
+      // id: 'pages.editor.onSubmitClipFeedback.successMessage',
+    // });
+    // showSuccessNotification(successMessage);
+    // setClipFeedbackText('');
+
+    return resp.ok;
+  };
+
+  const handleBinaryFeedback = async (feedback:any, message:string) => {
+    await onSubmitBinaryFeedback(feedback)
+    showSuccessNotification(message)
+  }
+
   return (
     <PageContainer
       content={formatMessage({
@@ -284,14 +309,24 @@ export default () => {
                 selectedClipId={selectedClipId}
                 url={`https://twitch.tv/videos/${videoId}`}
               />
-              <Search
-                placeholder={'This clip was good/ok/bad because...'}
-                onChange={onChange}
-                value={clipFeedbackText}
-                enterButton={'Submit'}
-                onSearch={onSubmitClipFeedback}
-                style={{ paddingBottom: '1rem', paddingTop: '1rem' }}
-              />
+              <div style={{padding: '1em', display: "flex"}}>
+              <Tooltip title={"I like this clip"}>
+                <Button size='large' shape='circle'  icon={ <LikeTwoTone twoToneColor="#52c41a" onClick={() => handleBinaryFeedback(1, "You liked this video")}/> }/>
+              </Tooltip>
+              <Tooltip title={"I dislike this clip"}>
+                <Button size='large' shape='circle' icon={<DislikeTwoTone twoToneColor="#eb2f96" onClick={() =>  handleBinaryFeedback(0, "You disliked this video")}/>}/>
+              </Tooltip>
+                <Search
+                  placeholder={'What did you think about this clip? '}
+                  onChange={onChange}
+                  value={clipFeedbackText}
+                  enterButton={'Submit'}
+                  onSearch={onSubmitClipFeedback}
+                  style={{ paddingBottom: '1rem', paddingLeft: '.5em', paddingTop: '.15em' }}
+                />
+              </div>
+              <div>
+              </div>
               <Row>
                 <Col style={{ width: '100%' }}>
                   <TimeSlider
