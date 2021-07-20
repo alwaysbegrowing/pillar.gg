@@ -44,6 +44,7 @@ export default () => {
   const [selectedClipId, setSelectedClipId] = useState<string>('');
   const [visible, setVisible] = React.useState(false);
   const [confirmLoading, setConfirmLoading] = React.useState(false);
+  const [confirmChangeClip, setConfirmChangeClip] = React.useState(false);
   const { formatMessage } = useIntl();
   const [clipFeedbackText, setClipFeedbackText] = useState('');
   const [showClipHandles, setShowClipHandles] = useState<boolean>(false);
@@ -178,16 +179,40 @@ export default () => {
     setPlaytime(trimClipUpdateValues[0]);
   };
 
-  const saveAdjustedClip = () => {
-    if (!trimClipUpdateValues[0]) return null;
+  const triggerLoadingStartSequence = async () => {
     const indexOfClipToAdjust = clips.findIndex((clip) => clip.id === selectedClipId);
 
     clips[indexOfClipToAdjust].startTime += trimClipUpdateValues[0];
     clips[indexOfClipToAdjust].endTime -= clipLength - trimClipUpdateValues[1];
 
     setClips([...clips]);
-    setShowClipHandles(false);
     seekToStartTime();
+    return true;
+  }
+  const triggerActiveLoadingButton = async () => {
+    setConfirmChangeClip(false)
+    return true
+  }
+  const triggerLoadingEndAnimation = () => {
+    const successMessage = "Changes saved! ";
+    showSuccessNotification(successMessage);
+    setShowClipHandles(false)
+    return true
+  }
+
+  const saveAdjustedClip = async () => {
+    if (!trimClipUpdateValues[0]){
+      setConfirmChangeClip(false) 
+      return true;
+    } 
+
+    // this poopy code is to hardcode a user feedback sequence when they adjust a clip 
+    setConfirmChangeClip(true)
+    setTimeout(triggerLoadingStartSequence, 1000);
+    setTimeout(triggerActiveLoadingButton, 900);
+    setTimeout(triggerLoadingEndAnimation, 1600);
+    
+
     return true;
   };
 
@@ -286,8 +311,8 @@ export default () => {
                   </Button>
 
                   {showClipHandles ? (
-                    <Button style={{ marginRight: '1%' }} onClick={saveAdjustedClip}>
-                      Clip Now
+                    <Button style={{ marginRight: '1%' }} loading={confirmChangeClip} onClick={saveAdjustedClip}>
+                      Save Changes
                     </Button>
                   ) : null}
                   {showClipHandles ? <Button onClick={seekToStartTime}>Preview</Button> : null}
