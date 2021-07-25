@@ -75,6 +75,7 @@ export interface IndividualTimestamp {
   endTime: number;
   selected?: boolean;
   verifiedTwitch?: boolean;
+  id: string;
 }
 
 interface Algorithm {
@@ -85,11 +86,21 @@ interface Algorithm {
   algo5?: IndividualTimestamp[];
   brain: IndividualTimestamp[];
 }
+
+export interface IndividualThumbnail {
+  string: any;
+}
+
+interface ThumbnailData {
+  thumbnail: IndividualThumbnail;
+}
+
 interface TimestampStructure {
   videoId: string;
   _id: string;
   clips: Algorithm;
   ccc: IndividualTimestamp[];
+  thumbnails: ThumbnailData[];
 }
 
 interface UseClipsDataProps {
@@ -102,7 +113,7 @@ function useClips(clipId: number | string | undefined) {
     clipId ? () => `/api/timestamps/${clipId}` : null,
     fetcher,
   );
-  const alldata = useMemo(() => ({ ...data?.clips, ccc: data?.ccc }), [JSON.stringify(data)]);
+  const alldata = useMemo(() => ({ ...data?.clips, ccc: data?.ccc, thumbnails: data?.thumbnails }), [JSON.stringify(data)]);
 
   return {
     data: alldata,

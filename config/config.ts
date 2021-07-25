@@ -62,17 +62,17 @@ export default defineConfig({
     //   icon: 'LineChartOutlined',
     //   component: './Analysis',
     // },
-    // {
-    //   path: '/settings',
-    //   name: 'settings',
-    //   icon: 'SettingOutlined',
-    //   component: './Settings',
-    // },
     {
       path: '/discord',
       name: 'Discord',
       icon: 'MessageOutlined',
       component: './Discord',
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      icon: 'SettingOutlined',
+      component: './Settings',
     },
     {
       path: '/',
