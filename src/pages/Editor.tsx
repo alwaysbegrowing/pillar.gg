@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
+import QueueAnim from 'rc-queue-anim';
 import { useClips, useVideo, useUser } from '../services/hooks/api';
 import { Button, Row, Col, Popconfirm, notification, message, Empty, Input, Tooltip } from 'antd';
 import { DislikeTwoTone, DownloadOutlined, LikeTwoTone } from '@ant-design/icons';
@@ -8,9 +9,14 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
 import VideoPlayer from '../components/VideoPlayer';
 import TimeSlider from '../components/TimeSlider/TimeSlider';
+import ExportToMobile from './ExportToMobile';
 import type { IndividualTimestamp } from '../services/hooks/api';
 import { useIntl } from 'umi';
 import { useTime } from '../services/hooks/playtime';
+import Cropper from "react-cropper";
+import "cropperjs/dist/cropper.css";
+import picture from './HD_transparent_picture.png'
+
 
 const { Search } = Input;
 
@@ -53,6 +59,17 @@ export default () => {
   const isPlaying = playing && isReady;
   const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId, clips);
   const { setSecPlayed, playedSeconds, isClipOver } = useTime(isPlaying, startTime, endTime);
+  const [showMobile, setShowMobile] = useState<boolean>(false);
+  const [aspectRatio, setAspectRatio] = useState<number>(4 / 3);
+  const cropperRef = useRef<HTMLImageElement>(null);
+  const onCrop = () => {
+    const imageElement: any = cropperRef?.current;
+    const cropper: any = imageElement?.cropper;
+    console.log(cropper.getCropBoxData());
+
+  };
+
+
   useEffect(() => {
     if (isClipOver) {
       setPlaying(false);
@@ -102,6 +119,10 @@ export default () => {
   if (isLoading) return formatMessage({ id: 'pages.editor.loading' });
   if (isError) return formatMessage({ id: 'pages.editor.error' });
   if (!data) return formatMessage({ id: 'pages.editor.noData' });
+
+  const handleShowOnClick = () => {
+    setShowMobile(!showMobile);
+  }
   const setPlaytime = (playtime: number) => {
     const newTime = startTime + playtime;
     setSecPlayed(newTime);
@@ -202,17 +223,17 @@ export default () => {
   }
 
   const saveAdjustedClip = async () => {
-    if (!trimClipUpdateValues[0]){
-      setConfirmChangeClip(false) 
+    if (!trimClipUpdateValues[0]) {
+      setConfirmChangeClip(false)
       return true;
-    } 
+    }
 
     // this poopy code is to hardcode a user feedback sequence when they adjust a clip 
     setConfirmChangeClip(true)
     setTimeout(triggerLoadingStartSequence, 1000);
     setTimeout(triggerActiveLoadingButton, 900);
     setTimeout(triggerLoadingEndAnimation, 1600);
-    
+
 
     return true;
   };
@@ -228,7 +249,7 @@ export default () => {
       }),
     });
     // const successMessage = formatMessage({
-      // id: 'pages.editor.onSubmitClipFeedback.successMessage',
+    // id: 'pages.editor.onSubmitClipFeedback.successMessage',
     // });
     // showSuccessNotification(successMessage);
     // setClipFeedbackText('');
@@ -236,11 +257,28 @@ export default () => {
     return resp.ok;
   };
 
-  const handleBinaryFeedback = async (feedback:any, message:string) => {
+  const handleBinaryFeedback = async (feedback: any, message: string) => {
     await onSubmitBinaryFeedback(feedback)
     showSuccessNotification(message)
   }
 
+  const handleSaveMobileEdit = () => {
+    // setAspectRatio(16 / 3);
+    console.log(aspectRatio)
+  }
+  const styles = {
+    playerWrapper: {
+      paddingTop: '56.25%',
+    },
+    reactPlayer: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+    },
+    icon: {
+      color: '#f1f7fe',
+    },
+  };
   return (
     <PageContainer
       content={formatMessage({
@@ -290,32 +328,32 @@ export default () => {
               id: 'pages.editor.combineClipsButton',
             })}
           </Button>
-          {}
+          { }
         </Popconfirm>
       }
     >
       {clips.length !== 0 ? (
-        <div>
-          <Row gutter={24}>
+        <QueueAnim className="demo-content"> {showMobile ? [
+          <Row gutter={24} key="a">
             <Col span={14} style={{ marginBottom: 24 }}>
               <VideoPlayer
                 videoRef={videoRef}
                 playing={playing}
                 setPlaying={setPlaying}
                 progress={playedSeconds}
-                onProgress={() => {}}
+                onProgress={() => { }}
                 duration={clipLength}
                 onReady={() => setIsReady(true)}
                 selectedClipId={selectedClipId}
                 url={`https://twitch.tv/videos/${videoId}`}
               />
-              <div style={{padding: '1em', display: "flex"}}>
-              <Tooltip title={"I like this clip"}>
-                <Button size='large' shape='circle'  icon={ <LikeTwoTone twoToneColor="#52c41a" onClick={() => handleBinaryFeedback(1, "You liked this video")}/> }/>
-              </Tooltip>
-              <Tooltip title={"I dislike this clip"}>
-                <Button size='large' shape='circle' icon={<DislikeTwoTone twoToneColor="#eb2f96" onClick={() =>  handleBinaryFeedback(0, "You disliked this video")}/>}/>
-              </Tooltip>
+              <div style={{ padding: '1em', display: "flex" }}>
+                <Tooltip title={"I like this clip"}>
+                  <Button size='large' shape='circle' icon={<LikeTwoTone twoToneColor="#52c41a" onClick={() => handleBinaryFeedback(1, "You liked this video")} />} />
+                </Tooltip>
+                <Tooltip title={"I dislike this clip"}>
+                  <Button size='large' shape='circle' icon={<DislikeTwoTone twoToneColor="#eb2f96" onClick={() => handleBinaryFeedback(0, "You disliked this video")} />} />
+                </Tooltip>
                 <Search
                   placeholder={'What did you think about this clip? '}
                   onChange={onChange}
@@ -338,13 +376,26 @@ export default () => {
                     setPlaytime={setPlaytime}
                     setPlaying={setPlaying}
                   />
-                  <Button
-                    style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
-                    onClick={() => setShowClipHandles(!showClipHandles)}
-                  >
-                    {showClipHandles ? 'Cancel' : 'Adjust Clip'}
-                  </Button>
+                  {showClipHandles ?
+                    <Button
+                      style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
+                      onClick={() => setShowClipHandles(!showClipHandles)}
+                    >
+                      Cancel
+                    </Button>
 
+                    :
+                    <div>
+
+                      <Button type='primary'
+                        style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
+                        onClick={() => setShowClipHandles(!showClipHandles)}
+                      >
+                        Adjust Clip
+                      </Button>
+                      <Button type="default" onClick={() => handleShowOnClick()}>Export To Mobile</Button>
+                    </div>
+                  }
                   {showClipHandles ? (
                     <Button style={{ marginRight: '1%' }} loading={confirmChangeClip} onClick={saveAdjustedClip}>
                       Save Changes
@@ -373,7 +424,61 @@ export default () => {
               )}
             </Col>
           </Row>
-        </div>
+        ] :
+          // export to mobile component screen here
+          <Row gutter={24} key="b">
+            <Col span={14}>
+              <video style={{height: '20em', width: '100%', position: 'absolute', marginTop: -54, marginLeft: 316, overflow: 'hidden'}} src={`https://prod-prodthumbnails.s3.amazonaws.com/42991276973-offset-15812.mp4`} />
+              {/* <VideoPlayer
+                videoRef={videoRef}
+                playing={playing}
+                setPlaying={setPlaying}
+                progress={playedSeconds}
+                onProgress={() => { }}
+                duration={clipLength}
+                onReady={() => setIsReady(true)}
+                selectedClipId={selectedClipId}
+                url={`https://twitch.tv/videos/${videoId}`}
+                style={{ arginLeft: '-1544.1008467245192px' }}
+              /> */}
+              <Cropper
+                src={picture}
+                style={{ height: '19em', width: "100%", position: 'absolute', left: 0, top: '.5em'  }}
+                // Cropper.js options
+                // initialAspectRatio={aspectRatio }
+                aspectRatio={4 / 3}
+                dragMode={'move'}
+                responsive={true}
+                restore={true}
+                viewMode={1}
+                // modal={false}
+                // highlight={false}
+                autoCropArea={.4}
+                background={false}
+                movable={false}
+                zoomable={false}
+                zoomOnTouch={false}
+                zoomOnWheel={false}
+                toggleDragModeOnDblclick={false}
+                crop={onCrop}
+                ref={cropperRef}
+              />
+
+            </Col>
+            <Col span={8}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', height: '100%', flexDirection: 'column' }}>
+                <div>
+                  Select your face cam area.
+                </div>
+                <div>
+                  <Button type='primary' onClick={() => handleSaveMobileEdit()}>Save Face Cam Area</Button>
+                </div>
+              </div>
+            </Col>
+
+          </Row>
+        }
+        </QueueAnim>
       ) : (
         'No clips found! Please select another VOD. '
       )}
