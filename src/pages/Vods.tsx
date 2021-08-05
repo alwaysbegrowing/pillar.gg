@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { List } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
 import { useVideos } from '../services/hooks/api';
 import VodCard from '../components/VodCard';
 import SelectUser from '../components/SelectUser';
@@ -20,19 +20,17 @@ const shouldRenderExtra = () => {
 };
 
 const Videos = () => {
-  const [ranCCCFinder, setCCCFinder] = useState(false);
   const { data: videos, isLoading, isError } = useVideos();
 
   if (isLoading) return 'loading...';
   if (isError) return 'error';
 
-  if (!isLoading && !isError && !ranCCCFinder) {
+  if (!isLoading && !isError) {
     videos.slice(0, CCC_VOD_CHECK).forEach((video: { id: any }) => {
       if (video?.id) {
         fetcher(`/api/ccc/${video.id}`);
       }
     });
-    setCCCFinder(true);
   }
 
   return (
