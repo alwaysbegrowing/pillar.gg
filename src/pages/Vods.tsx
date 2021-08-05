@@ -4,6 +4,11 @@ import React from 'react';
 import { useVideos } from '../services/hooks/api';
 import VodCard from '../components/VodCard';
 import SelectUser from '../components/SelectUser';
+import { fetcher } from '@/services/fetcher';
+
+// number of vods to go back
+// and check for CCC
+const CCC_VOD_CHECK = 5;
 
 const shouldRenderExtra = () => {
   const { NODE_ENV } = process.env;
@@ -19,6 +24,14 @@ const Videos = () => {
 
   if (isLoading) return 'loading...';
   if (isError) return 'error';
+
+  if (!isLoading && !isError) {
+    videos.slice(0, CCC_VOD_CHECK).forEach((video: { id: any }) => {
+      if (video?.id) {
+        fetcher(`/api/ccc/${video.id}`);
+      }
+    });
+  }
 
   return (
     <PageContainer extra={shouldRenderExtra()}>
