@@ -4,6 +4,7 @@ import React from 'react';
 import { useVideos } from '../services/hooks/api';
 import VodCard from '../components/VodCard';
 import SelectUser from '../components/SelectUser';
+import { fetcher } from '@/services/fetcher';
 
 const shouldRenderExtra = () => {
   const { NODE_ENV } = process.env;
@@ -19,6 +20,14 @@ const Videos = () => {
 
   if (isLoading) return 'loading...';
   if (isError) return 'error';
+
+  if (!isLoading && !isError) {
+    videos.forEach((video: { id: any }) => {
+      if (video?.id) {
+        fetcher(`/api/ccc/${video.id}`);
+      }
+    });
+  }
 
   return (
     <PageContainer extra={shouldRenderExtra()}>
