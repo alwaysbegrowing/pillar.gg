@@ -29,7 +29,7 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
       $set: { ...twitchUserData, ...hubspotID },
     };
 
-    const resp = db.collection('users').updateOne(filter, updatedoc, {});
+    const resp = await db.collection('users').updateOne(filter, updatedoc, {});
 
     // if the item in the database doesn't exist, insert it
     if (resp.result.nModified === 0) {
@@ -37,7 +37,8 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
         ...twitchUserData,
         ...hubspotID,
       };
-      const newUser = db.collection('users').insertOne(newdoc);
+
+      db.collection('users').insertOne(newdoc);
 
       const snsCredentials = {
         accessKeyId: process.env.SNS_AWS_ACCESS_KEY_ID || '',
@@ -49,9 +50,9 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
       const command = new PublishCommand({
         Message: 'Hello from Vercel!',
         MessageAttributes: {
-          _id: {
+          TwitchId: {
             DataType: 'String',
-            StringValue: newUser.insertedId.toString(),
+            StringValue: twitchUserData.id,
           },
         },
         TopicArn: process.env.SNS_TOPIC_ARN,
