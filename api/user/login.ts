@@ -33,22 +33,22 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
 
     // if the item in the database doesn't exist, insert it
     if (resp.result.nModified === 0) {
-      const newdoc = {
+      const newUserData = {
         ...twitchUserData,
         ...hubspotID,
       };
 
-      db.collection('users').insertOne(newdoc);
+      db.collection('users').insertOne(newUserData);
 
       const snsCredentials = {
-        accessKeyId: process.env.SNS_AWS_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.SNS_AWS_SECRET_ACCESS_KEY || '',
+        accessKeyId: process.env.SIGNUPEVENT_AWS_ACCESS_KEY_ID || '',
+        secretAccessKey: process.env.SIGNUPEVENT_AWS_SECRET_ACCESS_KEY || '',
       };
 
       const sns = new SNSClient({ region: 'us-east-1', credentials: snsCredentials });
 
       const command = new PublishCommand({
-        Message: 'Hello from Vercel!',
+        Message: 'Pillar has a new user!',
         MessageAttributes: {
           TwitchId: {
             DataType: 'String',
@@ -58,9 +58,7 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
         TopicArn: process.env.SNS_TOPIC_ARN,
       });
 
-      const snsResp = await sns.send(command);
-      // eslint-disable-next-line no-console
-      console.log(snsResp);
+      await sns.send(command);
     }
 
     res.status(200).json(credentials);
