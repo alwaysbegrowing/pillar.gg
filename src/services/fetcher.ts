@@ -53,15 +53,15 @@ const errorHandler = (error: ResponseError) => {
 // const extendRequest = extend({ errorHandler });
 
 const fetcher = (url: string) => {
-  const accessToken = localStorage.getItem('access_token');
-  if (!accessToken) return null;
+  // const accessToken = localStorage.getItem('access_token');
+  // if (!accessToken) return null;
 
-  const headers = {
-    Authorization: `Bearer ${accessToken}`,
-    'Client-ID': twitchClientId,
-  };
+  // const headers = {
+    // Authorization: `Bearer ${accessToken}`,
+    // 'Client-ID': twitchClientId,
+  // };
 
-  return request(url, { headers })
+  return request(url)
     .then((res: any) => res)
     .catch(errorHandler);
 };

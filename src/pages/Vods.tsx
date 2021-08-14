@@ -22,7 +22,7 @@ const shouldRenderExtra = () => {
 const Videos = () => {
   const { data: videos, isLoading, isError } = useVideos();
 
-  if (isLoading) return 'loading...';
+  // if (isLoading) return 'loading...';
   if (isError) return 'error';
 
   if (!isLoading && !isError) {

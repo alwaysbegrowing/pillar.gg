@@ -10,17 +10,19 @@ const Banner5 = () => {
   const { data: userData } = useUser();
 
   const { display_name } = userData || {};
-  const buttonText = display_name ? `Log in as ${display_name}` : 'Log in with Twitch';
+  const buttonText = display_name ? `Log in as ${display_name}` : 'Authenticating through Twitch...';
 
   const twitchAuth = () => {
-    if (userData) {
-      history.push('/vods');
-    } else {
-      window.open(
-        `https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${redirectURI}&response_type=code&scope=user_read`,
-        '_self',
-      );
-    }
+    history.push('/vods/1090059618')
+    // localStorage.setItem('vod_redirect_url', window.location.pathname);
+    // if (userData) {
+      // history.push('/vods');
+    // } else {
+      // window.open(
+        // `https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${redirectURI}&response_type=code&scope=user_read`,
+        // '_self',
+      // );
+    // }
   };
 
   useEffect(() => twitchAuth());

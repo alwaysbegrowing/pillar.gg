@@ -33,7 +33,8 @@ const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[])
 
 export default () => {
   const { id: videoId } = useParams<{ id: string }>();
-  const { data: userData } = useUser();
+  console.log(videoId)
+  // const { data: userData } = useUser();
   const { data, isLoading, isError } = useClips(videoId);
   const [clips, setClips] = useState<IndividualTimestamp[] | []>([]);
   const { data: videoData } = useVideo(videoId);
@@ -102,6 +103,7 @@ export default () => {
   if (isLoading) return formatMessage({ id: 'pages.editor.loading' });
   if (isError) return formatMessage({ id: 'pages.editor.error' });
   if (!data) return formatMessage({ id: 'pages.editor.noData' });
+  console.log(data)
   const setPlaytime = (playtime: number) => {
     const newTime = startTime + playtime;
     setSecPlayed(newTime);
@@ -122,7 +124,7 @@ export default () => {
   const thumbnail = thumbnail_url
     ? thumbnail_url.replace('%{width}', '195').replace('%{height}', '108')
     : '';
-  const { email } = userData || {};
+  const  email = 'steven@pillar.gg';
 
   const onChange = (event: any) => {
     setClipFeedbackText(event.target.value);
