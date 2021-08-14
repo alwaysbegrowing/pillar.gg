@@ -1,21 +1,11 @@
 import { Menu, Dropdown, Button } from 'antd';
-import {
-  DownOutlined,
-  ExportOutlined,
-  MailOutlined,
-  YoutubeOutlined,
-} from '@ant-design/icons';
+import { DownOutlined, ExportOutlined, MailOutlined, YoutubeOutlined } from '@ant-design/icons';
 import React from 'react';
 import { useUser } from '@/services/hooks/api';
+import { isDebugMode } from '@/pages/Vods';
 
-
-
-
-
-
-const ExportButton = ({onClick}: any) => {
+const ExportButton = ({ onClick }: any) => {
   const { data } = useUser();
-
 
   const verifyYoutube = async (id: number) => {
     const resp = await fetch(`/api/youtube/isAuthValid?state=${id}`);
@@ -23,7 +13,7 @@ const ExportButton = ({onClick}: any) => {
       window.open(`/api/youtube/callback?state=${id}`, '_blank');
     }
     if (resp.status === 200) {
-        onClick()
+      onClick();
     }
   };
 
@@ -33,16 +23,18 @@ const ExportButton = ({onClick}: any) => {
     }
 
     if (e.key === 'email') {
-        console.log('email clicked')
-        onClick()
-      }
+      console.log('email clicked');
+      onClick();
+    }
   }
 
   const menu = (
     <Menu onClick={handleMenuClick}>
-      <Menu.Item key="youtube" icon={<YoutubeOutlined />}>
-        Export to Youtube
-      </Menu.Item>
+      {isDebugMode() && (
+        <Menu.Item key="youtube" icon={<YoutubeOutlined />}>
+          Export to Youtube
+        </Menu.Item>
+      )}
       <Menu.Item key="email" icon={<MailOutlined />}>
         Export to Email
       </Menu.Item>
@@ -70,6 +62,5 @@ const ExportButton = ({onClick}: any) => {
 
   //   <LinkYoutubeButton/>
 };
-
 
 export default ExportButton;
