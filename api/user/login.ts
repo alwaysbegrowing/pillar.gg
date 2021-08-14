@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import getTwitchUserData from '../twitch/_getTwitchUserData';
 import addHubspotContact from '../hubspot/_addContact';
-import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
+// import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 
 const connectToDatabase = require('../_connectToDatabase');
 const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
@@ -30,7 +30,6 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
     };
 
     const resp = await db.collection('users').updateOne(filter, updatedoc, {});
-
     // if the item in the database doesn't exist, insert it
     if (resp.result.nModified === 0) {
       const newUserData = {
@@ -40,25 +39,25 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
 
       db.collection('users').insertOne(newUserData);
 
-      const snsCredentials = {
-        accessKeyId: process.env.SIGNUPEVENT_AWS_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.SIGNUPEVENT_AWS_SECRET_ACCESS_KEY || '',
-      };
+      // const snsCredentials = {
+      //   accessKeyId: process.env.SIGNUPEVENT_AWS_ACCESS_KEY_ID || '',
+      //   secretAccessKey: process.env.SIGNUPEVENT_AWS_SECRET_ACCESS_KEY || '',
+      // };
 
-      const sns = new SNSClient({ region: 'us-east-1', credentials: snsCredentials });
+      // const sns = new SNSClient({ region: 'us-east-1', credentials: snsCredentials });
 
-      const command = new PublishCommand({
-        Message: 'Pillar has a new user!',
-        MessageAttributes: {
-          TwitchId: {
-            DataType: 'String',
-            StringValue: twitchUserData.id,
-          },
-        },
-        TopicArn: process.env.SNS_TOPIC_ARN,
-      });
+      // const command = new PublishCommand({
+      //   Message: 'Pillar has a new user!',
+      //   MessageAttributes: {
+      //     TwitchId: {
+      //       DataType: 'String',
+      //       StringValue: twitchUserData.id,
+      //     },
+      //   },
+      //   TopicArn: process.env.SNS_TOPIC_ARN,
+      // });
 
-      await sns.send(command);
+      // await sns.send(command);
     }
 
     res.status(200).json(credentials);
