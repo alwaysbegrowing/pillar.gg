@@ -14,7 +14,7 @@ const handleAuthCallback = async (req: VercelRequest, res: VercelResponse) => {
   };
   const resp = await db.collection('youtube_tokens').findOne(filter);
   // in the future we should ALSO check if the refresh token is valid. Right now we are ONLY checking if it exists
-  return resp ? res.send(200) : res.send(401);
+  return resp ? res.status(200).send(null) : res.status(401).send(null);
 };
 
 export default handleAuthCallback;

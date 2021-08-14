@@ -11,7 +11,7 @@ import TimeSlider from '../components/TimeSlider/TimeSlider';
 import type { IndividualTimestamp } from '../services/hooks/api';
 import { useIntl } from 'umi';
 import { useTime } from '../services/hooks/playtime';
-import LinkYoutubeButton from '@/components/LinkYoutubeButton/LinkYoutubeButton';
+import ExportButton from '@/components/ExportButton';
 
 const { Search } = Input;
 
@@ -224,7 +224,7 @@ export default () => {
       method: 'POST',
       body: JSON.stringify({
         videoId,
-        binaryFeedback: binaryFeedback,
+        binaryFeedback,
         clip: { startTime: clipData[0], endTime: clipData[1] },
       }),
     });
@@ -280,19 +280,7 @@ export default () => {
             id: 'pages.editor.exportCancelText',
           })}
         >
-          <Button
-            style={{ marginLeft: 24 }}
-            type="primary"
-            disabled={isCombineButtonDisabled}
-            icon={<DownloadOutlined />}
-            onClick={showPopconfirm}
-          >
-            {formatMessage({
-              id: 'pages.editor.combineClipsButton',
-            })}
-          </Button>
-
-          <LinkYoutubeButton/>
+          <ExportButton onClick={showPopconfirm}/>
           
         </Popconfirm>
       }
