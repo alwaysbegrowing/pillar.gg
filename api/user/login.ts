@@ -6,6 +6,8 @@ const connectToDatabase = require('../_connectToDatabase');
 const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
 
 const login = async (req: VercelRequest, res: VercelResponse) => {
+  res.status(200).json("credentials");
+
   try {
     const { code } = req.query;
     if (!code) {

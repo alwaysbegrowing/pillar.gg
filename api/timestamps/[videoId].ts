@@ -3,11 +3,11 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 const connectToDatabase = require('../_connectToDatabase');
 
 export default async (req: VercelRequest, res: VercelResponse) => {
-  console.log("TEST")
+  // console.log("TEST")
   const {
     query: { videoId, limit = 10 },
   } = req;
-  console.log(videoId)
+  // console.log(videoId)
 
   const lim = parseInt(limit as string, 10);
   // throw 400 error here if input is not an int

@@ -4,6 +4,7 @@ const { TWITCH_CLIENT_ID } = process.env;
 
 const getTwitchUserData = async (accessToken) => {
   const url = `https://api.twitch.tv/helix/users`;
+  return '200'
 
   try {
     const resp = await fetch(url, {

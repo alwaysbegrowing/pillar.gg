@@ -50,7 +50,7 @@ export default defineConfig({
         },
         {
           path: '/vods/:id',
-          name: 'Select Clips',
+          name: 'Rate Clips',
           component: './Editor',
         },
       ],
@@ -68,12 +68,12 @@ export default defineConfig({
       icon: 'MessageOutlined',
       component: './Discord',
     },
-    {
-      path: '/settings',
-      name: 'settings',
-      icon: 'SettingOutlined',
-      component: './Settings',
-    },
+    // {
+      // path: '/settings',
+      // name: 'settings',
+      // icon: 'SettingOutlined',
+      // component: './Settings',
+    // },
     {
       path: '/',
       layout: false,

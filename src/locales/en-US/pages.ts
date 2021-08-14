@@ -1,5 +1,5 @@
 export default {
-  'pages.editor.successNotification.message': 'Success!',
+  'pages.editor.successNotification.message': 'Submitted feedback! ',
   'pages.editor.successNotification.description':
     'Your video has successfully started exporting! The link to download your video will be emailed to you in 5-10 minutes. ',
   'pages.editor.loading': 'Loading...',
@@ -7,7 +7,7 @@ export default {
   'pages.editor.noData': 'no data',
   'pages.editor.combineClips.error': 'Error combining clips',
   'pages.editor.instructions':
-    "Hide clips you don't want in your compilation video. Click and drag clips to re-order them on the timeline. Click the Export Video button when you are ready. ",
+    "Hypothetically speaking, if a clip was good enough to post to social media, click the Accept button. If not, click the Reject button.  ",
   'pages.editor.exportConfirm1': 'Are you ready to export your video?',
   'pages.editor.exportConfirm2':
     'You will receive an email at {email} with the combined video once it has been processed.',

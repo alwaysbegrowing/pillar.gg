@@ -29,22 +29,22 @@ const codeMessage = {
 const errorHandler = (error: ResponseError) => {
   const { response } = error;
   if (response && response.status && response.status !== 404) {
-    const errorText = codeMessage[response.status] || response.statusText;
-    const { status, url } = response;
+    // const errorText = codeMessage[response.status] || response.statusText;
+    // const { status, url } = response;
 
-    notification.error({
-      message: `Request error ${status} : ${url} `,
-      description: errorText,
-    });
-    if (status === 401 || status === 403) {
-      localStorage.removeItem('access_token');
-      history.push('/');
-    }
-  } else if (!response) {
-    notification.error({
-      description: 'Your network is abnormal and you cannot connect to the server',
-      message: 'Network abnormal',
-    });
+    // notification.error({
+      // message: `Request error ${status} : ${url} `,
+      // description: errorText,
+    // });
+    // if (status === 401 || status === 403) {
+      // localStorage.removeItem('access_token');
+      // history.push('/');
+    // }
+  // } else if (!response) {
+    // notification.error({
+      // description: 'Your network is abnormal and you cannot connect to the server',
+      // message: 'Network abnormal',
+    // });
   }
 
   throw error;

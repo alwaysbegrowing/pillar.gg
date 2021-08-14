@@ -37,6 +37,7 @@ export default () => {
   // const { data: userData } = useUser();
   const { data, isLoading, isError } = useClips(videoId);
   const [clips, setClips] = useState<IndividualTimestamp[] | []>([]);
+  const [currentClipIndex, setCurrentClipIndex] = useState<number>(0);
   const { data: videoData } = useVideo(videoId);
   const { thumbnail_url } = videoData || {};
   const videoRef = useRef<ReactPlayer>(null);
@@ -80,6 +81,10 @@ export default () => {
       seek(seekTime);
       setSecPlayed(seekTime);
       setSelectedClipId(clipId);
+      // console.log("CLIPID", clipId)
+      // const curr = clips.findIndex(clip =>  {console.log(clip); return clip.id === clipId})
+      // console.log("CURR", curr)
+      // setCurrentClipIndex(curr+1);
     },
     [seek, setSelectedClipId, setSecPlayed],
   );
@@ -103,7 +108,7 @@ export default () => {
   if (isLoading) return formatMessage({ id: 'pages.editor.loading' });
   if (isError) return formatMessage({ id: 'pages.editor.error' });
   if (!data) return formatMessage({ id: 'pages.editor.noData' });
-  console.log(data)
+  // console.log(data)
   const setPlaytime = (playtime: number) => {
     const newTime = startTime + playtime;
     setSecPlayed(newTime);
@@ -124,7 +129,7 @@ export default () => {
   const thumbnail = thumbnail_url
     ? thumbnail_url.replace('%{width}', '195').replace('%{height}', '108')
     : '';
-  const  email = 'steven@pillar.gg';
+  const email = 'steven@pillar.gg';
 
   const onChange = (event: any) => {
     setClipFeedbackText(event.target.value);
@@ -204,17 +209,17 @@ export default () => {
   }
 
   const saveAdjustedClip = async () => {
-    if (!trimClipUpdateValues[0]){
-      setConfirmChangeClip(false) 
+    if (!trimClipUpdateValues[0]) {
+      setConfirmChangeClip(false)
       return true;
-    } 
+    }
 
     // this poopy code is to hardcode a user feedback sequence when they adjust a clip 
     setConfirmChangeClip(true)
     setTimeout(triggerLoadingStartSequence, 1000);
     setTimeout(triggerActiveLoadingButton, 900);
     setTimeout(triggerLoadingEndAnimation, 1600);
-    
+
 
     return true;
   };
@@ -226,11 +231,11 @@ export default () => {
       body: JSON.stringify({
         videoId,
         binaryFeedback: binaryFeedback,
-        clip: { startTime: clipData[0], endTime: clipData[1] },
+        clip: { startTime: clipData[0], endTime: clipData[1], id: selectedClipId },
       }),
     });
     // const successMessage = formatMessage({
-      // id: 'pages.editor.onSubmitClipFeedback.successMessage',
+    // id: 'pages.editor.onSubmitClipFeedback.successMessage',
     // });
     // showSuccessNotification(successMessage);
     // setClipFeedbackText('');
@@ -238,9 +243,12 @@ export default () => {
     return resp.ok;
   };
 
-  const handleBinaryFeedback = async (feedback:any, message:string) => {
+  const handleBinaryFeedback = async (feedback: any, message: string) => {
     await onSubmitBinaryFeedback(feedback)
     showSuccessNotification(message)
+    play(clips[currentClipIndex + 1].startTime, clips[currentClipIndex + 1].id)
+    setSelectedClipId(clips[currentClipIndex + 1].id)
+    setCurrentClipIndex(currentClipIndex + 1)
   }
 
   return (
@@ -281,18 +289,7 @@ export default () => {
             id: 'pages.editor.exportCancelText',
           })}
         >
-          <Button
-            style={{ marginLeft: 24 }}
-            type="primary"
-            disabled={isCombineButtonDisabled}
-            icon={<DownloadOutlined />}
-            onClick={showPopconfirm}
-          >
-            {formatMessage({
-              id: 'pages.editor.combineClipsButton',
-            })}
-          </Button>
-          {}
+
         </Popconfirm>
       }
     >
@@ -305,56 +302,34 @@ export default () => {
                 playing={playing}
                 setPlaying={setPlaying}
                 progress={playedSeconds}
-                onProgress={() => {}}
+                onProgress={() => { }}
                 duration={clipLength}
                 onReady={() => setIsReady(true)}
                 selectedClipId={selectedClipId}
                 url={`https://twitch.tv/videos/${videoId}`}
               />
-              <div style={{padding: '1em', display: "flex"}}>
-              <Tooltip title={"I like this clip"}>
-                <Button size='large' shape='circle'  icon={ <LikeTwoTone twoToneColor="#52c41a" onClick={() => handleBinaryFeedback(1, "You liked this video")}/> }/>
-              </Tooltip>
-              <Tooltip title={"I dislike this clip"}>
-                <Button size='large' shape='circle' icon={<DislikeTwoTone twoToneColor="#eb2f96" onClick={() =>  handleBinaryFeedback(0, "You disliked this video")}/>}/>
-              </Tooltip>
-                <Search
-                  placeholder={'What did you think about this clip? '}
-                  onChange={onChange}
-                  value={clipFeedbackText}
-                  enterButton={'Submit'}
-                  onSearch={onSubmitClipFeedback}
-                  style={{ paddingBottom: '1rem', paddingLeft: '.5em', paddingTop: '.15em' }}
-                />
+              <div style={{ padding: '1em', display: "flex"}}>
+                <div style={{width: '100%'}}>
+                  <Tooltip title={"I would post this clip to social media"} placement={'bottom'}>
+                    {/* <Button size='large' shape='circle' icon={<LikeTwoTone twoToneColor="#52c41a" onClick={() => handleBinaryFeedback(1, "You liked this video")} />} /> */}
+                    <Col span={8} style={{width:"100%"}}>
+                    <div style={{"color":"#444","border":"1px solid #CCC","background":'#95de64',"boxShadow":"0 0 5px -1px rgba(0,0,0,0.2)","cursor":"pointer","verticalAlign":"middle", width:"300%", "height": "4em", "padding":"5px","textAlign":"center", "display":"flex","justifyContent":"center","flexDirection":"column" }} onClick={() => handleBinaryFeedback(1, "You accepted this video")}>Accept</div>
+                    </Col>
+                    
+                  </Tooltip>
+                </div>
+                <div style={{width: '100%'}}>
+                  <Tooltip title={"I would NOT post this clip to social media"} placement={'bottom'}>
+                    {/* <Button size='large' shape='circle' icon={<DislikeTwoTone twoToneColor="#eb2f96" onClick={() => handleBinaryFeedback(0, "You disliked this video")} />} /> */}
+                    <Col span={8} style={{width:"100%"}}>
+                    <div style={{"color":"#444","border":"1px solid #CCC","background":'#ff4d4f',"boxShadow":"0 0 5px -1px rgba(0,0,0,0.2)","cursor":"pointer","verticalAlign":"middle", width:"300%", "height": "4em", "padding":"5px","textAlign":"center", "display":"flex","justifyContent":"center","flexDirection":"column" }} onClick={() => handleBinaryFeedback(0, "You rejected this video")}>Reject</div>
+                    </Col>
+                  </Tooltip>
+                </div>
               </div>
               <div>
               </div>
-              <Row>
-                <Col style={{ width: '100%' }}>
-                  <TimeSlider
-                    trimClipUpdateValues={trimClipUpdateValues}
-                    setTrimClipUpdateValues={setTrimClipUpdateValues}
-                    showClipHandles={!showClipHandles}
-                    duration={clipLength}
-                    progress={playedSeconds}
-                    setPlaytime={setPlaytime}
-                    setPlaying={setPlaying}
-                  />
-                  <Button
-                    style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
-                    onClick={() => setShowClipHandles(!showClipHandles)}
-                  >
-                    {showClipHandles ? 'Cancel' : 'Adjust Clip'}
-                  </Button>
 
-                  {showClipHandles ? (
-                    <Button style={{ marginRight: '1%' }} loading={confirmChangeClip} onClick={saveAdjustedClip}>
-                      Save Changes
-                    </Button>
-                  ) : null}
-                  {showClipHandles ? <Button onClick={seekToStartTime}>Preview</Button> : null}
-                </Col>
-              </Row>
             </Col>
             <Col style={{ alignItems: 'flex-start' }} span={8}>
               {clips.length ? (

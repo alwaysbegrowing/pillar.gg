@@ -52,6 +52,6 @@ export default {
   'menu.editor.koni': 'Koni Editor',
   'menu.Vods': 'Vods',
   'menu.Vods.Vods': 'Vods',
-  'menu.Vods.Select Clips': 'Select Clips',
+  'menu.Vods.Select Clips': 'Rate Clips',
   'menu.Discord': 'Discord',
 };

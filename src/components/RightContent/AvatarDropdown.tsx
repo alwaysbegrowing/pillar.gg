@@ -46,11 +46,11 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
       const { key } = event;
       if (key === 'logout') {
         localStorage.removeItem('access_token');
-        history.push(`/`);
+        // history.push(`/`);
         // loginOut();
         return;
       }
-      history.push(`/account/${key}`);
+      // history.push(`/account/${key}`);
     },
     [],
   );

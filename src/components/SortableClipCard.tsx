@@ -100,18 +100,6 @@ export function SortableClipCard({
               {toTime(timestamp.startTime)} <Divider type="vertical" /> {toTime(timestamp.endTime)}
             </div>
           }
-          description={
-            <Switch
-              onChange={che}
-              checked={timestamp.selected}
-              checkedChildren={formatMessage({
-                id: 'component.SortableClipCard.Card.Switch.checkedChildren',
-              })}
-              unCheckedChildren={formatMessage({
-                id: 'component.SortableClipCard.Card.Switch.unCheckedChildren',
-              })}
-            />
-          }
         />
       </div>
     </div>
