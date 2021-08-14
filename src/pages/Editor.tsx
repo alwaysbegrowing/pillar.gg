@@ -11,6 +11,7 @@ import TimeSlider from '../components/TimeSlider/TimeSlider';
 import type { IndividualTimestamp } from '../services/hooks/api';
 import { useIntl } from 'umi';
 import { useTime } from '../services/hooks/playtime';
+import LinkYoutubeButton from '@/components/LinkYoutubeButton/LinkYoutubeButton';
 
 const { Search } = Input;
 
@@ -290,7 +291,9 @@ export default () => {
               id: 'pages.editor.combineClipsButton',
             })}
           </Button>
-          {}
+
+          <LinkYoutubeButton/>
+          
         </Popconfirm>
       }
     >

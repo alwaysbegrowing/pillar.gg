@@ -1,10 +1,21 @@
-import React from 'react'
-import styles from './LinkYoutubeButton.less'
+import React from 'react';
+import { useUser } from '@/services/hooks/api';
 
-export default function LinkYoutubeButton({ onClick }) {
+const verifyYoutube = async (id: number) => {
+  const resp = await fetch(`/api/youtube/isAuthValid?state=${id}`);
+  if (resp.status === 401) {
+    window.open(`/api/youtube/callback?state=${id}`, '_blank');
+  }
+  if (resp.status === 200) {
+    console.log('user is already authed with YT!')
+  }
+};
+
+export default function LinkYoutubeButton() {
+  const { data } = useUser();
   return (
-    <div className={styles.buttonContainer}>
-      <button className={styles.linkYoutubeButton} onClick={() => onClick()} type='button'>Connect With Youtube</button>
-    </div>
-  )
+    <button onClick={() => verifyYoutube(data?.id)} type="button">
+      Upload to Youtube
+    </button>
+  );
 }
