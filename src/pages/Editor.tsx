@@ -308,6 +308,7 @@ export default () => {
                 selectedClipId={selectedClipId}
                 url={`https://twitch.tv/videos/${videoId}`}
               />
+
               <div style={{ padding: '1em', display: "flex"}}>
                 <div style={{width: '100%'}}>
                   <Tooltip title={"I would post this clip to social media"} placement={'bottom'}>
@@ -327,8 +328,19 @@ export default () => {
                   </Tooltip>
                 </div>
               </div>
-              <div>
-              </div>
+              <Row style={{paddingTop: '1em'}}>
+                <Col style={{ width: '100%' }}>
+                  <TimeSlider
+                    trimClipUpdateValues={trimClipUpdateValues}
+                    setTrimClipUpdateValues={setTrimClipUpdateValues}
+                    showClipHandles={!showClipHandles}
+                    duration={clipLength}
+                    progress={playedSeconds}
+                    setPlaytime={setPlaytime}
+                    setPlaying={setPlaying}
+                  />
+                </Col>
+              </Row>
 
             </Col>
             <Col style={{ alignItems: 'flex-start' }} span={8}>
