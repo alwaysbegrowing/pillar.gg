@@ -313,7 +313,7 @@ export default () => {
                   <Tooltip title={"I would post this clip to social media"} placement={'bottom'}>
                     {/* <Button size='large' shape='circle' icon={<LikeTwoTone twoToneColor="#52c41a" onClick={() => handleBinaryFeedback(1, "You liked this video")} />} /> */}
                     <Col span={8} style={{width:"100%"}}>
-                    <div style={{"color":"#444","border":"1px solid #CCC","background":'#95de64',"boxShadow":"0 0 5px -1px rgba(0,0,0,0.2)","cursor":"pointer","verticalAlign":"middle", width:"300%", "height": "4em", "padding":"5px","textAlign":"center", "display":"flex","justifyContent":"center","flexDirection":"column" }} onClick={() => handleBinaryFeedback(1, "You accepted this video")}>Accept</div>
+                    <div style={{"color":"#444","border":"1px solid #CCC","background":'#b7eb8f',"boxShadow":"0 0 5px -1px rgba(0,0,0,0.2)","cursor":"pointer","verticalAlign":"middle", width:"300%", "height": "4em", "padding":"5px","textAlign":"center", "display":"flex","justifyContent":"center","flexDirection":"column" }} onClick={() => handleBinaryFeedback(1, "You accepted this video")}>Accept</div>
                     </Col>
                     
                   </Tooltip>
@@ -322,7 +322,7 @@ export default () => {
                   <Tooltip title={"I would NOT post this clip to social media"} placement={'bottom'}>
                     {/* <Button size='large' shape='circle' icon={<DislikeTwoTone twoToneColor="#eb2f96" onClick={() => handleBinaryFeedback(0, "You disliked this video")} />} /> */}
                     <Col span={8} style={{width:"100%"}}>
-                    <div style={{"color":"#444","border":"1px solid #CCC","background":'#ff4d4f',"boxShadow":"0 0 5px -1px rgba(0,0,0,0.2)","cursor":"pointer","verticalAlign":"middle", width:"300%", "height": "4em", "padding":"5px","textAlign":"center", "display":"flex","justifyContent":"center","flexDirection":"column" }} onClick={() => handleBinaryFeedback(0, "You rejected this video")}>Reject</div>
+                    <div style={{"color":"#444","border":"1px solid #CCC","background":'#ff7875',"boxShadow":"0 0 5px -1px rgba(0,0,0,0.2)","cursor":"pointer","verticalAlign":"middle", width:"300%", "height": "4em", "padding":"5px","textAlign":"center", "display":"flex","justifyContent":"center","flexDirection":"column" }} onClick={() => handleBinaryFeedback(0, "You rejected this video")}>Reject</div>
                     </Col>
                   </Tooltip>
                 </div>
