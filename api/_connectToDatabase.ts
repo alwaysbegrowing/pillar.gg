@@ -21,7 +21,7 @@ async function connectCached() {
 
   // Select the database through the connection,
   // using the database path of the connection string
-  const db = await client.db(process.env.MONGO_DB_NAME);
+  const db = await client.db('dev');
 
   // Cache the database connection and return the connection
   cachedDb = db;
