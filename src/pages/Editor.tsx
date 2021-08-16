@@ -11,6 +11,7 @@ import TimeSlider from '../components/TimeSlider/TimeSlider';
 import type { IndividualTimestamp } from '../services/hooks/api';
 import { useIntl } from 'umi';
 import { useTime } from '../services/hooks/playtime';
+import ExportButton from '@/components/ExportButton';
 
 const { Search } = Input;
 
@@ -19,6 +20,7 @@ const sendClips = async (videoId: string, clips: IndividualTimestamp[]) => {
 
   const resp = await fetch('https://lfh9xm104e.execute-api.us-east-1.amazonaws.com/prod/clips', {
     method: 'POST',
+    headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(data),
   });
   return resp.ok;
@@ -223,7 +225,7 @@ export default () => {
       method: 'POST',
       body: JSON.stringify({
         videoId,
-        binaryFeedback: binaryFeedback,
+        binaryFeedback,
         clip: { startTime: clipData[0], endTime: clipData[1] },
       }),
     });
@@ -279,18 +281,8 @@ export default () => {
             id: 'pages.editor.exportCancelText',
           })}
         >
-          <Button
-            style={{ marginLeft: 24 }}
-            type="primary"
-            disabled={isCombineButtonDisabled}
-            icon={<DownloadOutlined />}
-            onClick={showPopconfirm}
-          >
-            {formatMessage({
-              id: 'pages.editor.combineClipsButton',
-            })}
-          </Button>
-          {}
+          <ExportButton onClick={showPopconfirm}/>
+          
         </Popconfirm>
       }
     >

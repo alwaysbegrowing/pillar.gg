@@ -85,9 +85,9 @@ export default defineConfig({
       component: './TwitchAuth',
     },
     {
-      path: '/YoutubeAuth',
+      path: '/AuthSuccess',
       layout: false,
-      component: './YoutubeAuth',
+      component: './AuthSuccess',
     },
     {
       path: '/PrivacyPolicy',

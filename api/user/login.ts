@@ -1,7 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import getTwitchUserData from '../twitch/_getTwitchUserData';
 import addHubspotContact from '../hubspot/_addContact';
-import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 
 const connectToDatabase = require('../_connectToDatabase');
 const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
@@ -29,9 +28,7 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
     const filter = {
       twitch_id: twitchUserData.id,
     };
-
     const options = { upsert: true };
-
     const updatedoc = {
       $set: { ...twitchUserData, ...hubspotID },
     };
