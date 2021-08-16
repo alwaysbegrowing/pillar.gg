@@ -5,6 +5,11 @@ import addHubspotContact from '../hubspot/_addContact';
 const connectToDatabase = require('../_connectToDatabase');
 const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
 
+const snsCredentials = {
+  accessKeyId: process.env.SIGNUPEVENT_AWS_ACCESS_KEY_ID || '',
+  secretAccessKey: process.env.SIGNUPEVENT_AWS_SECRET_ACCESS_KEY || '',
+};
+
 const login = async (req: VercelRequest, res: VercelResponse) => {
   try {
     const { code } = req.query;
@@ -28,10 +33,29 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
       $set: { ...twitchUserData, ...hubspotID },
     };
 
-    db.collection('users').updateOne(filter, updatedoc, options);
-    res.status(200).json(credentials);
+    const resp = db.collection('users').updateOne(filter, updatedoc, options);
+
+    // if resp has an upserted value, then we have a new user
+    if (resp.upsertedCount) {
+      const sns = new SNSClient({ region: 'us-east-1', credentials: snsCredentials });
+
+      const command = new PublishCommand({
+        Message: 'Pillar has a new user!',
+        MessageAttributes: {
+          TwitchId: {
+            DataType: 'String',
+            StringValue: twitchUserData.id,
+          },
+        },
+        TopicArn: process.env.SNS_TOPIC_ARN,
+      });
+
+      await sns.send(command);
+    }
+
+    return res.status(200).json(credentials);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    return res.status(400).json({ error: err.message });
   }
 };
 
