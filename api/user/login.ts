@@ -6,7 +6,16 @@ import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 const connectToDatabase = require('../_connectToDatabase');
 const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
 
+const snsCredentials = {
+  accessKeyId: process.env.SIGNUPEVENT_AWS_ACCESS_KEY_ID || '',
+  secretAccessKey: process.env.SIGNUPEVENT_AWS_SECRET_ACCESS_KEY || '',
+};
+
 const login = async (req: VercelRequest, res: VercelResponse) => {
+  // if either accessKeyId or secretAccessKey is missing, return error
+  if (!snsCredentials.accessKeyId || !snsCredentials.secretAccessKey) {
+    return res.status(500).json({}).end();
+  }
   try {
     const { code } = req.query;
     if (!code) {
@@ -25,26 +34,16 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
       twitch_id: twitchUserData.id,
     };
 
+    const options = { upsert: true };
+
     const updatedoc = {
       $set: { ...twitchUserData, ...hubspotID },
     };
 
-    const resp = await db.collection('users').updateOne(filter, updatedoc, {});
+    const resp = db.collection('users').updateOne(filter, updatedoc, options);
 
-    // if the item in the database doesn't exist, insert it
-    if (resp.result.nModified === 0) {
-      const newUserData = {
-        ...twitchUserData,
-        ...hubspotID,
-      };
-
-      db.collection('users').insertOne(newUserData);
-
-      const snsCredentials = {
-        accessKeyId: process.env.SIGNUPEVENT_AWS_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.SIGNUPEVENT_AWS_SECRET_ACCESS_KEY || '',
-      };
-
+    // if resp has an upserted value, then we have a new user
+    if (resp.upsertedCount) {
       const sns = new SNSClient({ region: 'us-east-1', credentials: snsCredentials });
 
       const command = new PublishCommand({
@@ -61,9 +60,9 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
       await sns.send(command);
     }
 
-    res.status(200).json(credentials);
+    return res.status(200).json(credentials);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    return res.status(400).json({ error: err.message });
   }
 };
 
