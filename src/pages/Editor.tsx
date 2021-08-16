@@ -20,6 +20,7 @@ const sendClips = async (videoId: string, clips: IndividualTimestamp[]) => {
 
   const resp = await fetch('https://lfh9xm104e.execute-api.us-east-1.amazonaws.com/prod/clips', {
     method: 'POST',
+    headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(data),
   });
   return resp.ok;

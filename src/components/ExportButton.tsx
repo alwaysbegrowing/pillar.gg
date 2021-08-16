@@ -23,7 +23,6 @@ const ExportButton = ({ onClick }: any) => {
     }
 
     if (e.key === 'email') {
-      console.log('email clicked');
       onClick();
     }
   }
@@ -47,20 +46,6 @@ const ExportButton = ({ onClick }: any) => {
       </Button>
     </Dropdown>
   );
-
-  //     <Button
-  //     style={{ marginLeft: 24 }}
-  //     type="primary"
-  //     disabled={isCombineButtonDisabled}
-  //     icon={<DownloadOutlined />}
-  //     onClick={showPopconfirm}
-  //   >
-  //     {formatMessage({
-  //       id: 'pages.editor.combineClipsButton',
-  //     })}
-  //   </Button>
-
-  //   <LinkYoutubeButton/>
 };
 
 export default ExportButton;
