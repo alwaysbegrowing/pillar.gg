@@ -12,10 +12,6 @@ const snsCredentials = {
 };
 
 const login = async (req: VercelRequest, res: VercelResponse) => {
-  // if either accessKeyId or secretAccessKey is missing, return error
-  if (!snsCredentials.accessKeyId || !snsCredentials.secretAccessKey) {
-    return res.status(500).json({}).end();
-  }
   try {
     const { code } = req.query;
     if (!code) {
