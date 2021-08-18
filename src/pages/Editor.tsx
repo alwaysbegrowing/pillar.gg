@@ -12,17 +12,21 @@ import type { IndividualTimestamp } from '../services/hooks/api';
 import { useIntl } from 'umi';
 import { useTime } from '../services/hooks/playtime';
 import ExportButton from '@/components/ExportButton';
+import { getHeaders } from '@/services/fetcher';
 
 const { Search } = Input;
 
 const sendClips = async (videoId: string, clips: IndividualTimestamp[]) => {
   const data = { videoId, clips };
-
-  const resp = await fetch('https://lfh9xm104e.execute-api.us-east-1.amazonaws.com/prod/clips', {
+  const prodUrl = "https://lfh9xm104e.execute-api.us-east-1.amazonaws.com/prod/clips"
+  const qaUrl = "https://jbme5m4076.execute-api.us-east-1.amazonaws.com/prod/clips"
+  const resp = await fetch(prodUrl, {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: getHeaders(),
     body: JSON.stringify(data),
   });
+
+
   return resp.ok;
 };
 

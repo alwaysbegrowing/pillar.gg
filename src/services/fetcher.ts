@@ -50,19 +50,23 @@ const errorHandler = (error: ResponseError) => {
   throw error;
 };
 
-// const extendRequest = extend({ errorHandler });
+const getHeaders = () => {
+  const accessToken = localStorage.getItem('access_token');
+  if (!accessToken) return null
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${accessToken}`,
+  };
+  return headers;
+};
 
 const fetcher = (url: string) => {
-  const accessToken = localStorage.getItem('access_token');
-  if (!accessToken) return null;
-
-  const headers = {
-    Authorization: `Bearer ${accessToken}`,
-    'Client-ID': twitchClientId,
-  };
-
+  const headers = getHeaders();
+  if (!headers) return null
+  // careful!!! This may cause a CORS errror if Client-ID is not allowed by the server
+  headers['Client-ID'] = twitchClientId;
   return request(url, { headers })
     .then((res: any) => res)
     .catch(errorHandler);
 };
-export { fetcher };
+export { fetcher, getHeaders };
