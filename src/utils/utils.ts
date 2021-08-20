@@ -18,3 +18,14 @@ export const isAntDesignProOrDev = (): boolean => {
   }
   return isAntDesignPro();
 };
+
+
+
+export const showSuccessNotification = (successMessage: string) => {
+  notification.success({
+    message: formatMessage({
+      id: 'pages.editor.successNotification.message',
+    }),
+    description: successMessage,
+  });
+};
