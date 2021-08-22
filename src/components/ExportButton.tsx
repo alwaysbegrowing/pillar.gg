@@ -8,7 +8,6 @@ import { showSuccessNotification } from '@/utils/utils';
 import { sendClips } from '@/services/send';
 
 const ExportWrapper = ({ children, onConfirm, title, okText, cancelText }: any) => {
-  const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const confirm = async () => {
@@ -20,7 +19,6 @@ const ExportWrapper = ({ children, onConfirm, title, okText, cancelText }: any) 
   return (
     <Popconfirm
       title={title}
-      // visible={visible}
       onConfirm={confirm}
       okButtonProps={{ loading }}
       okText={okText}
@@ -69,16 +67,39 @@ const ExportButton = ({ clips, videoId }: any) => {
   const { formatMessage } = useIntl();
   const { data } = useUser();
 
-  const title = 'test';
-  const okText = 'test';
-  const cancelText = 'cancel';
+  const title = (
+    <div>
+      <div>
+        {formatMessage({
+          id: 'pages.editor.exportConfirmFile1',
+        })}
+      </div>
+      <div>
+        {formatMessage(
+          {
+            id: 'pages.editor.exportConfirmFile2',
+          },
+          { email: data?.email },
+        )}
+      </div>
+      <div>
+        {formatMessage({
+          id: 'pages.editor.exportConfirmFile3',
+        })}
+      </div>
+    </div>
+  );
+  const okText = formatMessage({ id: 'pages.editor.exportOkText' });
+  const cancelText = formatMessage({
+    id: 'pages.editor.exportCancelText',
+  });
 
   const menu = (
     <Menu>
       {isDebugMode() && (
         <Menu.Item key="youtube" icon={<YoutubeOutlined />}>
           <ExportWrapper
-            onOk={() => startYoutubeExport(data.id, videoId, clips, formatMessage)}
+            onConfirm={() => startYoutubeExport(data.id, videoId, clips, formatMessage)}
             title={title}
             okText={okText}
             cancelText={cancelText}
@@ -89,7 +110,7 @@ const ExportButton = ({ clips, videoId }: any) => {
       )}
       <Menu.Item key="email" icon={<MailOutlined />}>
         <ExportWrapper
-          onOk={() => startExport(videoId, clips, formatMessage, true)}
+          onConfirm={() => startExport(videoId, clips, formatMessage, true)}
           title={title}
           okText={okText}
           cancelText={cancelText}
