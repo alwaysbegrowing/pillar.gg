@@ -110,7 +110,7 @@ const ExportButton = ({ clips, videoId }: any) => {
       )}
       <Menu.Item key="email" icon={<MailOutlined />}>
         <ExportWrapper
-          onConfirm={() => startExport(videoId, clips, formatMessage, true)}
+          onConfirm={() => startExport(videoId, clips, formatMessage)}
           title={title}
           okText={okText}
           cancelText={cancelText}
