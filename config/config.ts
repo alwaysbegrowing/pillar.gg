@@ -72,11 +72,6 @@ export default defineConfig({
       component: './Settings',
     },
     {
-      path: '/',
-      layout: false,
-      component: './Landing',
-    },
-    {
       path: '/TwitchAuth',
       layout: false,
       component: './TwitchAuth',
