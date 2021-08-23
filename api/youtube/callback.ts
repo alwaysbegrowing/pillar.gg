@@ -1,12 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+
 const connectToDatabase = require('../_connectToDatabase');
 
 const { google } = require('googleapis');
 
 const { YT_CLIENT_ID, YT_CLIENT_SECRET, YOUTUBE_REDIRECT_URL } = process.env;
 const oauth2Client = new google.auth.OAuth2(YT_CLIENT_ID, YT_CLIENT_SECRET, YOUTUBE_REDIRECT_URL);
-const scopes = ['https://www.googleapis.com/auth/youtube'];
-
+const scopes = ['https://www.googleapis.com/auth/youtube.upload'];
 
 const updateTokens = async (tokens: any, state: any) => {
   const db = await connectToDatabase();
@@ -19,10 +19,10 @@ const updateTokens = async (tokens: any, state: any) => {
     $set: { ...tokens, twitch_id: state },
   };
   const resp = await db.collection('youtube_tokens').updateOne(filter, updatedoc, options);
+  // eslint-disable-next-line no-console
   console.log(resp);
-  return resp
+  return resp;
 };
-
 
 const handleAuthCallback = async (req: VercelRequest, res: VercelResponse) => {
   const { code, state } = req.query;
@@ -47,5 +47,3 @@ const handleAuthCallback = async (req: VercelRequest, res: VercelResponse) => {
 };
 
 export default handleAuthCallback;
-
-
