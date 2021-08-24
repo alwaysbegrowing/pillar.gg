@@ -1,4 +1,4 @@
-const hubspot = require('@hubspot/api-client');
+import * as hubspot from '@hubspot/api-client';
 
 const { HUBSPOT_API_KEY } = process.env;
 
@@ -14,6 +14,7 @@ interface TwitchUserData {
   view_count: number;
   email: string;
   created_at: string;
+  lead_status: string;
 }
 
 export default async (twitchUserData: TwitchUserData) => {
@@ -28,8 +29,9 @@ export default async (twitchUserData: TwitchUserData) => {
         twitch_description: twitchUserData.description,
         twitch_profile_image_url: twitchUserData.profile_image_url,
         twitch_offline_image_url: twitchUserData.offline_image_url,
-        twitch_view_count: twitchUserData.view_count,
+        twitch_view_count: String(twitchUserData.view_count),
         email: twitchUserData.email,
+        lead_status: 'Lead',
       },
     };
     const hubspotClient = new hubspot.Client({ apiKey: HUBSPOT_API_KEY });
@@ -41,7 +43,7 @@ export default async (twitchUserData: TwitchUserData) => {
         'Contact already exists. Existing ID: ',
         '',
       );
-      return existingHubspotClientID;
+      return { hubspot_contact_id: existingHubspotClientID };
     }
     return { hubspot_contact_id: null };
   }

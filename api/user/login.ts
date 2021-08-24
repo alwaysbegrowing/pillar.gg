@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import getTwitchUserData from '../twitch/_getTwitchUserData';
 import addHubspotContact from '../hubspot/_addContact';
+import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 
 const connectToDatabase = require('../_connectToDatabase');
 const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
