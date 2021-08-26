@@ -4,7 +4,7 @@ import { Slider, Rail, Handles, Tracks, Ticks } from '../Slider/src'
 import { SliderRail, Handle, Track } from './components' // example render components - source below
 import { ClipSliderRail, ClipHandle, ClipTrack, ClipTick } from './ClipComponents' // example render components - source below
 
-const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHandles, duration, progress, setPlaying, setPlaytime }) => {
+const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHandles, duration, progress, setPlaying, setPlaytime, changeInterval }) => {
   const MINIMUM_CLIP_DURATION = 10
   const domain = [100, 500]
 
@@ -51,6 +51,7 @@ const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHand
                     handle={handle}
                     domain={domain}
                     getHandleProps={getHandleProps}
+                    changeInterval={changeInterval}
                   />
                 ))}
               </div>

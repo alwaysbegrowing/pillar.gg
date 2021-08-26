@@ -40,7 +40,7 @@ export default () => {
   const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, 0]);
   const isPlaying = playing && isReady;
   const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId, clips);
-  const { setSecPlayed, playedSeconds, isClipOver } = useTime(isPlaying, startTime, endTime);
+  const { setSecPlayed, playedSeconds, isClipOver, intervalInMs } = useTime(isPlaying, startTime, endTime);
   useEffect(() => {
     if (isClipOver) {
       setPlaying(false);
@@ -266,6 +266,7 @@ export default () => {
                     progress={playedSeconds}
                     setPlaytime={setPlaytime}
                     setPlaying={setPlaying}
+                    changeInterval={intervalInMs}
                   />
                   <Button
                     style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}

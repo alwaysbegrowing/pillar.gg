@@ -48,6 +48,7 @@ export function Handle({
   handle: { id, value, percent },
   disabled,
   getHandleProps,
+  changeInterval
 }) {
 
   const oldValue = useRef(0)
@@ -55,7 +56,7 @@ export function Handle({
     oldValue.current = value
   })
 
-  const transitionStyle = Math.abs(oldValue.current - value) !== 1
+  const transitionStyle = Math.abs(oldValue.current - value) * 1000 !== changeInterval
     ? ''
     : 'left 1s linear'
 
