@@ -5,14 +5,6 @@ import { SliderRail, Handle, Track } from './components' // example render compo
 import { ClipSliderRail, ClipHandle, ClipTrack, ClipTick } from './ClipComponents' // example render components - source below
 
 const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHandles, duration, progress, setPlaying, setPlaytime }) => {
-
-  const onUpdate = update => {
-    this.setState({ update })
-  }
-
-  const onChange = values => {
-    this.setState({ values })
-  }
   const MINIMUM_CLIP_DURATION = 10
   const domain = [100, 500]
 
@@ -25,15 +17,15 @@ const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHand
   }
 
   const onClipUpdateValues = (values: number[]) => {
-    setTrimClipUpdateValues(values)
-    setUpdatingClipDuration(values[1] - values[0])
+      setTrimClipUpdateValues(values)
+      setUpdatingClipDuration(values[1] - values[0])
   }
 
   const formatTicks = (d:number) => {
     if(d == 0) return `| 00:00`
     return `| 00:${d}`
   }
-  // console.log(clips, setClips, selectedClipId, selectedClipStartTime, selectedClipEndTime)
+
   return (
     <div>
       {/* top line slider. SeekingSlider. has no visual components */}
@@ -46,7 +38,6 @@ const TimeSlider = ({trimClipUpdateValues, setTrimClipUpdateValues, showClipHand
             setPlaying(false)
           }}
           onSlideEnd={values => setPlaytime(values[0])}
-
         >
           <Rail>
             {({ getRailProps }) => <SliderRail getRailProps={getRailProps} />}

@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 
 // *******************************************************
@@ -44,11 +44,21 @@ SliderRail.propTypes = {
 // HANDLE COMPONENT
 // *******************************************************
 export function Handle({
-                         domain: [min, max],
-                         handle: { id, value, percent },
-                         disabled,
-                         getHandleProps,
-                       }) {
+  domain: [min, max],
+  handle: { id, value, percent },
+  disabled,
+  getHandleProps,
+}) {
+
+  const oldValue = useRef(0)
+  useEffect(() => {
+    oldValue.current = value
+  })
+
+  const transitionStyle = Math.abs(oldValue.current - value) !== 1
+    ? ''
+    : 'left 1s linear'
+
   return (
     <Fragment>
       <div
@@ -62,7 +72,7 @@ export function Handle({
           height: '6rem',
           cursor: 'pointer',
           // border: '1px solid white',
-          backgroundColor: 'transparent',
+          backgroundColor: 'transparent'
         }}
         {...getHandleProps(id)}
       />
@@ -81,6 +91,7 @@ export function Handle({
           // borderRadius: '20%',
           boxShadow: '1px 1px 1px 1px rgba(0, 0, 0, 0.3)',
           backgroundColor: 'white',
+          transition: `${transitionStyle}`
         }}
       />
     </Fragment>
