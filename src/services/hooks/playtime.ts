@@ -21,5 +21,5 @@ export const useTime = (isPlaying: boolean, startTime: number, endTime: number) 
   }, [isPlaying]);
 
   const isClipOver = secPlayed >= endTime;
-  return { secPlayed, setSecPlayed, playedSeconds, isClipOver };
+  return { secPlayed, setSecPlayed, playedSeconds, isClipOver, intervalInMs };
 };
