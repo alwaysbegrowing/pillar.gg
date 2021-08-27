@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
 import QueueAnim from 'rc-queue-anim';
@@ -45,7 +46,7 @@ export default () => {
   const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, 0]);
   const isPlaying = playing && isReady;
   const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId, clips);
-  const [showMobile, setShowMobile] = useState<boolean>(false);
+  const [showVideoCropper, setShowVideoCropper] = useState<boolean>(true);
   const { setSecPlayed, playedSeconds, isClipOver, intervalInMs } = useTime(
     isPlaying,
     startTime,
@@ -104,7 +105,7 @@ export default () => {
   if (!data) return formatMessage({ id: 'pages.editor.noData' });
 
   const handleShowOnClick = () => {
-    setShowMobile(!showMobile);
+    setShowVideoCropper(true);
   };
 
   const showSuccessNotification = (successMessage: string) => {
@@ -221,59 +222,18 @@ export default () => {
       content={formatMessage({
         id: 'pages.editor.instructions',
       })}
-      // extra={
-      //   <Popconfirm
-      //     title={
-      //       <div>
-      //         <div>
-      //           {formatMessage({
-      //             id: 'pages.editor.exportConfirm1',
-      //           })}
-      //         </div>
-      //         <div>
-      //           {formatMessage(
-      //             {
-      //               id: 'pages.editor.exportConfirm2',
-      //             },
-      //             { email },
-      //           )}
-      //         </div>
-      //         <div>
-      //           {formatMessage({
-      //             id: 'pages.editor.exportConfirm3',
-      //           })}
-      //         </div>
-      //       </div>
-      //     }
-      //     visible={visible}
-      //     onConfirm={combineClips}
-      //     okButtonProps={{ loading: confirmLoading }}
-      //     onCancel={handleCancel}
-      //     okText={formatMessage({ id: 'pages.editor.exportOkText' })}
-      //     cancelText={formatMessage({
-      //       id: 'pages.editor.exportCancelText',
-      //     })}
-      //   >
-      //     <Button
-      //       style={{ marginLeft: 24 }}
-      //       type="primary"
-      //       disabled={isCombineButtonDisabled}
-      //       icon={<DownloadOutlined />}
-      //       onClick={showPopconfirm}
-      //     >
-      //       {formatMessage({
-      //         id: 'pages.editor.combineClipsButton',
-      //       })}
-      //     </Button>
-      //     { }
-      //   </Popconfirm>
-      // }
       extra={<ExportButton videoId={videoId} clips={clips?.filter((clip) => clip.selected)} />}
     >
       {clips.length !== 0 ? (
         // <QueueAnim className="demo-content">
         // {' '}
-        showMobile ? (
+        showVideoCropper ? (
+          // export to mobile component screen here
+          <VideoCropper
+            onConfirm={(a, b) => console.log(a, b)}
+            onCancel={() => setShowVideoCropper(false)}
+          />
+        ) : (
           [
             <Row gutter={24} key="a">
               <Col span={14} style={{ marginBottom: 24 }}>
@@ -389,9 +349,6 @@ export default () => {
               </Col>
             </Row>,
           ]
-        ) : (
-          // export to mobile component screen here
-          <VideoCropper onConfirm={() => {}} onCancel={() => {}} />
         )
       ) : (
         // </QueueAnim>
