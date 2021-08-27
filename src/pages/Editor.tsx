@@ -391,7 +391,7 @@ export default () => {
           ]
         ) : (
           // export to mobile component screen here
-          <VideoCropper />
+          <VideoCropper onConfirm={() => {}} onCancel={() => {}} />
         )
       ) : (
         // </QueueAnim>
