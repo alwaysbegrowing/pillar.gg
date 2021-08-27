@@ -1,5 +1,5 @@
-import React, { Fragment, useRef, useEffect } from 'react'
-import PropTypes from 'prop-types'
+import React, { Fragment, useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 // *******************************************************
 // RAIL
@@ -8,13 +8,13 @@ const railOuterStyle = {
   position: 'absolute',
   width: '100%',
   height: 75,
-  backgroundColor: "transparent",
+  backgroundColor: 'transparent',
   transform: 'translate(0%, 0%)',
   borderRadius: 7,
   cursor: 'pointer',
-  zIndex: 1
+  zIndex: 1,
   // border: '1px solid white',
-}
+};
 
 const railInnerStyle = {
   position: 'absolute',
@@ -24,8 +24,8 @@ const railInnerStyle = {
   borderRadius: 7,
   pointerEvents: 'none',
   backgroundColor: 'transparent',
-  zIndex: 1
-}
+  zIndex: 1,
+};
 
 export function SliderRail({ getRailProps }) {
   return (
@@ -33,12 +33,12 @@ export function SliderRail({ getRailProps }) {
       <div style={railOuterStyle} {...getRailProps()} />
       <div style={railInnerStyle} />
     </Fragment>
-  )
+  );
 }
 
 SliderRail.propTypes = {
   getRailProps: PropTypes.func.isRequired,
-}
+};
 
 // *******************************************************
 // HANDLE COMPONENT
@@ -48,17 +48,17 @@ export function Handle({
   handle: { id, value, percent },
   disabled,
   getHandleProps,
-  changeInterval
+  changeInterval,
 }) {
-
-  const oldValue = useRef(0)
+  const previousValue = useRef(0);
   useEffect(() => {
-    oldValue.current = value
-  })
+    previousValue.current = value;
+  });
 
-  const transitionStyle = Math.abs(oldValue.current - value) * 1000 !== changeInterval
-    ? ''
-    : 'left 1s linear'
+  const transitionStyle =
+    Math.abs(previousValue.current - value) * 1000 !== changeInterval
+      ? ''
+      : `left ${changeInterval}ms linear`;
 
   return (
     <Fragment>
@@ -73,7 +73,7 @@ export function Handle({
           height: '6rem',
           cursor: 'pointer',
           // border: '1px solid white',
-          backgroundColor: 'transparent'
+          backgroundColor: 'transparent',
         }}
         {...getHandleProps(id)}
       />
@@ -92,11 +92,11 @@ export function Handle({
           // borderRadius: '20%',
           boxShadow: '1px 1px 1px 1px rgba(0, 0, 0, 0.3)',
           backgroundColor: 'white',
-          transition: `${transitionStyle}`
+          transition: `${transitionStyle}`,
         }}
       />
     </Fragment>
-  )
+  );
 }
 
 Handle.propTypes = {
@@ -108,11 +108,11 @@ Handle.propTypes = {
   }).isRequired,
   getHandleProps: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
-}
+};
 
 Handle.defaultProps = {
   disabled: false,
-}
+};
 
 // *******************************************************
 // TRACK COMPONENT
@@ -133,7 +133,7 @@ export function Track({ source, target, getTrackProps, disabled }) {
       }}
       {...getTrackProps()}
     />
-  )
+  );
 }
 
 Track.propTypes = {
@@ -149,11 +149,11 @@ Track.propTypes = {
   }).isRequired,
   getTrackProps: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
-}
+};
 
 Track.defaultProps = {
   disabled: false,
-}
+};
 
 // *******************************************************
 // TICK COMPONENT
@@ -180,13 +180,13 @@ export function Tick({ tick, count, format }) {
           marginLeft: `${-(100 / count) / 2}%`,
           width: `${100 / count}%`,
           left: `${tick.percent}%`,
-          backgroundColor: 'transparent'
+          backgroundColor: 'transparent',
         }}
       >
         {format(tick.value)}
       </div>
     </div>
-  )
+  );
 }
 
 Tick.propTypes = {
@@ -197,8 +197,8 @@ Tick.propTypes = {
   }).isRequired,
   count: PropTypes.number.isRequired,
   format: PropTypes.func.isRequired,
-}
+};
 
 Tick.defaultProps = {
-  format: d => d,
-}
+  format: (d) => d,
+};
