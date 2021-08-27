@@ -1,5 +1,5 @@
-import React, { Fragment } from 'react'
-import PropTypes from 'prop-types'
+import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
 
 // *******************************************************
 // RAIL
@@ -7,26 +7,26 @@ import PropTypes from 'prop-types'
 const railOuterStyle = {
   position: 'absolute',
   width: '100%',
-  height: "5rem",
-  backgroundColor: "#8c8c8c",
+  height: '5rem',
+  backgroundColor: '#8c8c8c',
   transform: 'translate(0%, 0%)',
   borderRadius: 7,
   cursor: 'pointer',
-  zIndex: 0
+  zIndex: 0,
   // border: '1px solid white',
-}
+};
 
 const railInnerStyle = {
   position: 'absolute',
   width: '100%',
-  height: "1rem",
+  height: '1rem',
   transform: 'translate(0%, -50%)',
   borderTopLeftRadius: 7,
   borderTopRightRadius: 7,
   pointerEvents: 'none',
   backgroundColor: '#bfbfbf',
-  zIndex: 0
-}
+  zIndex: 0,
+};
 
 export function ClipSliderRail({ getRailProps }) {
   return (
@@ -34,22 +34,22 @@ export function ClipSliderRail({ getRailProps }) {
       <div style={railOuterStyle} {...getRailProps()} />
       <div style={railInnerStyle} />
     </Fragment>
-  )
+  );
 }
 
 ClipSliderRail.propTypes = {
   getRailProps: PropTypes.func.isRequired,
-}
+};
 
 // *******************************************************
 // HANDLE COMPONENT
 // *******************************************************
 export function ClipHandle({
-                         domain: [min, max],
-                         handle: { id, value, percent },
-                         disabled,
-                         getHandleProps,
-                       }) {
+  domain: [min, max],
+  handle: { id, value, percent },
+  disabled,
+  getHandleProps,
+}) {
   return (
     <Fragment>
       <div
@@ -64,7 +64,7 @@ export function ClipHandle({
           height: '3.5rem',
           cursor: 'pointer',
           backgroundColor: 'none',
-          display: disabled? 'none' : 'block'
+          display: disabled ? 'none' : 'block',
         }}
         {...getHandleProps(id)}
       />
@@ -84,11 +84,23 @@ export function ClipHandle({
           // borderRadius: '50%',
           // boxShadow: '1px 1px 1px 1px rgba(0, 0, 0, 0.3)',
           backgroundColor: '#ffec3d',
-          display: disabled? 'none' : 'block'
+          display: disabled ? 'none' : 'block',
         }}
-      ><div style={{height: "1rem", width: ".2rem", backgroundColor: "#d4b106", position: 'relative', top: "40%", borderRadius: 7, margin: "0 auto" }}/></div>
+      >
+        <div
+          style={{
+            height: '1rem',
+            width: '.2rem',
+            backgroundColor: '#d4b106',
+            position: 'relative',
+            top: '40%',
+            borderRadius: 7,
+            margin: '0 auto',
+          }}
+        />
+      </div>
     </Fragment>
-  )
+  );
 }
 
 ClipHandle.propTypes = {
@@ -100,16 +112,23 @@ ClipHandle.propTypes = {
   }).isRequired,
   getHandleProps: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
-}
+};
 
 ClipHandle.defaultProps = {
   disabled: false,
-}
+};
 
 // *******************************************************
 // TRACK COMPONENT
 // *******************************************************
-export function ClipTrack({ source, target, getTrackProps, updatingClipDuration, clipLength, disabled }) {
+export function ClipTrack({
+  source,
+  target,
+  getTrackProps,
+  updatingClipDuration,
+  clipLength,
+  disabled,
+}) {
   return (
     <div
       style={{
@@ -127,21 +146,25 @@ export function ClipTrack({ source, target, getTrackProps, updatingClipDuration,
         cursor: 'pointer',
         left: `${source.percent}%`,
         width: `${target.percent - source.percent}%`,
-        display: disabled? 'none' : 'block'
+        display: disabled ? 'none' : 'block',
       }}
       {...getTrackProps()}
     >
-      <div style={{
-        textAlign: "center", 
-        transform: "translate(0, 70%)", 
-        color: "black", 
-        fontWeight: "bold", 
-        zIndex: 2
-      }}>
-        {updatingClipDuration !== undefined && !isNaN(updatingClipDuration) ? Math.floor(updatingClipDuration) + 's' : clipLength + 's' }
+      <div
+        style={{
+          textAlign: 'center',
+          transform: 'translate(0, 70%)',
+          color: 'black',
+          fontWeight: 'bold',
+          zIndex: 2,
+        }}
+      >
+        {updatingClipDuration !== undefined && !isNaN(updatingClipDuration)
+          ? Math.floor(updatingClipDuration) + 's'
+          : clipLength + 's'}
       </div>
     </div>
-  )
+  );
 }
 
 ClipTrack.propTypes = {
@@ -157,11 +180,11 @@ ClipTrack.propTypes = {
   }).isRequired,
   getTrackProps: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
-}
+};
 
 ClipTrack.defaultProps = {
   disabled: false,
-}
+};
 
 // *******************************************************
 // TICK COMPONENT
@@ -178,7 +201,7 @@ export function ClipTick({ tick, count, format }) {
           backgroundColor: 'rgb(200,200,200, 0)',
           left: `${tick.percent}%`,
           transform: 'translate(0%, -200%)',
-          zIndex: 3
+          zIndex: 3,
         }}
       />
       <div
@@ -192,13 +215,13 @@ export function ClipTick({ tick, count, format }) {
           // width: `${100 / count-9}%`,
           left: `${tick.percent}%`,
           transform: 'translate(0%, -200%)',
-          zIndex: 3
+          zIndex: 3,
         }}
       >
         {format(tick.value)}
       </div>
     </div>
-  )
+  );
 }
 
 ClipTick.propTypes = {
@@ -209,8 +232,8 @@ ClipTick.propTypes = {
   }).isRequired,
   count: PropTypes.number.isRequired,
   format: PropTypes.func.isRequired,
-}
+};
 
 ClipTick.defaultProps = {
-  format: d => d,
-}
+  format: (d) => d,
+};

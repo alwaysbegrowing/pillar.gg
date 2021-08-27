@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Slider, Rail, Handles, Tracks, Ticks } from '../Slider/src';
-// import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider'
+import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider';
 import { SliderRail, Handle, Track } from './components'; // example render components - source below
 import { ClipSliderRail, ClipHandle, ClipTrack, ClipTick } from './ClipComponents'; // example render components - source below
 
 const TimeSlider = ({
+  trimClipUpdateValues,
   setTrimClipUpdateValues,
   showClipHandles,
   duration,
@@ -14,7 +14,6 @@ const TimeSlider = ({
   changeInterval,
 }) => {
   const domain = [100, 500];
-
   const [updatingClipDuration, setUpdatingClipDuration] = useState<number>();
 
   const sliderStyle = {
@@ -80,10 +79,7 @@ const TimeSlider = ({
           rootStyle={sliderStyle}
           mode={2}
           domain={[0, duration]} // [min, max]
-          values={[
-            { value: 0, num: 1 },
-            { value: duration, num: 1 },
-          ]} // slider values
+          values={[0, duration]} // slider values
           disabled={showClipHandles}
           onUpdate={onClipUpdateValues}
         >
@@ -91,7 +87,7 @@ const TimeSlider = ({
           <Handles>
             {({ handles, getHandleProps }) => (
               <div className="slider-handles">
-                {handles.map((handle) => (
+                {handles.map((handle, index) => (
                   <ClipHandle
                     key={handle.id}
                     handle={handle}
