@@ -8,10 +8,10 @@ export default {
   'pages.editor.combineClips.error': 'クリップの結合中にエラーが発生しました',
   'pages.editor.instructions':
     '不要なクリップを非表示にしましょう。クリップをドラッグし、並べ替える事が出来ます。準備ができたら、[ビデオをエクスポート]ボタンをクリックして下さい。',
-  'pages.editor.exportConfirm1': 'ビデオをエクスポートしますか？',
-  'pages.editor.exportConfirm2':
+  'pages.editor.exportConfirmFile1': 'ビデオをエクスポートしますか？',
+  'pages.editor.exportConfirmFile2':
     '処理が完了すると、結合されたビデオが記載されたメールが {email} に届きます。',
-  'pages.editor.exportConfirm3': '今のところ、これはVODごとに1回だけ実行できます。',
+  'pages.editor.exportConfirmFile3': '今のところ、これはVODごとに1回だけ実行できます。',
   'pages.editor.exportOkText': '書き出す',
   'pages.editor.exportCancelText': 'キャンセル',
   'pages.editor.combineClipsButton': '選択したビデオをエクスポート',

@@ -1,5 +1,4 @@
 import { notification } from 'antd';
-import { history } from 'umi';
 import type { ResponseError } from 'umi-request';
 import request from 'umi-request';
 
@@ -36,10 +35,6 @@ const errorHandler = (error: ResponseError) => {
       message: `Request error ${status} : ${url} `,
       description: errorText,
     });
-    if (status === 401 || status === 403) {
-      localStorage.removeItem('access_token');
-      history.push('/');
-    }
   } else if (!response) {
     notification.error({
       description: 'Your network is abnormal and you cannot connect to the server',
@@ -50,19 +45,21 @@ const errorHandler = (error: ResponseError) => {
   throw error;
 };
 
-// const extendRequest = extend({ errorHandler });
+const getHeaders = () => {
+  const accessToken = localStorage.getItem('access_token');
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${accessToken}`,
+  };
+  return headers;
+};
 
 const fetcher = (url: string) => {
-  const accessToken = localStorage.getItem('access_token');
-  if (!accessToken) return null;
-
-  const headers = {
-    Authorization: `Bearer ${accessToken}`,
-    'Client-ID': twitchClientId,
-  };
-
+  const headers = getHeaders();
+  // careful!!! This may cause a CORS errror if Client-ID is not allowed by the server
+  headers['Client-ID'] = twitchClientId;
   return request(url, { headers })
     .then((res: any) => res)
     .catch(errorHandler);
 };
-export { fetcher };
+export { fetcher, getHeaders };

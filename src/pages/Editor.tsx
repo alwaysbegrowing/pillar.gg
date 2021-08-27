@@ -1,34 +1,24 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
 import QueueAnim from 'rc-queue-anim';
-import { useClips, useVideo, useUser } from '../services/hooks/api';
-import { Button, Row, Col, Popconfirm, notification, message, Empty, Input, Tooltip } from 'antd';
-import { DislikeTwoTone, DownloadOutlined, LikeTwoTone } from '@ant-design/icons';
+import { useClips, useVideo } from '../services/hooks/api';
+import { Button, Row, Col, notification, Empty, Input, Tooltip } from 'antd';
+import { DislikeTwoTone, LikeTwoTone } from '@ant-design/icons';
 import ClipList from '../components/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
 import VideoPlayer from '../components/VideoPlayer';
 import TimeSlider from '../components/TimeSlider/TimeSlider';
+import VideoCropper from '../components/MobileExporter/VideoCropper';
 import ExportToMobile from './ExportToMobile';
 import type { IndividualTimestamp } from '../services/hooks/api';
 import { useIntl } from 'umi';
 import { useTime } from '../services/hooks/playtime';
-import Cropper from "react-cropper";
-import "cropperjs/dist/cropper.css";
-import picture from './HD_transparent_picture.png'
+import 'cropperjs/dist/cropper.css';
 
+import ExportButton from '@/components/ExportButton';
 
 const { Search } = Input;
-
-const sendClips = async (videoId: string, clips: IndividualTimestamp[]) => {
-  const data = { videoId, clips };
-
-  const resp = await fetch('https://lfh9xm104e.execute-api.us-east-1.amazonaws.com/prod/clips', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
-  return resp.ok;
-};
 
 const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[]): number[] => {
   if (clipId == null) return [0, 1];
@@ -39,17 +29,14 @@ const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[])
 
 export default () => {
   const { id: videoId } = useParams<{ id: string }>();
-  const { data: userData } = useUser();
+  // const { data: userData } = useUser();
   const { data, isLoading, isError } = useClips(videoId);
   const [clips, setClips] = useState<IndividualTimestamp[] | []>([]);
   const { data: videoData } = useVideo(videoId);
   const { thumbnail_url } = videoData || {};
   const videoRef = useRef<ReactPlayer>(null);
   const [playing, setPlaying] = useState<boolean>(false);
-  const [isCombineButtonDisabled, setIsCombineButtonDisabled] = useState<boolean>(false);
   const [selectedClipId, setSelectedClipId] = useState<string>('');
-  const [visible, setVisible] = React.useState(false);
-  const [confirmLoading, setConfirmLoading] = React.useState(false);
   const [confirmChangeClip, setConfirmChangeClip] = React.useState(false);
   const { formatMessage } = useIntl();
   const [clipFeedbackText, setClipFeedbackText] = useState('');
@@ -58,17 +45,12 @@ export default () => {
   const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, 0]);
   const isPlaying = playing && isReady;
   const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId, clips);
-  const { setSecPlayed, playedSeconds, isClipOver } = useTime(isPlaying, startTime, endTime);
   const [showMobile, setShowMobile] = useState<boolean>(false);
-  const [aspectRatio, setAspectRatio] = useState<number>(4 / 3);
-  const cropperRef = useRef<HTMLImageElement>(null);
-  const onCrop = () => {
-    const imageElement: any = cropperRef?.current;
-    const cropper: any = imageElement?.cropper;
-    console.log(cropper.getCropBoxData());
-
-  };
-
+  const { setSecPlayed, playedSeconds, isClipOver, intervalInMs } = useTime(
+    isPlaying,
+    startTime,
+    endTime,
+  );
 
   useEffect(() => {
     if (isClipOver) {
@@ -90,6 +72,7 @@ export default () => {
     },
     [videoRef],
   );
+
   const play = useCallback(
     (seekTime: number, clipId: string) => {
       setIsReady(false);
@@ -122,15 +105,7 @@ export default () => {
 
   const handleShowOnClick = () => {
     setShowMobile(!showMobile);
-  }
-  const setPlaytime = (playtime: number) => {
-    const newTime = startTime + playtime;
-    setSecPlayed(newTime);
-    seek(newTime);
   };
-
-  const clipLength = Math.round(endTime - startTime);
-  const { thumbnails } = data || {};
 
   const showSuccessNotification = (successMessage: string) => {
     notification.success({
@@ -140,21 +115,22 @@ export default () => {
       description: successMessage,
     });
   };
+
+  const setPlaytime = (playtime: number) => {
+    const newTime = startTime + playtime;
+    setSecPlayed(newTime);
+    seek(newTime);
+  };
+
+  const clipLength = Math.round(endTime - startTime);
+  const { thumbnails } = data || {};
+
   const thumbnail = thumbnail_url
     ? thumbnail_url.replace('%{width}', '195').replace('%{height}', '108')
     : '';
-  const { email } = userData || {};
 
   const onChange = (event: any) => {
     setClipFeedbackText(event.target.value);
-  };
-
-  const showPopconfirm = () => {
-    setVisible(true);
-  };
-
-  const handleCancel = () => {
-    setVisible(false);
   };
 
   const onSubmitClipFeedback = async () => {
@@ -176,27 +152,6 @@ export default () => {
     return resp.ok;
   };
 
-  const combineClips = async () => {
-    const successMessage = formatMessage({ id: 'pages.editor.combineClips.successMessage' });
-    if (clips) {
-      const selectedClips = clips.filter((clip) => clip.selected);
-      setIsCombineButtonDisabled(true);
-      setConfirmLoading(true);
-      const success = await sendClips(videoId, selectedClips);
-      setConfirmLoading(false);
-      setVisible(false);
-      if (success) {
-        showSuccessNotification(successMessage);
-      } else {
-        message.error(
-          formatMessage({
-            id: 'pages.editor.combineClips.error',
-          }),
-        );
-      }
-    }
-  };
-
   const seekToStartTime = () => {
     setPlaytime(trimClipUpdateValues[0]);
   };
@@ -210,41 +165,40 @@ export default () => {
     setClips([...clips]);
     seekToStartTime();
     return true;
-  }
+  };
   const triggerActiveLoadingButton = async () => {
-    setConfirmChangeClip(false)
-    return true
-  }
+    setConfirmChangeClip(false);
+    return true;
+  };
   const triggerLoadingEndAnimation = () => {
-    const successMessage = "Changes saved! ";
+    const successMessage = 'Changes saved! ';
     showSuccessNotification(successMessage);
-    setShowClipHandles(false)
-    return true
-  }
+    setShowClipHandles(false);
+    return true;
+  };
 
   const saveAdjustedClip = async () => {
     if (!trimClipUpdateValues[0]) {
-      setConfirmChangeClip(false)
+      setConfirmChangeClip(false);
       return true;
     }
 
-    // this poopy code is to hardcode a user feedback sequence when they adjust a clip 
-    setConfirmChangeClip(true)
+    // this poopy code is to hardcode a user feedback sequence when they adjust a clip
+    setConfirmChangeClip(true);
     setTimeout(triggerLoadingStartSequence, 1000);
     setTimeout(triggerActiveLoadingButton, 900);
     setTimeout(triggerLoadingEndAnimation, 1600);
 
-
     return true;
   };
 
-  const onSubmitBinaryFeedback = async (binaryFeedback) => {
+  const onSubmitBinaryFeedback = async (binaryFeedback: boolean) => {
     const clipData = getStartEndTimeFromClipId(selectedClipId, clips);
     const resp = await fetch('/api/submitClipFeedback', {
       method: 'POST',
       body: JSON.stringify({
         videoId,
-        binaryFeedback: binaryFeedback,
+        binaryFeedback,
         clip: { startTime: clipData[0], endTime: clipData[1] },
       }),
     });
@@ -258,228 +212,189 @@ export default () => {
   };
 
   const handleBinaryFeedback = async (feedback: any, message: string) => {
-    await onSubmitBinaryFeedback(feedback)
-    showSuccessNotification(message)
-  }
-
-  const handleSaveMobileEdit = () => {
-    // setAspectRatio(16 / 3);
-    console.log(aspectRatio)
-  }
-  const styles = {
-    playerWrapper: {
-      paddingTop: '56.25%',
-    },
-    reactPlayer: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-    },
-    icon: {
-      color: '#f1f7fe',
-    },
+    await onSubmitBinaryFeedback(feedback);
+    showSuccessNotification(message);
   };
+
   return (
     <PageContainer
       content={formatMessage({
         id: 'pages.editor.instructions',
       })}
-      extra={
-        <Popconfirm
-          title={
-            <div>
-              <div>
-                {formatMessage({
-                  id: 'pages.editor.exportConfirm1',
-                })}
-              </div>
-              <div>
-                {formatMessage(
-                  {
-                    id: 'pages.editor.exportConfirm2',
-                  },
-                  { email },
-                )}
-              </div>
-              <div>
-                {formatMessage({
-                  id: 'pages.editor.exportConfirm3',
-                })}
-              </div>
-            </div>
-          }
-          visible={visible}
-          onConfirm={combineClips}
-          okButtonProps={{ loading: confirmLoading }}
-          onCancel={handleCancel}
-          okText={formatMessage({ id: 'pages.editor.exportOkText' })}
-          cancelText={formatMessage({
-            id: 'pages.editor.exportCancelText',
-          })}
-        >
-          <Button
-            style={{ marginLeft: 24 }}
-            type="primary"
-            disabled={isCombineButtonDisabled}
-            icon={<DownloadOutlined />}
-            onClick={showPopconfirm}
-          >
-            {formatMessage({
-              id: 'pages.editor.combineClipsButton',
-            })}
-          </Button>
-          { }
-        </Popconfirm>
-      }
+      // extra={
+      //   <Popconfirm
+      //     title={
+      //       <div>
+      //         <div>
+      //           {formatMessage({
+      //             id: 'pages.editor.exportConfirm1',
+      //           })}
+      //         </div>
+      //         <div>
+      //           {formatMessage(
+      //             {
+      //               id: 'pages.editor.exportConfirm2',
+      //             },
+      //             { email },
+      //           )}
+      //         </div>
+      //         <div>
+      //           {formatMessage({
+      //             id: 'pages.editor.exportConfirm3',
+      //           })}
+      //         </div>
+      //       </div>
+      //     }
+      //     visible={visible}
+      //     onConfirm={combineClips}
+      //     okButtonProps={{ loading: confirmLoading }}
+      //     onCancel={handleCancel}
+      //     okText={formatMessage({ id: 'pages.editor.exportOkText' })}
+      //     cancelText={formatMessage({
+      //       id: 'pages.editor.exportCancelText',
+      //     })}
+      //   >
+      //     <Button
+      //       style={{ marginLeft: 24 }}
+      //       type="primary"
+      //       disabled={isCombineButtonDisabled}
+      //       icon={<DownloadOutlined />}
+      //       onClick={showPopconfirm}
+      //     >
+      //       {formatMessage({
+      //         id: 'pages.editor.combineClipsButton',
+      //       })}
+      //     </Button>
+      //     { }
+      //   </Popconfirm>
+      // }
+      extra={<ExportButton videoId={videoId} clips={clips?.filter((clip) => clip.selected)} />}
     >
       {clips.length !== 0 ? (
-        <QueueAnim className="demo-content"> {showMobile ? [
-          <Row gutter={24} key="a">
-            <Col span={14} style={{ marginBottom: 24 }}>
-              <VideoPlayer
-                videoRef={videoRef}
-                playing={playing}
-                setPlaying={setPlaying}
-                progress={playedSeconds}
-                onProgress={() => { }}
-                duration={clipLength}
-                onReady={() => setIsReady(true)}
-                selectedClipId={selectedClipId}
-                url={`https://twitch.tv/videos/${videoId}`}
-              />
-              <div style={{ padding: '1em', display: "flex" }}>
-                <Tooltip title={"I like this clip"}>
-                  <Button size='large' shape='circle' icon={<LikeTwoTone twoToneColor="#52c41a" onClick={() => handleBinaryFeedback(1, "You liked this video")} />} />
-                </Tooltip>
-                <Tooltip title={"I dislike this clip"}>
-                  <Button size='large' shape='circle' icon={<DislikeTwoTone twoToneColor="#eb2f96" onClick={() => handleBinaryFeedback(0, "You disliked this video")} />} />
-                </Tooltip>
-                <Search
-                  placeholder={'What did you think about this clip? '}
-                  onChange={onChange}
-                  value={clipFeedbackText}
-                  enterButton={'Submit'}
-                  onSearch={onSubmitClipFeedback}
-                  style={{ paddingBottom: '1rem', paddingLeft: '.5em', paddingTop: '.15em' }}
+        // <QueueAnim className="demo-content">
+        // {' '}
+        showMobile ? (
+          [
+            <Row gutter={24} key="a">
+              <Col span={14} style={{ marginBottom: 24 }}>
+                <VideoPlayer
+                  videoRef={videoRef}
+                  playing={playing}
+                  setPlaying={setPlaying}
+                  progress={playedSeconds}
+                  onProgress={() => {}}
+                  duration={clipLength}
+                  onReady={() => setIsReady(true)}
+                  selectedClipId={selectedClipId}
+                  url={`https://twitch.tv/videos/${videoId}`}
                 />
-              </div>
-              <div>
-              </div>
-              <Row>
-                <Col style={{ width: '100%' }}>
-                  <TimeSlider
-                    trimClipUpdateValues={trimClipUpdateValues}
-                    setTrimClipUpdateValues={setTrimClipUpdateValues}
-                    showClipHandles={!showClipHandles}
-                    duration={clipLength}
-                    progress={playedSeconds}
-                    setPlaytime={setPlaytime}
-                    setPlaying={setPlaying}
-                  />
-                  {showClipHandles ?
+                <div style={{ padding: '1em', display: 'flex' }}>
+                  <Tooltip title={'I like this clip'}>
                     <Button
-                      style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
-                      onClick={() => setShowClipHandles(!showClipHandles)}
-                    >
-                      Cancel
-                    </Button>
-
-                    :
-                    <div>
-
-                      <Button type='primary'
+                      size="large"
+                      shape="circle"
+                      icon={
+                        <LikeTwoTone
+                          twoToneColor="#52c41a"
+                          onClick={() => handleBinaryFeedback(1, 'You liked this video')}
+                        />
+                      }
+                    />
+                  </Tooltip>
+                  <Tooltip title={'I dislike this clip'}>
+                    <Button
+                      size="large"
+                      shape="circle"
+                      icon={
+                        <DislikeTwoTone
+                          twoToneColor="#eb2f96"
+                          onClick={() => handleBinaryFeedback(0, 'You disliked this video')}
+                        />
+                      }
+                    />
+                  </Tooltip>
+                  <Search
+                    placeholder={'What did you think about this clip? '}
+                    onChange={onChange}
+                    value={clipFeedbackText}
+                    enterButton={'Submit'}
+                    onSearch={onSubmitClipFeedback}
+                    style={{ paddingBottom: '1rem', paddingLeft: '.5em', paddingTop: '.15em' }}
+                  />
+                </div>
+                <div></div>
+                <Row>
+                  <Col style={{ width: '100%' }}>
+                    <TimeSlider
+                      trimClipUpdateValues={trimClipUpdateValues}
+                      setTrimClipUpdateValues={setTrimClipUpdateValues}
+                      showClipHandles={!showClipHandles}
+                      duration={clipLength}
+                      progress={playedSeconds}
+                      setPlaytime={setPlaytime}
+                      setPlaying={setPlaying}
+                      changeInterval={intervalInMs}
+                    />
+                    {showClipHandles ? (
+                      <Button
                         style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
                         onClick={() => setShowClipHandles(!showClipHandles)}
                       >
-                        Adjust Clip
+                        Cancel
                       </Button>
-                      <Button type="default" onClick={() => handleShowOnClick()}>Export To Mobile</Button>
-                    </div>
-                  }
-                  {showClipHandles ? (
-                    <Button style={{ marginRight: '1%' }} loading={confirmChangeClip} onClick={saveAdjustedClip}>
-                      Save Changes
-                    </Button>
-                  ) : null}
-                  {showClipHandles ? <Button onClick={seekToStartTime}>Preview</Button> : null}
-                </Col>
-              </Row>
-            </Col>
-            <Col style={{ alignItems: 'flex-start' }} span={8}>
-              {clips.length ? (
-                <ClipList
-                  clipInfo={{ clips, setClips }}
-                  clipIdInfo={{ selectedClipId, setSelectedClipId }}
-                  play={play}
-                  thumbnail={thumbnail}
-                  videoId={videoId}
-                  thumbnails={thumbnails}
-                />
-              ) : (
-                <Empty
-                  description={formatMessage({
-                    id: 'pages.editor.noClips',
-                  })}
-                />
-              )}
-            </Col>
-          </Row>
-        ] :
+                    ) : (
+                      <div>
+                        <Button
+                          type="primary"
+                          style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
+                          onClick={() => setShowClipHandles(!showClipHandles)}
+                        >
+                          Adjust Clip
+                        </Button>
+                        <Button type="default" onClick={() => handleShowOnClick()}>
+                          Export To Mobile
+                        </Button>
+                      </div>
+                    )}
+                    {showClipHandles ? (
+                      <Button
+                        style={{ marginRight: '1%' }}
+                        loading={confirmChangeClip}
+                        onClick={saveAdjustedClip}
+                      >
+                        Save Changes
+                      </Button>
+                    ) : null}
+                    {showClipHandles ? <Button onClick={seekToStartTime}>Preview</Button> : null}
+                  </Col>
+                </Row>
+              </Col>
+              <Col style={{ alignItems: 'flex-start' }} span={8}>
+                {clips.length ? (
+                  <ClipList
+                    clipInfo={{ clips, setClips }}
+                    clipIdInfo={{ selectedClipId, setSelectedClipId }}
+                    play={play}
+                    thumbnail={thumbnail}
+                    videoId={videoId}
+                    thumbnails={thumbnails}
+                  />
+                ) : (
+                  <Empty
+                    description={formatMessage({
+                      id: 'pages.editor.noClips',
+                    })}
+                  />
+                )}
+              </Col>
+            </Row>,
+          ]
+        ) : (
           // export to mobile component screen here
-          <Row gutter={24} key="b">
-            <Col span={14}>
-              <video style={{height: '20em', width: '100%', position: 'absolute', marginTop: -54, marginLeft: 316, overflow: 'hidden'}} src={`https://prod-prodthumbnails.s3.amazonaws.com/42991276973-offset-15812.mp4`} />
-              {/* <VideoPlayer
-                videoRef={videoRef}
-                playing={playing}
-                setPlaying={setPlaying}
-                progress={playedSeconds}
-                onProgress={() => { }}
-                duration={clipLength}
-                onReady={() => setIsReady(true)}
-                selectedClipId={selectedClipId}
-                url={`https://twitch.tv/videos/${videoId}`}
-                style={{ arginLeft: '-1544.1008467245192px' }}
-              /> */}
-              <Cropper
-                src={picture}
-                style={{ height: '19em', width: "100%", position: 'absolute', left: 0, top: '.5em'  }}
-                // Cropper.js options
-                // initialAspectRatio={aspectRatio }
-                aspectRatio={4 / 3}
-                dragMode={'move'}
-                responsive={true}
-                restore={true}
-                viewMode={1}
-                // modal={false}
-                // highlight={false}
-                autoCropArea={.4}
-                background={false}
-                movable={false}
-                zoomable={false}
-                zoomOnTouch={false}
-                zoomOnWheel={false}
-                toggleDragModeOnDblclick={false}
-                crop={onCrop}
-                ref={cropperRef}
-              />
-
-            </Col>
-            <Col span={8}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', height: '100%', flexDirection: 'column' }}>
-                <div>
-                  Select your face cam area.
-                </div>
-                <div>
-                  <Button type='primary' onClick={() => handleSaveMobileEdit()}>Save Face Cam Area</Button>
-                </div>
-              </div>
-            </Col>
-
-          </Row>
-        }
-        </QueueAnim>
+          <VideoCropper />
+        )
       ) : (
+        // </QueueAnim>
         'No clips found! Please select another VOD. '
       )}
     </PageContainer>
