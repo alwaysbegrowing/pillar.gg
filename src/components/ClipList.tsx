@@ -42,7 +42,7 @@ const App = ({
                 play={() => play(timestamp.startTime, timestamp.id)}
                 timestamp={timestamp}
                 key={timestamp.id}
-                verifiedTwitch={timestamp.verifiedTwitch}
+                sourceAttribution={timestamp.sourceAttribution}
                 id={timestamp.id}
                 i={i}
                 /* TODO potential bug: if s3 upload failed and image does not exist in thumbnails array, this will probably error out */

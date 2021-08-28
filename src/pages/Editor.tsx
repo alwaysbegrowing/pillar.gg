@@ -85,7 +85,14 @@ export default () => {
     if (data?.ccc) {
       const append = data.ccc.map((d) => ({
         ...d,
-        verifiedTwitch: true,
+        sourceAttribution: 'Clipped By Chat',
+      }));
+      setClips((prev) => [...prev, ...append]);
+    }
+    if (data?.manual) {
+      const append = data.manual.map((d) => ({
+        ...d,
+        sourceAttribution: 'From !clip',
       }));
       setClips((prev) => [...prev, ...append]);
     }
