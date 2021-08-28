@@ -1,9 +1,6 @@
 // https://umijs.org/config/
 import { defineConfig } from 'umi';
 import defaultSettings from './defaultSettings';
-import proxy from './proxy';
-
-const { REACT_APP_ENV } = process.env;
 
 export default defineConfig({
   hash: true,
@@ -75,19 +72,14 @@ export default defineConfig({
       component: './Settings',
     },
     {
-      path: '/',
-      layout: false,
-      component: './Landing',
-    },
-    {
       path: '/TwitchAuth',
       layout: false,
       component: './TwitchAuth',
     },
     {
-      path: '/YoutubeAuth',
+      path: '/AuthSuccess',
       layout: false,
-      component: './YoutubeAuth',
+      component: './AuthSuccess',
     },
     {
       path: '/PrivacyPolicy',
@@ -106,7 +98,6 @@ export default defineConfig({
   // @ts-ignore
   title: false,
   ignoreMomentLocale: true,
-  proxy: proxy[REACT_APP_ENV || 'dev'],
   manifest: {
     basePath: '/',
   },

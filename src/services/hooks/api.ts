@@ -1,4 +1,4 @@
-import { useEffect, useContext, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import useSWR from 'swr';
 import { fetcher } from '../fetcher';
 import { GlobalContext } from '../../ContextWrapper';
@@ -14,6 +14,19 @@ interface UseDBUserProps {
   error?: boolean;
 }
 
+const twitchClientId = 'phpnjz4llxez4zpw3iurfthoi573c8';
+const redirectURI = `${window.location.origin}/TwitchAuth`;
+
+const onErrorRetry = (error: any) => {
+  if (error.data.status === 401 || error.data.status === 403) {
+    return window.open(
+      `https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${redirectURI}&response_type=code&scope=user_read`,
+      '_self',
+    );
+  }
+  return null;
+};
+
 function useUser() {
   const { twitchId } = useContext(GlobalContext);
 
@@ -21,11 +34,8 @@ function useUser() {
   const otherUrl = `https://api.twitch.tv/helix/users?id=${twitchId}`;
 
   const url = twitchId ? otherUrl : selfUrl;
-  const { data, error, mutate } = useSWR(url, fetcher);
-  const access_token = localStorage.getItem('access_token');
-  useEffect(() => {
-    mutate();
-  }, [access_token, mutate]);
+  const { data, error } = useSWR(url, fetcher, { onErrorRetry });
+
   return {
     data: data?.data?.[0],
     isLoading: !error && !data,
@@ -101,6 +111,7 @@ interface TimestampStructure {
   clips: Algorithm;
   ccc: IndividualTimestamp[];
   thumbnails: ThumbnailData[];
+  manual: IndividualTimestamp[];
 }
 
 interface UseClipsDataProps {
@@ -113,7 +124,10 @@ function useClips(clipId: number | string | undefined) {
     clipId ? () => `/api/timestamps/${clipId}` : null,
     fetcher,
   );
-  const alldata = useMemo(() => ({ ...data?.clips, ccc: data?.ccc, thumbnails: data?.thumbnails }), [JSON.stringify(data)]);
+  const alldata = useMemo(
+    () => ({ ...data?.clips, ccc: data?.ccc, manual: data?.manual, thumbnails: data?.thumbnails }),
+    [JSON.stringify(data)],
+  );
 
   return {
     data: alldata,

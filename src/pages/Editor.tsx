@@ -1,8 +1,8 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
-import { useClips, useVideo, useUser } from '../services/hooks/api';
-import { Button, Row, Col, Popconfirm, notification, message, Empty, Input, Tooltip } from 'antd';
-import { DislikeTwoTone, DownloadOutlined, LikeTwoTone } from '@ant-design/icons';
+import { useClips, useVideo } from '../services/hooks/api';
+import { Button, Row, Col, notification, Empty, Input, Tooltip } from 'antd';
+import { DislikeTwoTone, LikeTwoTone } from '@ant-design/icons';
 import ClipList from '../components/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
@@ -11,18 +11,9 @@ import TimeSlider from '../components/TimeSlider/TimeSlider';
 import type { IndividualTimestamp } from '../services/hooks/api';
 import { useIntl } from 'umi';
 import { useTime } from '../services/hooks/playtime';
+import ExportButton from '@/components/ExportButton';
 
 const { Search } = Input;
-
-const sendClips = async (videoId: string, clips: IndividualTimestamp[]) => {
-  const data = { videoId, clips };
-
-  const resp = await fetch('https://lfh9xm104e.execute-api.us-east-1.amazonaws.com/prod/clips', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
-  return resp.ok;
-};
 
 const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[]): number[] => {
   if (clipId == null) return [0, 1];
@@ -33,17 +24,14 @@ const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[])
 
 export default () => {
   const { id: videoId } = useParams<{ id: string }>();
-  const { data: userData } = useUser();
+  // const { data: userData } = useUser();
   const { data, isLoading, isError } = useClips(videoId);
   const [clips, setClips] = useState<IndividualTimestamp[] | []>([]);
   const { data: videoData } = useVideo(videoId);
   const { thumbnail_url } = videoData || {};
   const videoRef = useRef<ReactPlayer>(null);
   const [playing, setPlaying] = useState<boolean>(false);
-  const [isCombineButtonDisabled, setIsCombineButtonDisabled] = useState<boolean>(false);
   const [selectedClipId, setSelectedClipId] = useState<string>('');
-  const [visible, setVisible] = React.useState(false);
-  const [confirmLoading, setConfirmLoading] = React.useState(false);
   const [confirmChangeClip, setConfirmChangeClip] = React.useState(false);
   const { formatMessage } = useIntl();
   const [clipFeedbackText, setClipFeedbackText] = useState('');
@@ -52,7 +40,11 @@ export default () => {
   const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, 0]);
   const isPlaying = playing && isReady;
   const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId, clips);
-  const { setSecPlayed, playedSeconds, isClipOver } = useTime(isPlaying, startTime, endTime);
+  const { setSecPlayed, playedSeconds, isClipOver, intervalInMs } = useTime(
+    isPlaying,
+    startTime,
+    endTime,
+  );
   useEffect(() => {
     if (isClipOver) {
       setPlaying(false);
@@ -93,7 +85,14 @@ export default () => {
     if (data?.ccc) {
       const append = data.ccc.map((d) => ({
         ...d,
-        verifiedTwitch: true,
+        sourceAttribution: 'Clipped By Chat',
+      }));
+      setClips((prev) => [...prev, ...append]);
+    }
+    if (data?.manual) {
+      const append = data.manual.map((d) => ({
+        ...d,
+        sourceAttribution: 'From !clip',
       }));
       setClips((prev) => [...prev, ...append]);
     }
@@ -102,14 +101,6 @@ export default () => {
   if (isLoading) return formatMessage({ id: 'pages.editor.loading' });
   if (isError) return formatMessage({ id: 'pages.editor.error' });
   if (!data) return formatMessage({ id: 'pages.editor.noData' });
-  const setPlaytime = (playtime: number) => {
-    const newTime = startTime + playtime;
-    setSecPlayed(newTime);
-    seek(newTime);
-  };
-
-  const clipLength = Math.round(endTime - startTime);
-  const { thumbnails } = data || {};
 
   const showSuccessNotification = (successMessage: string) => {
     notification.success({
@@ -119,21 +110,21 @@ export default () => {
       description: successMessage,
     });
   };
+  const setPlaytime = (playtime: number) => {
+    const newTime = startTime + playtime;
+    setSecPlayed(newTime);
+    seek(newTime);
+  };
+
+  const clipLength = Math.round(endTime - startTime);
+  const { thumbnails } = data || {};
+
   const thumbnail = thumbnail_url
     ? thumbnail_url.replace('%{width}', '195').replace('%{height}', '108')
     : '';
-  const { email } = userData || {};
 
   const onChange = (event: any) => {
     setClipFeedbackText(event.target.value);
-  };
-
-  const showPopconfirm = () => {
-    setVisible(true);
-  };
-
-  const handleCancel = () => {
-    setVisible(false);
   };
 
   const onSubmitClipFeedback = async () => {
@@ -155,27 +146,6 @@ export default () => {
     return resp.ok;
   };
 
-  const combineClips = async () => {
-    const successMessage = formatMessage({ id: 'pages.editor.combineClips.successMessage' });
-    if (clips) {
-      const selectedClips = clips.filter((clip) => clip.selected);
-      setIsCombineButtonDisabled(true);
-      setConfirmLoading(true);
-      const success = await sendClips(videoId, selectedClips);
-      setConfirmLoading(false);
-      setVisible(false);
-      if (success) {
-        showSuccessNotification(successMessage);
-      } else {
-        message.error(
-          formatMessage({
-            id: 'pages.editor.combineClips.error',
-          }),
-        );
-      }
-    }
-  };
-
   const seekToStartTime = () => {
     setPlaytime(trimClipUpdateValues[0]);
   };
@@ -189,46 +159,45 @@ export default () => {
     setClips([...clips]);
     seekToStartTime();
     return true;
-  }
+  };
   const triggerActiveLoadingButton = async () => {
-    setConfirmChangeClip(false)
-    return true
-  }
+    setConfirmChangeClip(false);
+    return true;
+  };
   const triggerLoadingEndAnimation = () => {
-    const successMessage = "Changes saved! ";
+    const successMessage = 'Changes saved! ';
     showSuccessNotification(successMessage);
-    setShowClipHandles(false)
-    return true
-  }
+    setShowClipHandles(false);
+    return true;
+  };
 
   const saveAdjustedClip = async () => {
-    if (!trimClipUpdateValues[0]){
-      setConfirmChangeClip(false) 
+    if (!trimClipUpdateValues[0]) {
+      setConfirmChangeClip(false);
       return true;
-    } 
+    }
 
-    // this poopy code is to hardcode a user feedback sequence when they adjust a clip 
-    setConfirmChangeClip(true)
+    // this poopy code is to hardcode a user feedback sequence when they adjust a clip
+    setConfirmChangeClip(true);
     setTimeout(triggerLoadingStartSequence, 1000);
     setTimeout(triggerActiveLoadingButton, 900);
     setTimeout(triggerLoadingEndAnimation, 1600);
-    
 
     return true;
   };
 
-  const onSubmitBinaryFeedback = async (binaryFeedback) => {
+  const onSubmitBinaryFeedback = async (binaryFeedback: boolean) => {
     const clipData = getStartEndTimeFromClipId(selectedClipId, clips);
     const resp = await fetch('/api/submitClipFeedback', {
       method: 'POST',
       body: JSON.stringify({
         videoId,
-        binaryFeedback: binaryFeedback,
+        binaryFeedback,
         clip: { startTime: clipData[0], endTime: clipData[1] },
       }),
     });
     // const successMessage = formatMessage({
-      // id: 'pages.editor.onSubmitClipFeedback.successMessage',
+    // id: 'pages.editor.onSubmitClipFeedback.successMessage',
     // });
     // showSuccessNotification(successMessage);
     // setClipFeedbackText('');
@@ -236,63 +205,17 @@ export default () => {
     return resp.ok;
   };
 
-  const handleBinaryFeedback = async (feedback:any, message:string) => {
-    await onSubmitBinaryFeedback(feedback)
-    showSuccessNotification(message)
-  }
+  const handleBinaryFeedback = async (feedback: any, message: string) => {
+    await onSubmitBinaryFeedback(feedback);
+    showSuccessNotification(message);
+  };
 
   return (
     <PageContainer
       content={formatMessage({
         id: 'pages.editor.instructions',
       })}
-      extra={
-        <Popconfirm
-          title={
-            <div>
-              <div>
-                {formatMessage({
-                  id: 'pages.editor.exportConfirm1',
-                })}
-              </div>
-              <div>
-                {formatMessage(
-                  {
-                    id: 'pages.editor.exportConfirm2',
-                  },
-                  { email },
-                )}
-              </div>
-              <div>
-                {formatMessage({
-                  id: 'pages.editor.exportConfirm3',
-                })}
-              </div>
-            </div>
-          }
-          visible={visible}
-          onConfirm={combineClips}
-          okButtonProps={{ loading: confirmLoading }}
-          onCancel={handleCancel}
-          okText={formatMessage({ id: 'pages.editor.exportOkText' })}
-          cancelText={formatMessage({
-            id: 'pages.editor.exportCancelText',
-          })}
-        >
-          <Button
-            style={{ marginLeft: 24 }}
-            type="primary"
-            disabled={isCombineButtonDisabled}
-            icon={<DownloadOutlined />}
-            onClick={showPopconfirm}
-          >
-            {formatMessage({
-              id: 'pages.editor.combineClipsButton',
-            })}
-          </Button>
-          {}
-        </Popconfirm>
-      }
+      extra={<ExportButton videoId={videoId} clips={clips?.filter((clip) => clip.selected)} />}
     >
       {clips.length !== 0 ? (
         <div>
@@ -309,13 +232,31 @@ export default () => {
                 selectedClipId={selectedClipId}
                 url={`https://twitch.tv/videos/${videoId}`}
               />
-              <div style={{padding: '1em', display: "flex"}}>
-              <Tooltip title={"I like this clip"}>
-                <Button size='large' shape='circle'  icon={ <LikeTwoTone twoToneColor="#52c41a" onClick={() => handleBinaryFeedback(1, "You liked this video")}/> }/>
-              </Tooltip>
-              <Tooltip title={"I dislike this clip"}>
-                <Button size='large' shape='circle' icon={<DislikeTwoTone twoToneColor="#eb2f96" onClick={() =>  handleBinaryFeedback(0, "You disliked this video")}/>}/>
-              </Tooltip>
+              <div style={{ padding: '1em', display: 'flex' }}>
+                <Tooltip title={'I like this clip'}>
+                  <Button
+                    size="large"
+                    shape="circle"
+                    icon={
+                      <LikeTwoTone
+                        twoToneColor="#52c41a"
+                        onClick={() => handleBinaryFeedback(1, 'You liked this video')}
+                      />
+                    }
+                  />
+                </Tooltip>
+                <Tooltip title={'I dislike this clip'}>
+                  <Button
+                    size="large"
+                    shape="circle"
+                    icon={
+                      <DislikeTwoTone
+                        twoToneColor="#eb2f96"
+                        onClick={() => handleBinaryFeedback(0, 'You disliked this video')}
+                      />
+                    }
+                  />
+                </Tooltip>
                 <Search
                   placeholder={'What did you think about this clip? '}
                   onChange={onChange}
@@ -325,8 +266,7 @@ export default () => {
                   style={{ paddingBottom: '1rem', paddingLeft: '.5em', paddingTop: '.15em' }}
                 />
               </div>
-              <div>
-              </div>
+              <div></div>
               <Row>
                 <Col style={{ width: '100%' }}>
                   <TimeSlider
@@ -337,6 +277,7 @@ export default () => {
                     progress={playedSeconds}
                     setPlaytime={setPlaytime}
                     setPlaying={setPlaying}
+                    changeInterval={intervalInMs}
                   />
                   <Button
                     style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
@@ -346,7 +287,11 @@ export default () => {
                   </Button>
 
                   {showClipHandles ? (
-                    <Button style={{ marginRight: '1%' }} loading={confirmChangeClip} onClick={saveAdjustedClip}>
+                    <Button
+                      style={{ marginRight: '1%' }}
+                      loading={confirmChangeClip}
+                      onClick={saveAdjustedClip}
+                    >
                       Save Changes
                     </Button>
                   ) : null}
