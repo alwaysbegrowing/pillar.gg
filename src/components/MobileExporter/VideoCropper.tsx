@@ -132,6 +132,8 @@ function VideoCropper({ onConfirm, onCancel }) {
         ) : (
           <>
             <video
+              loop
+              autoPlay
               style={{
                 position: 'absolute',
                 width: '100%',
