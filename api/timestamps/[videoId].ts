@@ -30,6 +30,9 @@ export default async (req: VercelRequest, res: VercelResponse) => {
         ccc: {
           $slice: lim,
         },
+        manual: {
+          $slice: lim,
+        },
       },
     },
   };
@@ -44,8 +47,11 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     result.clips.brain = result.clips.brain.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
   }
 
-  if (result?.ccc?.length > 1) {
-    result.clips.ccc = result.ccc.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
+  if (result?.clips?.ccc?.length > 0) {
+    result.ccc = result.clips.ccc.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
+  }
+  if (result?.clips?.manual?.length > 0) {
+    result.manual = result.clips.manual.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
   }
 
   // scrub for muted portions of clips and dont return them
