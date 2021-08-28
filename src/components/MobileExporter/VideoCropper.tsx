@@ -142,7 +142,7 @@ function VideoCropper({ onConfirm, onCancel }) {
             />
             <Cropper
               src={picture}
-              initialAspectRatio={INITIAL_ASPECT_RATIO}
+              aspectRatio={INITIAL_ASPECT_RATIO}
               dragMode={'move'}
               responsive={true}
               restore={true}
@@ -161,20 +161,22 @@ function VideoCropper({ onConfirm, onCancel }) {
         )}
       </Col>
       <Col span={8}>
-        {/* <Space direction="vertical"> */}
         <Row>{promptUser}</Row>
-        <Divider />
-        <Title level={5}>Change Aspect Ratio</Title>
-        <Row>
-          <Radio.Group value={aspectRatio} onChange={(e) => updateAspectRatio(e.target.value)}>
-            <Radio.Button value={1}>1:1</Radio.Button>
-            <Radio.Button value={4 / 3}>4:3</Radio.Button>
-            <Radio.Button value={16 / 9}>16:9</Radio.Button>
-            <Radio.Button value={16 / 10}>16:10</Radio.Button>
-            <Radio.Button value={ASPECT_NAN_VAL}>Free</Radio.Button>
-          </Radio.Group>
-        </Row>
-        {/* </Space> */}
+        {stage !== Stage.PREVIEW && (
+          <>
+            <Divider />
+            <Title level={5}>Change Aspect Ratio</Title>
+            <Row>
+              <Radio.Group value={aspectRatio} onChange={(e) => updateAspectRatio(e.target.value)}>
+                <Radio.Button value={1}>1:1</Radio.Button>
+                <Radio.Button value={4 / 3}>4:3</Radio.Button>
+                <Radio.Button value={16 / 9}>16:9</Radio.Button>
+                <Radio.Button value={16 / 10}>16:10</Radio.Button>
+                <Radio.Button value={ASPECT_NAN_VAL}>Free</Radio.Button>
+              </Radio.Group>
+            </Row>
+          </>
+        )}
       </Col>
     </Row>
   );
