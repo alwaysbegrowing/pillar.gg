@@ -189,6 +189,7 @@ export default () => {
     // if(clips[currentClipIndex].selected != true){
     setTimeout(() => {
       clips[currentClipIndex].selected = true;
+      return true;
     }, 1600);
     // }
 
