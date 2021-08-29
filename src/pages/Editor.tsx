@@ -171,17 +171,26 @@ export default () => {
     return true;
   };
 
+  const isCurrentClip = (element: IndividualTimestamp) => element.id === selectedClipId;
+
   const saveAdjustedClip = async () => {
     if (!trimClipUpdateValues[0]) {
       setConfirmChangeClip(false);
       return true;
     }
 
+    const currentClipIndex = clips.findIndex(isCurrentClip);
+
     // this poopy code is to hardcode a user feedback sequence when they adjust a clip
     setConfirmChangeClip(true);
     setTimeout(triggerLoadingStartSequence, 1000);
     setTimeout(triggerActiveLoadingButton, 900);
     setTimeout(triggerLoadingEndAnimation, 1600);
+    // if(clips[currentClipIndex].selected != true){
+    setTimeout(() => {
+      clips[currentClipIndex].selected = true;
+    }, 1600);
+    // }
 
     return true;
   };
