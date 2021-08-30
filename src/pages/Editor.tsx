@@ -176,7 +176,7 @@ export default () => {
     setTimeout(triggerLoadingEndAnimation, 1600);
 
     if (twitchId) {
-      sendHubspotEvent(twitchId);
+      sendHubspotEvent(twitchId, videoId);
     }
 
     return true;

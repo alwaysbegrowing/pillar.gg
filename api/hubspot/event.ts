@@ -13,6 +13,7 @@ const connectToDatabase = require('../_connectToDatabase');
 const majorEvent = async (req: VercelRequest, res: VercelResponse) => {
   // get hubspotID from req query
   const { twitchId } = req.query;
+  const { videoId } = req.body;
 
   // match hubspotID to hubspot_contact_id in database
   const db = await connectToDatabase();
@@ -33,7 +34,9 @@ const majorEvent = async (req: VercelRequest, res: VercelResponse) => {
     eventName: MAJOR_EVENT,
     email,
     objectId: String(contactId), // it a string or an array of strings
-    properties: {},
+    properties: {
+      videoId,
+    },
   };
 
   try {
