@@ -43,7 +43,11 @@ export default () => {
   const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, 0]);
   const isPlaying = playing && isReady;
   const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId, clips);
-  const { setSecPlayed, playedSeconds, isClipOver } = useTime(isPlaying, startTime, endTime);
+  const { setSecPlayed, playedSeconds, isClipOver, intervalInMs } = useTime(
+    isPlaying,
+    startTime,
+    endTime,
+  );
   useEffect(() => {
     if (isClipOver) {
       setPlaying(false);
@@ -84,7 +88,14 @@ export default () => {
     if (data?.ccc) {
       const append = data.ccc.map((d) => ({
         ...d,
-        verifiedTwitch: true,
+        sourceAttribution: 'Clipped By Chat',
+      }));
+      setClips((prev) => [...prev, ...append]);
+    }
+    if (data?.manual) {
+      const append = data.manual.map((d) => ({
+        ...d,
+        sourceAttribution: 'From !clip',
       }));
       setClips((prev) => [...prev, ...append]);
     }
@@ -163,17 +174,27 @@ export default () => {
     return true;
   };
 
+  const isCurrentClip = (element: IndividualTimestamp) => element.id === selectedClipId;
+
   const saveAdjustedClip = async () => {
     if (!trimClipUpdateValues[0]) {
       setConfirmChangeClip(false);
       return true;
     }
 
+    const currentClipIndex = clips.findIndex(isCurrentClip);
+
     // this poopy code is to hardcode a user feedback sequence when they adjust a clip
     setConfirmChangeClip(true);
     setTimeout(triggerLoadingStartSequence, 1000);
     setTimeout(triggerActiveLoadingButton, 900);
     setTimeout(triggerLoadingEndAnimation, 1600);
+    // if(clips[currentClipIndex].selected != true){
+    setTimeout(() => {
+      clips[currentClipIndex].selected = true;
+      return true;
+    }, 1600);
+    // }
 
     if (twitchId) {
       sendHubspotEvent(twitchId, videoId);
@@ -273,6 +294,7 @@ export default () => {
                     progress={playedSeconds}
                     setPlaytime={setPlaytime}
                     setPlaying={setPlaying}
+                    changeInterval={intervalInMs}
                   />
                   <Button
                     style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}

@@ -37,13 +37,13 @@ export function SortableClipCard({
   thumbnail,
   timestamp,
   play,
-  verifiedTwitch,
+  sourceAttribution,
   selectedClipId,
   setClips,
   i,
 }: {
   play: () => any;
-  verifiedTwitch?: boolean;
+  sourceAttribution?: string;
   selectedClipId: string;
   id: string;
   setClips: any;
@@ -150,14 +150,8 @@ export function SortableClipCard({
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      {verifiedTwitch && (
-        <Badge.Ribbon
-          text={formatMessage({ id: 'component.SortableClipCard.div.Badge.Ribbon.text' })}
-        >
-          {card}
-        </Badge.Ribbon>
-      )}
-      {!verifiedTwitch && card}
+      {sourceAttribution && <Badge.Ribbon text={sourceAttribution}>{card}</Badge.Ribbon>}
+      {!sourceAttribution && card}
     </div>
   );
 }
