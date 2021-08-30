@@ -3,7 +3,7 @@ import getTwitchUserData from '../twitch/_getTwitchUserData';
 import addHubspotContact from '../hubspot/_addContact';
 import type { IHubspotEvent } from '../hubspot/_logCustomEvent';
 import logCustomEvent from '../hubspot/_logCustomEvent';
-import { SIGNUP_EVENT, LOGIN_EVENT } from 'api/hubspot/_customEvents';
+import { SIGNUP_EVENT, LOGIN_EVENT } from '../hubspot/_customEvents';
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 
 const connectToDatabase = require('../_connectToDatabase');
