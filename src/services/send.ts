@@ -18,10 +18,8 @@ export const sendClips = async (
   return resp.ok;
 };
 
-export const sendMajorEvent = async (twitchId: string | number) => {
-  // get base url from browser
-  const baseUrl = window.location.origin;
-  const apiUrl = `${baseUrl}/api/hubspot/majorEvent?twitchId=${twitchId}`;
+export const sendHubspotEvent = async (twitchId: string | number) => {
+  const apiUrl = `/api/hubspot/event?twitchId=${twitchId}`;
 
   const resp = await fetch(apiUrl, {
     method: 'GET',

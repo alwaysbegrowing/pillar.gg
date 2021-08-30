@@ -5,7 +5,7 @@ import { isDebugMode } from '@/pages/Vods';
 import { Button, Menu, Dropdown, Popconfirm, message } from 'antd';
 import { useIntl } from 'umi';
 import { showSuccessNotification } from '@/utils/utils';
-import { sendClips, sendMajorEvent } from '@/services/send';
+import { sendClips, sendHubspotEvent } from '@/services/send';
 
 const ExportWrapper = ({ children, onConfirm, title, okText, cancelText }: any) => {
   const [loading, setLoading] = useState(false);
@@ -96,14 +96,14 @@ const ExportButton = ({ clips, videoId }: any) => {
 
   const onConfirmYouTube = async () => {
     if (data?.id) {
-      sendMajorEvent(data?.id);
+      sendHubspotEvent(data?.id);
     }
     await startYoutubeExport(data.id, videoId, clips, formatMessage);
   };
 
   const onConfirmExport = async () => {
     if (data?.id) {
-      sendMajorEvent(data?.id);
+      sendHubspotEvent(data?.id);
     }
     await startExport(videoId, clips, formatMessage);
   };

@@ -12,7 +12,7 @@ import type { IndividualTimestamp } from '../services/hooks/api';
 import { useIntl } from 'umi';
 import { useTime } from '../services/hooks/playtime';
 import ExportButton from '@/components/ExportButton';
-import { sendMajorEvent } from '@/services/send';
+import { sendHubspotEvent } from '@/services/send';
 
 const { Search } = Input;
 
@@ -176,7 +176,7 @@ export default () => {
     setTimeout(triggerLoadingEndAnimation, 1600);
 
     if (twitchId) {
-      sendMajorEvent(twitchId);
+      sendHubspotEvent(twitchId);
     }
 
     return true;
