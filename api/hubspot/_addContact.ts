@@ -1,4 +1,4 @@
-import * as hubspot from '@hubspot/api-client';
+import { Client } from '@hubspot/api-client';
 
 const { HUBSPOT_API_KEY } = process.env;
 
@@ -34,7 +34,7 @@ export default async (twitchUserData: TwitchUserData) => {
         lead_status: 'Lead',
       },
     };
-    const hubspotClient = new hubspot.Client({ apiKey: HUBSPOT_API_KEY });
+    const hubspotClient = new Client({ apiKey: HUBSPOT_API_KEY });
     const createContactResponse = await hubspotClient.crm.contacts.basicApi.create(contactObj);
     return { hubspot_contact_id: createContactResponse.body.id };
   } catch (e: any) {

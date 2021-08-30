@@ -21,18 +21,12 @@ const majorEvent = async (req: VercelRequest, res: VercelResponse) => {
   });
 
   // if contact is not found, do nothing
-  if (!contact) {
-    res.status(204).send({});
-    return;
+  if (!contact?.email || !contact?.hubspot_contact_id) {
+    return res.status(204).send({});
   }
 
   // get email from contact
   const { email, hubspot_contact_id: contactId } = contact;
-
-  if (!email || !contactId) {
-    res.status(204).send({});
-    return;
-  }
 
   // create hubspot event object
   const event: IHubspotEvent = {
@@ -43,16 +37,14 @@ const majorEvent = async (req: VercelRequest, res: VercelResponse) => {
   };
 
   try {
-    // log event to hubspot
     await logCustomEvent(event);
-    // update contact with new lead_status
     const properties: UpdateContactInput = { lead_status: 'qualifying' };
     await updateContact(contactId, properties);
   } catch (error) {
-    res.status(500).send({ error });
+    return res.status(500).send({ error });
   }
 
-  res.status(200).send({});
+  return res.status(200).send({});
 };
 
 export default majorEvent;

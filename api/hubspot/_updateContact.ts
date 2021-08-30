@@ -1,4 +1,4 @@
-import * as hubspot from '@hubspot/api-client';
+import { Client } from '@hubspot/api-client';
 
 // get hubspot api key from env
 const { HUBSPOT_API_KEY } = process.env;
@@ -14,7 +14,7 @@ const updateContact = async (contactId: string, contactProperties: UpdateContact
   const properties = { properties: contactProperties };
 
   // create hubspot api client
-  const hubspotClient = new hubspot.Client({ apiKey: HUBSPOT_API_KEY });
+  const hubspotClient = new Client({ apiKey: HUBSPOT_API_KEY });
 
   const response = await hubspotClient.crm.contacts.basicApi.update(contactId, properties);
   return response;
