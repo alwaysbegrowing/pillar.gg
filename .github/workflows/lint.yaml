@@ -6,9 +6,15 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout Code
+        uses: actions/checkout@v1
         with:
           ref: '${{ github.head_ref }}'
+
+      - name: Set Up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
 
       - name: Install Dependencies
         run: |
