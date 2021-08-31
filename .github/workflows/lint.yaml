@@ -1,0 +1,33 @@
+name: Lint PR
+
+on: [pull_request]
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          ref: '${{ github.head_ref }}'
+
+      - name: Install Dependencies
+        run: |
+          npm i
+
+      - name: Run Prettier
+        run: npm run prettier
+
+      - name: Commit and Push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "Github Action"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "there are changes";
+            git add -A
+            git commit -m "[bot] Lint files"
+            git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git" ${{ github.head_ref }}
+          else
+            echo "no changes";
+          fi
