@@ -17,12 +17,13 @@ const SelectUser = () => {
 
   if (isLoading || !userData) return null;
 
-
   return (
     <Select style={{ width: 120 }} defaultValue={userData.id} onChange={handleChange}>
       {usersInDb?.map((user) => (
         // eslint-disable-next-line no-underscore-dangle
-        <Option key={user._id} value={user.twitch_id}>{user.display_name}</Option>
+        <Option key={user._id} value={user.twitch_id}>
+          {user.display_name}
+        </Option>
       ))}
     </Select>
   );
