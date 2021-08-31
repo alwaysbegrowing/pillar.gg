@@ -32,14 +32,15 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
       twitch_id: twitchUserData.id,
     };
     const options = { upsert: true };
-    const updatedoc = {
+    const updateDoc = {
       $set: { ...twitchUserData, ...hubspotID },
     };
 
-    const resp = db.collection('users').updateOne(filter, updatedoc, options);
+    const resp = db.collection('users').updateOne(filter, updateDoc, options);
 
-    // if resp has an upserted value, then we have a new user
-    if (resp.upsertedCount) {
+    const isNewUser = resp.upsertedCount > 0;
+
+    if (isNewUser) {
       const sns = new SNSClient({ region: 'us-east-1', credentials: snsCredentials });
 
       const command = new PublishCommand({

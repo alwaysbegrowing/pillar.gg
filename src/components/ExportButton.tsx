@@ -94,14 +94,14 @@ const ExportButton = ({ clips, videoId }: any) => {
     id: 'pages.editor.exportCancelText',
   });
 
-  const onConfirmYouTube = async () => {
+  const handleConfirmYouTube = async () => {
     if (data?.id) {
       sendHubspotEvent(data?.id, 'EXPORT_CLIP_EVENT', videoId);
     }
     await startYoutubeExport(data.id, videoId, clips, formatMessage);
   };
 
-  const onConfirmExport = async () => {
+  const handleConfirmExport = async () => {
     if (data?.id) {
       sendHubspotEvent(data?.id, 'EXPORT_CLIP_EVENT', videoId);
     }
@@ -113,7 +113,7 @@ const ExportButton = ({ clips, videoId }: any) => {
       {isDebugMode() && (
         <Menu.Item key="youtube" icon={<YoutubeOutlined />}>
           <ExportWrapper
-            onConfirm={onConfirmYouTube}
+            onConfirm={handleConfirmYouTube}
             title={title}
             okText={okText}
             cancelText={cancelText}
@@ -124,7 +124,7 @@ const ExportButton = ({ clips, videoId }: any) => {
       )}
       <Menu.Item key="email" icon={<MailOutlined />}>
         <ExportWrapper
-          onConfirm={onConfirmExport}
+          onConfirm={handleConfirmExport}
           title={title}
           okText={okText}
           cancelText={cancelText}
