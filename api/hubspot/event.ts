@@ -22,7 +22,7 @@ const hubspotEvent = async (req: VercelRequest, res: VercelResponse) => {
 
   // if contact is not found, do nothing
   if (!contact?.email || !contact?.hubspot_contact_id) {
-    return res.status(204).send({});
+    return res.status(404).send({});
   }
 
   // get email from contact
