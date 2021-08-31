@@ -1,8 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import getTwitchUserData from '../twitch/_getTwitchUserData';
 import addHubspotContact from '../hubspot/_addContact';
-import type { IHubspotEvent } from '../hubspot/_logCustomEvent';
-import logCustomEvent from '../hubspot/_logCustomEvent';
+import logHubspotEvent from '../hubspot/_logCustomEvent';
 import { SIGNUP_EVENT, LOGIN_EVENT } from '../hubspot/_customEvents';
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 
@@ -12,17 +11,6 @@ const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
 const snsCredentials = {
   accessKeyId: process.env.SIGNUPEVENT_AWS_ACCESS_KEY_ID || '',
   secretAccessKey: process.env.SIGNUPEVENT_AWS_SECRET_ACCESS_KEY || '',
-};
-
-const logHubspotEvent = (eventName: string, contactId: string, email: string) => {
-  const hubspotEvent: IHubspotEvent = {
-    eventName,
-    email,
-    objectId: contactId,
-    properties: {}, // if we need more properties, we can add them here
-  };
-
-  return logCustomEvent(hubspotEvent);
 };
 
 const login = async (req: VercelRequest, res: VercelResponse) => {

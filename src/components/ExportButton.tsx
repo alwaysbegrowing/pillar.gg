@@ -96,14 +96,14 @@ const ExportButton = ({ clips, videoId }: any) => {
 
   const onConfirmYouTube = async () => {
     if (data?.id) {
-      sendHubspotEvent(data?.id, videoId);
+      sendHubspotEvent(data?.id, 'EXPORT_CLIP_EVENT', videoId);
     }
     await startYoutubeExport(data.id, videoId, clips, formatMessage);
   };
 
   const onConfirmExport = async () => {
     if (data?.id) {
-      sendHubspotEvent(data?.id, videoId);
+      sendHubspotEvent(data?.id, 'EXPORT_CLIP_EVENT', videoId);
     }
     await startExport(videoId, clips, formatMessage);
   };

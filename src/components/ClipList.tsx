@@ -9,6 +9,7 @@ const App = ({
   clipIdInfo,
   clipInfo,
   thumbnails,
+  videoId,
 }: {
   clipIdInfo: { selectedClipId: string; setSelectedClipId: any };
   play: (timestamp: number, clipId: string) => any;
@@ -45,6 +46,7 @@ const App = ({
                 sourceAttribution={timestamp.sourceAttribution}
                 id={timestamp.id}
                 i={i}
+                videoId={videoId}
                 /* TODO potential bug: if s3 upload failed and image does not exist in thumbnails array, this will probably error out */
                 thumbnail={thumbnails === undefined ? thumbnail : thumbnails[timestamp.id]}
                 selectedClipId={selectedClipId}

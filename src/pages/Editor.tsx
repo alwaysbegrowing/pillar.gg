@@ -197,7 +197,7 @@ export default () => {
     // }
 
     if (twitchId) {
-      sendHubspotEvent(twitchId, videoId);
+      sendHubspotEvent(twitchId, 'SAVED_ADJUSTED_CLIP_EVENT', videoId);
     }
 
     return true;

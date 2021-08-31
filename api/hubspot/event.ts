@@ -4,15 +4,15 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 // import hubspot event type
 import type { IHubspotEvent } from './_logCustomEvent';
 import type { UpdateContactInput } from './_updateContact';
-import { MAJOR_EVENT } from './_customEvents';
-import logCustomEvent from './_logCustomEvent';
+import * as events from './_customEvents';
+import { logCustomEvent } from './_logCustomEvent';
 import updateContact from './_updateContact';
 
 const connectToDatabase = require('../_connectToDatabase');
 
-const majorEvent = async (req: VercelRequest, res: VercelResponse) => {
+const hubspotEvent = async (req: VercelRequest, res: VercelResponse) => {
   // get hubspotID from req query
-  const { twitchId } = req.query;
+  const { twitchId, contactProperties, eventName } = req.body;
 
   // match hubspotID to hubspot_contact_id in database
   const db = await connectToDatabase();
@@ -30,12 +30,10 @@ const majorEvent = async (req: VercelRequest, res: VercelResponse) => {
 
   // create hubspot event object
   const event: IHubspotEvent = {
-    eventName: MAJOR_EVENT,
+    eventName: events[eventName],
     email,
     objectId: String(contactId), // it a string or an array of strings
-    properties: {
-      ...req.body,
-    },
+    properties: contactProperties,
   };
 
   try {
@@ -49,4 +47,4 @@ const majorEvent = async (req: VercelRequest, res: VercelResponse) => {
   return res.status(200).send({});
 };
 
-export default majorEvent;
+export default hubspotEvent;

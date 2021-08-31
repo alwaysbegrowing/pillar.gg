@@ -12,7 +12,7 @@ export interface IHubspotEvent {
   properties: any;
 }
 
-export default async (event: IHubspotEvent) => {
+export const logCustomEvent = async (event: IHubspotEvent) => {
   const options = {
     method: 'POST',
     headers: {
@@ -26,4 +26,15 @@ export default async (event: IHubspotEvent) => {
   const response = await fetch(HUBSPOT_API_URL, options);
 
   return response.ok;
+};
+
+export default (eventName: string, contactId: string, email: string) => {
+  const hubspotEvent: IHubspotEvent = {
+    eventName,
+    email,
+    objectId: contactId,
+    properties: {}, // if we need more properties, we can add them here
+  };
+
+  return logCustomEvent(hubspotEvent);
 };

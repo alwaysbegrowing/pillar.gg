@@ -20,14 +20,22 @@ export const sendClips = async (
 
 export const sendHubspotEvent = async (
   twitchId: string | number,
+  eventName: string = 'MAJOR_EVENT',
   videoId: string | number = '',
   additionalProperties: any = {},
 ) => {
-  const apiUrl = `/api/hubspot/event?twitchId=${twitchId}`;
+  const apiUrl = `/api/hubspot/event`;
 
   const resp = await fetch(apiUrl, {
     method: 'POST',
-    body: JSON.stringify({ videoId, ...additionalProperties }),
+    body: JSON.stringify({
+      contactProperties: {
+        ...additionalProperties,
+        videoId,
+      },
+      eventName,
+      twitchId,
+    }),
     headers: getHeaders() || undefined,
   });
 
