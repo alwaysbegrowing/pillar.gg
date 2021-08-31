@@ -5,14 +5,17 @@ import './device.min.css';
 const SCREEN_HEIGHT = 812;
 const SCREEN_WIDTH = 375;
 
-function CropPreview({ face, video }) {
+function CropPreview({ face, gameplay }) {
   const faceRatio = face.height / face.width;
   const adjustedFaceHeight = SCREEN_WIDTH * faceRatio;
 
-  const videoRatio = video.height / video.width;
-  const adjustedVideoHeight = SCREEN_WIDTH * videoRatio;
+  const gameplayRatio = gameplay.height / gameplay.width;
+  const adjustedGameplayHeight = SCREEN_WIDTH * gameplayRatio;
 
-  const offsetFromTop = (SCREEN_HEIGHT - (adjustedFaceHeight + adjustedVideoHeight)) / 2;
+  const offsetFromTop = (SCREEN_HEIGHT - (adjustedFaceHeight + adjustedGameplayHeight)) / 2;
+
+  const faceScale = SCREEN_WIDTH / face.width;
+  const gameplayScale = SCREEN_WIDTH / gameplay.width;
 
   return (
     <Row justify="center">
@@ -39,18 +42,44 @@ function CropPreview({ face, video }) {
               top: `${offsetFromTop}px`,
               width: `${SCREEN_WIDTH}px`,
               height: `${adjustedFaceHeight}px`,
-              background: 'yellow',
+              overflow: 'hidden',
+              background: 'red',
             }}
-          ></div>
+          >
+            <video
+              loop
+              autoPlay
+              style={{
+                position: 'absolute',
+                top: `${-face.top * faceScale}px`,
+                left: `${-face.left * faceScale}px`,
+                width: `${1920 * faceScale}px`,
+              }}
+              src={`https://prod-prodthumbnails.s3.amazonaws.com/42991276973-offset-15812.mp4`}
+            />
+          </div>
           <div
             style={{
               position: 'absolute',
               top: `${offsetFromTop + adjustedFaceHeight}px`,
               width: `${SCREEN_WIDTH}px`,
-              height: `${adjustedVideoHeight}px`,
-              background: 'red',
+              height: `${adjustedGameplayHeight}px`,
+              overflow: 'hidden',
+              background: 'yellow',
             }}
-          ></div>
+          >
+            <video
+              loop
+              autoPlay
+              style={{
+                position: 'absolute',
+                top: `${-gameplay.top * gameplayScale}px`,
+                left: `${-gameplay.left * gameplayScale}px`,
+                width: `${1920 * gameplayScale}px`,
+              }}
+              src={`https://prod-prodthumbnails.s3.amazonaws.com/42991276973-offset-15812.mp4`}
+            />
+          </div>
         </div>
       </div>
     </Row>

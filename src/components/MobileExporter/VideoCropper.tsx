@@ -35,6 +35,21 @@ function VideoCropper({ onConfirm, onCancel }) {
     getCropper().setAspectRatio(ratio);
   };
 
+  const getCropData = () => {
+    const cropper = getCropper();
+    const cropDimensions = cropper.getCropBoxData();
+    const onScreenWidth: any = cropper.containerData.width;
+    const actualWidth: any = cropperRef?.current.width;
+    const scale = actualWidth / onScreenWidth;
+
+    return {
+      left: cropDimensions.left * scale,
+      top: cropDimensions.top * scale,
+      width: cropDimensions.width * scale,
+      height: cropDimensions.height * scale,
+    };
+  };
+
   const CancelButton = () => {
     return (
       <Button type="primary" onClick={onCancel}>
@@ -43,82 +58,64 @@ function VideoCropper({ onConfirm, onCancel }) {
     );
   };
 
-  const PromptA = () => {
-    return (
-      <Space direction="vertical">
-        <Title level={5}>Select Your Face</Title>
-        <Text>Position and resize the window over your face camera.</Text>
-        <Col span={24}>
-          <Space>
-            <Button
-              type="primary"
-              onClick={() => {
-                setFaceCropDimensions(getCropper().getCropBoxData());
-                setStage(Stage.SELECT_VID);
-              }}
-            >
-              Next
-            </Button>
-            <CancelButton />
-          </Space>
-        </Col>
-      </Space>
-    );
-  };
+  const Prompt = ({ title, text, buttonText, onNext }) => (
+    <Space direction="vertical">
+      <Title level={5}>{title}</Title>
+      <Text>{text}</Text>
+      <Col span={24}>
+        <Space>
+          <Button type="primary" onClick={onNext}>
+            {buttonText}
+          </Button>
+          <CancelButton />
+        </Space>
+      </Col>
+    </Space>
+  );
 
-  const PromptB = () => {
-    return (
-      <Space direction="vertical">
-        <Title level={5}>Select Your Gameplay</Title>
-        <Text>Position and resize the window over your desired gameplay region.</Text>
-        <Col span={24}>
-          <Space>
-            <Button
-              type="primary"
-              onClick={() => {
-                setVideoCropDimensions(getCropper().getCropBoxData());
-                setStage(Stage.PREVIEW);
-              }}
-            >
-              Next
-            </Button>
-            <CancelButton />
-          </Space>
-        </Col>
-      </Space>
-    );
-  };
+  const promptA = (
+    <Prompt
+      title="Select Your Face"
+      text="Position and resize the window over your face camera."
+      onNext={() => {
+        setFaceCropDimensions(getCropData());
+        setStage(Stage.SELECT_VID);
+      }}
+      buttonText="Next"
+    />
+  );
 
-  const PromptC = () => {
-    return (
-      <Space direction="vertical">
-        <Title level={5}>Preview Results</Title>
-        <Text>Verify the footage looks correct.</Text>
-        <Col span={24}>
-          <Space>
-            <Button
-              type="primary"
-              onClick={() => onConfirm(faceCropDimensions, videoCropDimensions)}
-            >
-              Confirm
-            </Button>
-            <CancelButton />
-          </Space>
-        </Col>
-      </Space>
-    );
-  };
+  const promptB = (
+    <Prompt
+      title="Select Your Gameplay"
+      text="Position and resize the window over your desired gameplay region."
+      onNext={() => {
+        setVideoCropDimensions(getCropData());
+        setStage(Stage.PREVIEW);
+      }}
+      buttonText="Next"
+    />
+  );
+
+  const promptC = (
+    <Prompt
+      title="Preview Results"
+      text="Verify the footage looks correct."
+      onNext={() => onConfirm(faceCropDimensions, videoCropDimensions)}
+      buttonText="Next"
+    />
+  );
 
   let promptUser;
   switch (stage) {
     case Stage.SELECT_FACE:
-      promptUser = <PromptA />;
+      promptUser = promptA;
       break;
     case Stage.SELECT_VID:
-      promptUser = <PromptB />;
+      promptUser = promptB;
       break;
     case Stage.PREVIEW:
-      promptUser = <PromptC />;
+      promptUser = promptC;
       break;
     default:
       promptUser = <></>;
@@ -128,7 +125,7 @@ function VideoCropper({ onConfirm, onCancel }) {
     <Row gutter={GUTTER_SIZE}>
       <Col span={14}>
         {stage === Stage.PREVIEW ? (
-          <CropPreview face={faceCropDimensions} video={videoCropDimensions} />
+          <CropPreview face={faceCropDimensions} gameplay={videoCropDimensions} />
         ) : (
           <>
             <video
