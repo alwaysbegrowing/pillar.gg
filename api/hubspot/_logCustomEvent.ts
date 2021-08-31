@@ -22,7 +22,6 @@ export const logCustomEvent = async (event: IHubspotEvent) => {
     body: JSON.stringify(event),
   };
 
-  // send request
   const response = await fetch(HUBSPOT_API_URL, options);
 
   return response.ok;
