@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
-import { useClips, useVideo } from '../services/hooks/api';
+import { useClips, useUser, useVideo } from '../services/hooks/api';
 import { Button, Row, Col, notification, Empty, Input, Tooltip } from 'antd';
 import { DislikeTwoTone, LikeTwoTone } from '@ant-design/icons';
 import ClipList from '../components/ClipList';
@@ -12,6 +12,7 @@ import type { IndividualTimestamp } from '../services/hooks/api';
 import { useIntl } from 'umi';
 import { useTime } from '../services/hooks/playtime';
 import ExportButton from '@/components/ExportButton';
+import { sendHubspotEvent } from '@/services/send';
 
 const { Search } = Input;
 
@@ -23,6 +24,8 @@ const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[])
 };
 
 export default () => {
+  const { data: twitchData } = useUser();
+  const { id: twitchId } = twitchData || {};
   const { id: videoId } = useParams<{ id: string }>();
   // const { data: userData } = useUser();
   const { data, isLoading, isError } = useClips(videoId);
@@ -192,6 +195,10 @@ export default () => {
       return true;
     }, 1600);
     // }
+
+    if (twitchId) {
+      sendHubspotEvent(twitchId, 'SAVED_ADJUSTED_CLIP_EVENT', videoId);
+    }
 
     return true;
   };

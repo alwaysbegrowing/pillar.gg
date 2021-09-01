@@ -1,6 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import getTwitchUserData from '../twitch/_getTwitchUserData';
 import addHubspotContact from '../hubspot/_addContact';
+import logHubspotEvent from '../hubspot/_logCustomEvent';
+import { SIGNUP_EVENT, LOGIN_EVENT } from '../hubspot/_customEvents';
+import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 
 const connectToDatabase = require('../_connectToDatabase');
 const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
@@ -29,14 +32,15 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
       twitch_id: twitchUserData.id,
     };
     const options = { upsert: true };
-    const updatedoc = {
+    const updateDoc = {
       $set: { ...twitchUserData, ...hubspotID },
     };
 
-    const resp = db.collection('users').updateOne(filter, updatedoc, options);
+    const resp = db.collection('users').updateOne(filter, updateDoc, options);
 
-    // if resp has an upserted value, then we have a new user
-    if (resp.upsertedCount) {
+    const isNewUser = resp.upsertedCount > 0;
+
+    if (isNewUser) {
       const sns = new SNSClient({ region: 'us-east-1', credentials: snsCredentials });
 
       const command = new PublishCommand({
@@ -51,6 +55,9 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
       });
 
       await sns.send(command);
+      await logHubspotEvent(SIGNUP_EVENT, hubspotID.hubspot_contact_id, twitchUserData.email);
+    } else {
+      await logHubspotEvent(LOGIN_EVENT, hubspotID.hubspot_contact_id, twitchUserData.email);
     }
 
     return res.status(200).json(credentials);

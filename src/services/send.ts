@@ -17,3 +17,27 @@ export const sendClips = async (
 
   return resp.ok;
 };
+
+export const sendHubspotEvent = async (
+  twitchId: string | number,
+  eventName: string = 'MAJOR_EVENT',
+  videoId: string | number = '',
+  additionalProperties: any = {},
+) => {
+  const apiUrl = `/api/hubspot/event`;
+
+  const resp = await fetch(apiUrl, {
+    method: 'POST',
+    body: JSON.stringify({
+      contactProperties: {
+        ...additionalProperties,
+        videoId,
+      },
+      eventName,
+      twitchId,
+    }),
+    headers: getHeaders() || undefined,
+  });
+
+  return resp.ok;
+};
