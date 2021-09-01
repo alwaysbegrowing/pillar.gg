@@ -217,6 +217,10 @@ export default () => {
     showSuccessNotification(message);
   };
 
+  const handleFinishCrop = (faceDimensions, gameplayDimensions) => {
+    console.log(faceDimensions, gameplayDimensions);
+  };
+
   return (
     <PageContainer
       content={formatMessage({
@@ -230,7 +234,10 @@ export default () => {
         showVideoCropper ? (
           // export to mobile component screen here
           <VideoCropper
-            onConfirm={(a, b) => console.log(a, b)}
+            onConfirm={(faceDimensions, gameplayDimensions) => {
+              setShowVideoCropper(false);
+              handleFinishCrop(faceDimensions, gameplayDimensions);
+            }}
             onCancel={() => setShowVideoCropper(false)}
           />
         ) : (

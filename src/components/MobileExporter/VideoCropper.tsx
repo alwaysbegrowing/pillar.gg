@@ -2,11 +2,13 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Row, Col, Button, Space, Radio, Typography, Divider } from 'antd';
 import Cropper from 'react-cropper';
 import CropPreview from './CropPreview';
+import TemplateSelector from './TemplateSelector';
 import picture from './HD_transparent_picture.png';
 
 const { Title, Text } = Typography;
 
 enum Stage {
+  SELECT_TEMPLATE = 'SELECT_TEMPLATE',
   SELECT_FACE = 'SELECT_FACE',
   SELECT_VID = 'SELECT_VID',
   PREVIEW = 'PREVIEW',
@@ -14,13 +16,13 @@ enum Stage {
 
 const ASPECT_NAN_VAL = -1;
 const GUTTER_SIZE = 24;
-const INITIAL_ASPECT_RATIO = 4 / 3;
 
 function VideoCropper({ onConfirm, onCancel }) {
-  const [stage, setStage] = useState(Stage.SELECT_FACE);
+  const [template, setTemplate] = useState(null);
+  const [stage, setStage] = useState(Stage.SELECT_TEMPLATE);
   const [faceCropDimensions, setFaceCropDimensions] = useState({});
   const [videoCropDimensions, setVideoCropDimensions] = useState({});
-  const [aspectRatio, setAspectRatio] = useState(INITIAL_ASPECT_RATIO);
+  const [aspectRatio, setAspectRatio] = useState(template ? template.face.aspect : 4 / 3);
   const cropperRef = useRef(null);
 
   const getCropper = () => {
@@ -79,6 +81,9 @@ function VideoCropper({ onConfirm, onCancel }) {
       text="Position and resize the window over your face camera."
       onNext={() => {
         setFaceCropDimensions(getCropData());
+        if (template) {
+          updateAspectRatio(template.gameplay.aspect);
+        }
         setStage(Stage.SELECT_VID);
       }}
       buttonText="Next"
@@ -102,7 +107,7 @@ function VideoCropper({ onConfirm, onCancel }) {
       title="Preview Results"
       text="Verify the footage looks correct."
       onNext={() => onConfirm(faceCropDimensions, videoCropDimensions)}
-      buttonText="Next"
+      buttonText="Accept and Export"
     />
   );
 
@@ -122,62 +127,80 @@ function VideoCropper({ onConfirm, onCancel }) {
   }
 
   return (
-    <Row gutter={GUTTER_SIZE}>
-      <Col span={14}>
-        {stage === Stage.PREVIEW ? (
-          <CropPreview face={faceCropDimensions} gameplay={videoCropDimensions} />
-        ) : (
-          <>
-            <video
-              loop
-              autoPlay
-              style={{
-                position: 'absolute',
-                width: '100%',
-                // Ensure video is aligned with cropper within antd columnm
-                paddingRight: `${GUTTER_SIZE}px`,
-              }}
-              src={`https://prod-prodthumbnails.s3.amazonaws.com/42991276973-offset-15812.mp4`}
-            />
-            <Cropper
-              src={picture}
-              aspectRatio={INITIAL_ASPECT_RATIO}
-              dragMode={'move'}
-              responsive={true}
-              restore={true}
-              viewMode={1}
-              autoCropArea={0.4}
-              background={false}
-              movable={false}
-              zoomable={false}
-              zoomOnTouch={false}
-              zoomOnWheel={false}
-              toggleDragModeOnDblclick={false}
-              crop={() => {}}
-              ref={cropperRef}
-            />
-          </>
-        )}
-      </Col>
-      <Col span={8}>
-        <Row>{promptUser}</Row>
-        {stage !== Stage.PREVIEW && (
-          <>
-            <Divider />
-            <Title level={5}>Change Aspect Ratio</Title>
-            <Row>
-              <Radio.Group value={aspectRatio} onChange={(e) => updateAspectRatio(e.target.value)}>
-                <Radio.Button value={1}>1:1</Radio.Button>
-                <Radio.Button value={4 / 3}>4:3</Radio.Button>
-                <Radio.Button value={16 / 9}>16:9</Radio.Button>
-                <Radio.Button value={16 / 10}>16:10</Radio.Button>
-                <Radio.Button value={ASPECT_NAN_VAL}>Free</Radio.Button>
-              </Radio.Group>
-            </Row>
-          </>
-        )}
-      </Col>
-    </Row>
+    <>
+      {stage === Stage.SELECT_TEMPLATE ? (
+        <TemplateSelector
+          onSelect={(selection) => {
+            setTemplate(selection);
+            setStage(Stage.SELECT_FACE);
+          }}
+        />
+      ) : (
+        <Row gutter={GUTTER_SIZE}>
+          <Col span={14}>
+            {stage === Stage.PREVIEW ? (
+              <CropPreview
+                faceCrop={faceCropDimensions}
+                gameplayCrop={videoCropDimensions}
+                template={template}
+              />
+            ) : (
+              <>
+                <video
+                  loop
+                  autoPlay
+                  style={{
+                    position: 'absolute',
+                    width: '100%',
+                    // Ensure video is aligned with cropper within antd columnm
+                    paddingRight: `${GUTTER_SIZE}px`,
+                  }}
+                  src={`https://prod-prodthumbnails.s3.amazonaws.com/42991276973-offset-15812.mp4`}
+                />
+                <Cropper
+                  src={picture}
+                  aspectRatio={aspectRatio}
+                  dragMode={'move'}
+                  responsive={true}
+                  restore={true}
+                  viewMode={1}
+                  autoCropArea={0.4}
+                  background={false}
+                  movable={false}
+                  zoomable={false}
+                  zoomOnTouch={false}
+                  zoomOnWheel={false}
+                  toggleDragModeOnDblclick={false}
+                  crop={() => {}}
+                  ref={cropperRef}
+                />
+              </>
+            )}
+          </Col>
+          <Col span={8}>
+            <Row>{promptUser}</Row>
+            {stage !== Stage.PREVIEW && !template && (
+              <>
+                <Divider />
+                <Title level={5}>Change Aspect Ratio</Title>
+                <Row>
+                  <Radio.Group
+                    value={aspectRatio}
+                    onChange={(e) => updateAspectRatio(e.target.value)}
+                  >
+                    <Radio.Button value={1}>1:1</Radio.Button>
+                    <Radio.Button value={4 / 3}>4:3</Radio.Button>
+                    <Radio.Button value={16 / 9}>16:9</Radio.Button>
+                    <Radio.Button value={16 / 10}>16:10</Radio.Button>
+                    <Radio.Button value={ASPECT_NAN_VAL}>Free</Radio.Button>
+                  </Radio.Group>
+                </Row>
+              </>
+            )}
+          </Col>
+        </Row>
+      )}
+    </>
   );
 }
 

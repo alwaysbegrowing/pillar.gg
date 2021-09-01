@@ -5,17 +5,17 @@ import './device.min.css';
 const SCREEN_HEIGHT = 812;
 const SCREEN_WIDTH = 375;
 
-function CropPreview({ face, gameplay }) {
-  const faceRatio = face.height / face.width;
+function CropPreview({ faceCrop, gameplayCrop, template }) {
+  const faceRatio = faceCrop.height / faceCrop.width;
   const adjustedFaceHeight = SCREEN_WIDTH * faceRatio;
 
-  const gameplayRatio = gameplay.height / gameplay.width;
+  const gameplayRatio = gameplayCrop.height / gameplayCrop.width;
   const adjustedGameplayHeight = SCREEN_WIDTH * gameplayRatio;
 
   const offsetFromTop = (SCREEN_HEIGHT - (adjustedFaceHeight + adjustedGameplayHeight)) / 2;
 
-  const faceScale = SCREEN_WIDTH / face.width;
-  const gameplayScale = SCREEN_WIDTH / gameplay.width;
+  const faceScale = SCREEN_WIDTH / faceCrop.width;
+  const gameplayScale = SCREEN_WIDTH / gameplayCrop.width;
 
   return (
     <Row justify="center">
@@ -51,8 +51,8 @@ function CropPreview({ face, gameplay }) {
               autoPlay
               style={{
                 position: 'absolute',
-                top: `${-face.top * faceScale}px`,
-                left: `${-face.left * faceScale}px`,
+                top: `${-faceCrop.top * faceScale}px`,
+                left: `${-faceCrop.left * faceScale}px`,
                 width: `${1920 * faceScale}px`,
               }}
               src={`https://prod-prodthumbnails.s3.amazonaws.com/42991276973-offset-15812.mp4`}
@@ -73,8 +73,8 @@ function CropPreview({ face, gameplay }) {
               autoPlay
               style={{
                 position: 'absolute',
-                top: `${-gameplay.top * gameplayScale}px`,
-                left: `${-gameplay.left * gameplayScale}px`,
+                top: `${-gameplayCrop.top * gameplayScale}px`,
+                left: `${-gameplayCrop.left * gameplayScale}px`,
                 width: `${1920 * gameplayScale}px`,
               }}
               src={`https://prod-prodthumbnails.s3.amazonaws.com/42991276973-offset-15812.mp4`}
