@@ -8,10 +8,10 @@ import picture from './HD_transparent_picture.png';
 const { Title, Text } = Typography;
 
 enum Stage {
-  SELECT_TEMPLATE = 'SELECT_TEMPLATE',
-  SELECT_FACE = 'SELECT_FACE',
-  SELECT_VID = 'SELECT_VID',
-  PREVIEW = 'PREVIEW',
+  SELECT_TEMPLATE = 0,
+  SELECT_FACE = 1,
+  SELECT_VID = 2,
+  PREVIEW = 3,
 }
 
 const ASPECT_NAN_VAL = -1;
