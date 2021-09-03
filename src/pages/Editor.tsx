@@ -79,20 +79,20 @@ export default () => {
   );
 
   useEffect(() => {
-    if (data?.brain) {
+    if (data?.brain?.length) {
       const clipsDefaultChecked = data.brain.map((timestamp) => ({ ...timestamp, selected: true }));
       setClips((prev) => [...prev, ...clipsDefaultChecked]);
       // setSelectedClipId(clipsDefaultChecked[0].id);
       play(clipsDefaultChecked[0].startTime, clipsDefaultChecked[0].id);
     }
-    if (data?.ccc) {
+    if (data?.ccc?.length) {
       const append = data.ccc.map((d) => ({
         ...d,
         sourceAttribution: 'Clipped By Chat',
       }));
       setClips((prev) => [...prev, ...append]);
     }
-    if (data?.manual) {
+    if (data?.manual?.length) {
       const append = data.manual.map((d) => ({
         ...d,
         sourceAttribution: 'From !clip',
