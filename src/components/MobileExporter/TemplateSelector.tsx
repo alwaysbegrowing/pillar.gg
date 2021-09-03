@@ -1,16 +1,18 @@
 import React from 'react';
-import { Typography, Row, Space, Col } from 'antd';
+import { Typography, Row, Col } from 'antd';
 import TemplateCard from './TC';
 import templates from './Templates';
+import Stages from './Stages';
 
 const { Title } = Typography;
 
-function TemplateSelector({ onSelect }) {
-  return (
+function TemplateSelector({ stage, onSelect }) {
+  return stage !== Stages.SELECT_TEMPLATE ? null : (
     <>
       <Row>
         <Title level={5}>Select A Template</Title>
       </Row>
+
       <Row gutter={[24, 24]}>
         {templates.map((template) => (
           <Col>
