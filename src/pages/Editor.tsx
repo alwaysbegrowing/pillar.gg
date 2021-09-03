@@ -65,7 +65,6 @@ export default () => {
   );
   const play = useCallback(
     (seekTime: number, clipId: string) => {
-      setIsReady(false);
       seek(seekTime);
       setSecPlayed(seekTime);
       setSelectedClipId(clipId);
