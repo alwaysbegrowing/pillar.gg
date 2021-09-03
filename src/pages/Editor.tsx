@@ -10,8 +10,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
 import VideoPlayer from '../components/VideoPlayer';
 import TimeSlider from '../components/TimeSlider/TimeSlider';
-import VideoCropper from '../components/MobileExporter/VideoCropper';
-import ExportToMobile from './ExportToMobile';
+import ExportController from '../components/MobileExporter/ExportController';
 import type { IndividualTimestamp } from '../services/hooks/api';
 import { useIntl } from 'umi';
 import { useTime } from '../services/hooks/playtime';
@@ -46,7 +45,7 @@ export default () => {
   const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, 0]);
   const isPlaying = playing && isReady;
   const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId, clips);
-  const [showVideoCropper, setShowVideoCropper] = useState<boolean>(true);
+  const [showExportController, setShowExportController] = useState<boolean>(true);
   const { setSecPlayed, playedSeconds, isClipOver, intervalInMs } = useTime(
     isPlaying,
     startTime,
@@ -105,7 +104,7 @@ export default () => {
   if (!data) return formatMessage({ id: 'pages.editor.noData' });
 
   const handleShowOnClick = () => {
-    setShowVideoCropper(true);
+    setShowExportController(true);
   };
 
   const showSuccessNotification = (successMessage: string) => {
@@ -231,14 +230,14 @@ export default () => {
       {clips.length !== 0 ? (
         // <QueueAnim className="demo-content">
         // {' '}
-        showVideoCropper ? (
+        showExportController ? (
           // export to mobile component screen here
-          <VideoCropper
+          <ExportController
             onConfirm={(faceDimensions, gameplayDimensions) => {
-              setShowVideoCropper(false);
+              setShowExportController(false);
               handleFinishCrop(faceDimensions, gameplayDimensions);
             }}
-            onCancel={() => setShowVideoCropper(false)}
+            onCancel={() => setShowExportController(false)}
           />
         ) : (
           [

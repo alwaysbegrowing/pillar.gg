@@ -1,25 +1,22 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { Row, Col, Button, Space, Radio, Typography, Divider } from 'antd';
+import React, { useRef, useState } from 'react';
+import { Row, Col, Radio, Typography, Divider } from 'antd';
 import Cropper from 'react-cropper';
 import CropPreview from './CropPreview';
 import TemplateSelector from './TemplateSelector';
 import picture from './HD_transparent_picture.png';
+import FaceCamPrompt from './FaceCamPrompt';
+import GameplayPrompt from './GameplayPrompt';
+import PreviewPrompt from './PreviewPrompt';
+import Stages from './Stages';
 
-const { Title, Text } = Typography;
-
-enum Stage {
-  SELECT_TEMPLATE = 0,
-  SELECT_FACE = 1,
-  SELECT_VID = 2,
-  PREVIEW = 3,
-}
+const { Title } = Typography;
 
 const ASPECT_NAN_VAL = -1;
 const GUTTER_SIZE = 24;
 
-function VideoCropper({ onConfirm, onCancel }) {
+function ExportController({ onConfirm, onCancel }) {
   const [template, setTemplate] = useState(null);
-  const [stage, setStage] = useState(Stage.SELECT_TEMPLATE);
+  const [stage, setStage] = useState(Stages.SELECT_TEMPLATE);
   const [faceCropDimensions, setFaceCropDimensions] = useState({});
   const [videoCropDimensions, setVideoCropDimensions] = useState({});
   const [aspectRatio, setAspectRatio] = useState(template ? template.face.aspect : 4 / 3);
@@ -52,93 +49,34 @@ function VideoCropper({ onConfirm, onCancel }) {
     };
   };
 
-  const CancelButton = () => {
-    return (
-      <Button type="primary" onClick={onCancel}>
-        Cancel
-      </Button>
-    );
+  const handleFaceCamSelected = () => {
+    setFaceCropDimensions(getCropData());
+    if (template) {
+      updateAspectRatio(template.gameplay.aspect);
+    }
+    setStage(Stages.SELECT_VID);
   };
 
-  const Prompt = ({ title, text, buttonText, onNext }) => (
-    <Space direction="vertical">
-      <Title level={5}>{title}</Title>
-      <Text>{text}</Text>
-      <Col span={24}>
-        <Space>
-          <Button type="primary" onClick={onNext}>
-            {buttonText}
-          </Button>
-          <CancelButton />
-        </Space>
-      </Col>
-    </Space>
-  );
+  const handleGameplaySelected = () => {
+    setVideoCropDimensions(getCropData());
+    setStage(Stages.PREVIEW);
+  };
 
-  const promptA = (
-    <Prompt
-      title="Select Your Face"
-      text="Position and resize the window over your face camera."
-      onNext={() => {
-        setFaceCropDimensions(getCropData());
-        if (template) {
-          updateAspectRatio(template.gameplay.aspect);
-        }
-        setStage(Stage.SELECT_VID);
-      }}
-      buttonText="Next"
-    />
-  );
-
-  const promptB = (
-    <Prompt
-      title="Select Your Gameplay"
-      text="Position and resize the window over your desired gameplay region."
-      onNext={() => {
-        setVideoCropDimensions(getCropData());
-        setStage(Stage.PREVIEW);
-      }}
-      buttonText="Next"
-    />
-  );
-
-  const promptC = (
-    <Prompt
-      title="Preview Results"
-      text="Verify the footage looks correct."
-      onNext={() => onConfirm(faceCropDimensions, videoCropDimensions)}
-      buttonText="Accept and Export"
-    />
-  );
-
-  let promptUser;
-  switch (stage) {
-    case Stage.SELECT_FACE:
-      promptUser = promptA;
-      break;
-    case Stage.SELECT_VID:
-      promptUser = promptB;
-      break;
-    case Stage.PREVIEW:
-      promptUser = promptC;
-      break;
-    default:
-      promptUser = <></>;
-  }
+  const handlePreviewAccepted = () => onConfirm(faceCropDimensions, videoCropDimensions);
 
   return (
     <>
-      {stage === Stage.SELECT_TEMPLATE ? (
+      {stage === Stages.SELECT_TEMPLATE ? (
         <TemplateSelector
           onSelect={(selection) => {
             setTemplate(selection);
-            setStage(Stage.SELECT_FACE);
+            setStage(Stages.SELECT_FACE);
           }}
         />
       ) : (
         <Row gutter={GUTTER_SIZE}>
           <Col span={14}>
-            {stage === Stage.PREVIEW ? (
+            {stage === Stages.PREVIEW ? (
               <CropPreview
                 faceCrop={faceCropDimensions}
                 gameplayCrop={videoCropDimensions}
@@ -178,8 +116,12 @@ function VideoCropper({ onConfirm, onCancel }) {
             )}
           </Col>
           <Col span={8}>
-            <Row>{promptUser}</Row>
-            {stage !== Stage.PREVIEW && !template && (
+            <Row>
+              <FaceCamPrompt stage={stage} onNext={handleFaceCamSelected} onCancel={onCancel} />
+              <GameplayPrompt stage={stage} onNext={handleGameplaySelected} onCancel={onCancel} />
+              <PreviewPrompt stage={stage} onNext={handlePreviewAccepted} onCancel={onCancel} />
+            </Row>
+            {stage !== Stages.PREVIEW && !template && (
               <>
                 <Divider />
                 <Title level={5}>Change Aspect Ratio</Title>
@@ -204,4 +146,4 @@ function VideoCropper({ onConfirm, onCancel }) {
   );
 }
 
-export default VideoCropper;
+export default ExportController;
