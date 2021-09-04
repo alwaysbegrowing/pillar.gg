@@ -1,27 +1,26 @@
 import React, { useState } from 'react';
+import { Row, Col, Divider, Radio, Typography } from 'antd';
 import Prompt from './Prompt';
-import { Col, Row, Radio, Divider, Typography } from 'antd';
 import Stages from './Stages';
 
 const { Title } = Typography;
 
 const GUTTER_SIZE = 24;
 
-function FaceCamPrompt({ stage, template, cropper, onNext, onCancel }) {
-  const [aspectRatio, setAspectRatio] = useState(template.face?.aspect);
+function HighlightPrompt({ stage, template, cropper, onNext, onCancel }) {
+  const [aspectRatio, setAspectRatio] = useState(template.highlight.aspect);
 
-  return stage !== Stages.SELECT_FACE ? null : (
+  return stage !== Stages.SELECT_HIGHLIGHT ? null : (
     <Row gutter={GUTTER_SIZE}>
       <Col span={16}>{cropper.element}</Col>
       <Col span={8}>
         <Prompt
-          title="Select Your Face"
-          text="Position and resize the window over your face camera."
+          title="Select Your Highlight"
+          text="Position and resize the window over your desired highlight region."
           onNext={onNext}
           onCancel={onCancel}
           buttonText="Next"
         />
-
         {!template.lockAspectRatio && (
           <>
             <Divider />
@@ -48,4 +47,4 @@ function FaceCamPrompt({ stage, template, cropper, onNext, onCancel }) {
   );
 }
 
-export default FaceCamPrompt;
+export default HighlightPrompt;

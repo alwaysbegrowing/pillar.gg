@@ -1,45 +1,38 @@
 import React, { useState } from 'react';
 import TemplateSelector from './TemplateSelector';
 import FaceCamPrompt from './FaceCamPrompt';
-import GameplayPrompt from './GameplayPrompt';
+import HighlightPrompt from './HighlightPrompt';
 import PreviewPrompt from './PreviewPrompt';
 import Stages from './Stages';
 import templates from './Templates';
+import useVideoCropper from '@/services/hooks/useVideoCropper';
+
+const GUTTER_SIZE = 24;
 
 function ExportController({ onConfirm, onCancel }) {
   const [template, setTemplate] = useState(templates[0]);
   const [stage, setStage] = useState(Stages.SELECT_TEMPLATE);
   const [faceCropDimensions, setFaceCropDimensions] = useState({});
   const [videoCropDimensions, setVideoCropDimensions] = useState({});
-
-  const getCropData = () => {
-    // const cropper = getCropper();
-    // const cropDimensions = cropper.getCropBoxData();
-    // const onScreenWidth: any = cropper.containerData.width;
-    // const actualWidth: any = cropperRef?.current.width;
-    // const scale = actualWidth / onScreenWidth;
-
-    // return {
-    //   left: cropDimensions.left * scale,
-    //   top: cropDimensions.top * scale,
-    //   width: cropDimensions.width * scale,
-    //   height: cropDimensions.height * scale,
-    // };
-    return { left: 0, top: 0, width: 0, height: 0 };
-  };
+  const faceCamCropper = useVideoCropper(template.face?.aspect, GUTTER_SIZE);
+  const highlightCropper = useVideoCropper(template.highlight.aspect, GUTTER_SIZE);
 
   const handleTemplateSelected = (selection) => {
     setTemplate(selection);
-    setStage(Stages.SELECT_FACE);
+    if (selection.face) {
+      setStage(Stages.SELECT_FACE);
+    } else {
+      setStage(Stages.SELECT_HIGHLIGHT);
+    }
   };
 
   const handleFaceCamSelected = () => {
-    setFaceCropDimensions(getCropData());
-    setStage(Stages.SELECT_VID);
+    setFaceCropDimensions(faceCamCropper.getCropData());
+    setStage(Stages.SELECT_HIGHLIGHT);
   };
 
   const handleGameplaySelected = () => {
-    setVideoCropDimensions(getCropData());
+    setVideoCropDimensions(highlightCropper.getCropData());
     setStage(Stages.PREVIEW);
   };
 
@@ -48,15 +41,19 @@ function ExportController({ onConfirm, onCancel }) {
   return (
     <>
       <TemplateSelector stage={stage} onSelect={handleTemplateSelected} />
-      <FaceCamPrompt
+      {template.face && (
+        <FaceCamPrompt
+          stage={stage}
+          template={template}
+          cropper={faceCamCropper}
+          onNext={handleFaceCamSelected}
+          onCancel={onCancel}
+        />
+      )}
+      <HighlightPrompt
         stage={stage}
         template={template}
-        onNext={handleFaceCamSelected}
-        onCancel={onCancel}
-      />
-      <GameplayPrompt
-        stage={stage}
-        template={template}
+        cropper={highlightCropper}
         onNext={handleGameplaySelected}
         onCancel={onCancel}
       />

@@ -5,12 +5,12 @@ const stacked = {
   image:
     'https://i0.wp.com/www.alphr.com/wp-content/uploads/2021/03/image1-34.png?resize=690%2C1192&ssl=1',
   face: {
-    aspect: 16 / 9,
+    aspect: 4 / 3,
     left: 0,
     top: 0,
     z: 0,
   },
-  gameplay: {
+  highlight: {
     aspect: 1,
     left: 0,
     top: 0,
@@ -21,7 +21,7 @@ const stacked = {
 const blurred = {
   name: 'Blurred',
   description: 'Highlight your clip and fill extra space with a blurred video.',
-  lockAspectRatio: false,
+  lockAspectRatio: true,
   image:
     'https://i0.wp.com/www.alphr.com/wp-content/uploads/2021/03/image1-34.png?resize=690%2C1192&ssl=1',
   face: {
@@ -30,7 +30,7 @@ const blurred = {
     top: 0,
     z: 0,
   },
-  gameplay: {
+  highlight: {
     aspect: 1,
     left: 0,
     top: 0,
@@ -41,17 +41,11 @@ const blurred = {
 const fullscreen = {
   name: 'Fullscreen',
   description: 'Display your footage in fullscreen portrait mode.',
-  lockAspectRatio: false,
+  lockAspectRatio: true,
   image:
     'https://i0.wp.com/www.alphr.com/wp-content/uploads/2021/03/image1-34.png?resize=690%2C1192&ssl=1',
-  face: {
-    aspect: 4 / 3,
-    left: 0,
-    top: 0,
-    z: 0,
-  },
-  gameplay: {
-    aspect: 1,
+  highlight: {
+    aspect: 1 / 2,
     left: 0,
     top: 0,
     z: 1,
@@ -70,7 +64,7 @@ const smallcam = {
     top: 0,
     z: 0,
   },
-  gameplay: {
+  highlight: {
     aspect: 1,
     left: 0,
     top: 0,

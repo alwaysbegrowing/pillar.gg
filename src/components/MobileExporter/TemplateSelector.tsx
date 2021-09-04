@@ -15,7 +15,7 @@ function TemplateSelector({ stage, onSelect }) {
 
       <Row gutter={[24, 24]}>
         {templates.map((template) => (
-          <Col>
+          <Col key={template.name}>
             <TemplateCard onClick={() => onSelect(template)} template={template} />
           </Col>
         ))}
