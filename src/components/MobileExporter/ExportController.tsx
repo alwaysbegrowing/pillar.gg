@@ -13,7 +13,7 @@ function ExportController({ onConfirm, onCancel }) {
   const [template, setTemplate] = useState(templates[0]);
   const [stage, setStage] = useState(Stages.SELECT_TEMPLATE);
   const [faceCropDimensions, setFaceCropDimensions] = useState({});
-  const [videoCropDimensions, setVideoCropDimensions] = useState({});
+  const [highlightCropDimensions, setHighlightCropDimensions] = useState({});
   const faceCamCropper = useVideoCropper(template.face?.aspect, GUTTER_SIZE);
   const highlightCropper = useVideoCropper(template.highlight.aspect, GUTTER_SIZE);
 
@@ -32,11 +32,11 @@ function ExportController({ onConfirm, onCancel }) {
   };
 
   const handleGameplaySelected = () => {
-    setVideoCropDimensions(highlightCropper.getCropData());
+    setHighlightCropDimensions(highlightCropper.getCropData());
     setStage(Stages.PREVIEW);
   };
 
-  const handlePreviewAccepted = () => onConfirm(faceCropDimensions, videoCropDimensions);
+  const handlePreviewAccepted = () => onConfirm(faceCropDimensions, highlightCropDimensions);
 
   return (
     <>
@@ -61,7 +61,7 @@ function ExportController({ onConfirm, onCancel }) {
         stage={stage}
         template={template}
         faceCropDimensions={faceCropDimensions}
-        videoCropDimensions={videoCropDimensions}
+        highlightCropDimensions={highlightCropDimensions}
         onNext={handlePreviewAccepted}
         onCancel={onCancel}
       />

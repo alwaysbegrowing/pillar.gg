@@ -21,7 +21,6 @@ function FaceCamPrompt({ stage, template, cropper, onNext, onCancel }) {
           onCancel={onCancel}
           buttonText="Next"
         />
-
         {!template.lockAspectRatio && (
           <>
             <Divider />
