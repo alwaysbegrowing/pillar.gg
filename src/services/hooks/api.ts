@@ -9,8 +9,20 @@ interface DbUser {
   _id: string;
 }
 
+interface DbModerator {
+  user_name: string;
+  twitch_id: number;
+  mod_for: [{ id: number; display_name: string }];
+  _id: string;
+}
+
 interface UseDBUserProps {
   data?: DbUser[];
+  error?: boolean;
+}
+
+interface UseModeratorProps {
+  data?: DbModerator;
   error?: boolean;
 }
 
@@ -20,7 +32,7 @@ const redirectURI = `${window.location.origin}/TwitchAuth`;
 const onErrorRetry = (error: any) => {
   if (error.data.status === 401 || error.data.status === 403) {
     return window.open(
-      `https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${redirectURI}&response_type=code&scope=user_read`,
+      `https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${redirectURI}&response_type=code&scope=user_read%20moderation:read`,
       '_self',
     );
   }
@@ -45,6 +57,21 @@ function useUser() {
 
 function useDbUsers() {
   const { data, error }: UseDBUserProps = useSWR('/api/users', fetcher);
+
+  return {
+    data,
+    isLoading: !error && !data,
+    isError: error,
+  };
+}
+
+function useModerators() {
+  const { data: userData } = useUser();
+
+  const { data, error }: UseModeratorProps = useSWR(
+    userData ? () => `/api/moderators/${userData.id}` : null,
+    fetcher,
+  );
 
   return {
     data,
@@ -131,9 +158,10 @@ function useClips(clipId: number | string | undefined) {
 
   return {
     data: alldata,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     isLoading: !error && !data,
     isError: error,
   };
 }
 
-export { useUser, useVideos, useVideo, useClips, useDbUsers };
+export { useUser, useVideos, useVideo, useClips, useDbUsers, useModerators };

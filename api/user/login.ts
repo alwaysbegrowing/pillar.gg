@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import getTwitchUserData from '../twitch/_getTwitchUserData';
 import addHubspotContact from '../hubspot/_addContact';
+import getTwitchModeratorData from '../twitch/_getTwitchModeratorData';
 
 const connectToDatabase = require('../_connectToDatabase');
 const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
@@ -37,6 +38,28 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
 
     // if resp has an upserted value, then we have a new user
     if (resp.upsertedCount) {
+      const twitchModeratorData = await getTwitchModeratorData(
+        credentials.access_token,
+        twitchUserData.id,
+      );
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const moderator_id of twitchModeratorData) {
+        // eslint-disable-next-line no-await-in-loop
+        await db
+          .collection('moderators')
+          .updateOne(
+            { twitch_id: moderator_id.user_id },
+            {
+              $set: { user_name: moderator_id.user_name },
+              $push: {
+                mod_for: { id: twitchUserData.id, display_name: twitchUserData.display_name },
+              },
+            },
+            options,
+          );
+      }
+
       const sns = new SNSClient({ region: 'us-east-1', credentials: snsCredentials });
 
       const command = new PublishCommand({
