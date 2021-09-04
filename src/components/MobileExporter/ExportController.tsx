@@ -7,15 +7,13 @@ import Stages from './Stages';
 import templates from './Templates';
 import useVideoCropper from '@/services/hooks/useVideoCropper';
 
-const GUTTER_SIZE = 24;
-
 function ExportController({ onConfirm, onCancel }) {
   const [template, setTemplate] = useState(templates[0]);
   const [stage, setStage] = useState(Stages.SELECT_TEMPLATE);
   const [faceCropDimensions, setFaceCropDimensions] = useState({});
   const [highlightCropDimensions, setHighlightCropDimensions] = useState({});
-  const faceCamCropper = useVideoCropper(template.face?.aspect, GUTTER_SIZE);
-  const highlightCropper = useVideoCropper(template.highlight.aspect, GUTTER_SIZE);
+  const faceCamCropper = useVideoCropper(template.face?.aspect);
+  const highlightCropper = useVideoCropper(template.highlight.aspect);
 
   const handleTemplateSelected = (selection) => {
     setTemplate(selection);

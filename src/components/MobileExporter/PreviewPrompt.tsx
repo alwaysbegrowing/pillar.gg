@@ -4,8 +4,6 @@ import Prompt from './Prompt';
 import Stages from './Stages';
 import CropPreview from './CropPreview';
 
-const GUTTER_SIZE = 24;
-
 function PreviewPrompt({
   stage,
   template,
@@ -15,7 +13,7 @@ function PreviewPrompt({
   onCancel,
 }) {
   return stage !== Stages.PREVIEW ? null : (
-    <Row gutter={GUTTER_SIZE}>
+    <Row gutter={24}>
       <Col span={16}>
         <CropPreview
           faceCrop={faceCropDimensions}

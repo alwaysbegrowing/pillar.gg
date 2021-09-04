@@ -3,7 +3,7 @@ import VideoCropper from '../../components/MobileExporter/VideoCropper';
 
 const ASPECT_NAN_VAL = -1;
 
-const useVideoCropper = (aspectRatio, rightPadding) => {
+const useVideoCropper = (aspectRatio) => {
   const cropperRef = useRef(null);
 
   const getCropper = () => {
@@ -32,9 +32,7 @@ const useVideoCropper = (aspectRatio, rightPadding) => {
     getCropper().setAspectRatio(ratio);
   };
 
-  const element = (
-    <VideoCropper ref={cropperRef} aspectRatio={aspectRatio} rightPadding={rightPadding} />
-  );
+  const element = <VideoCropper ref={cropperRef} aspectRatio={aspectRatio} />;
 
   return { element, getCropData, setAspectRatio };
 };

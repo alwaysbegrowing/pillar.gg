@@ -5,13 +5,11 @@ import Stages from './Stages';
 
 const { Title } = Typography;
 
-const GUTTER_SIZE = 24;
-
 function HighlightPrompt({ stage, template, cropper, onNext, onCancel }) {
   const [aspectRatio, setAspectRatio] = useState(template.highlight.aspect);
 
   return stage !== Stages.SELECT_HIGHLIGHT ? null : (
-    <Row gutter={GUTTER_SIZE}>
+    <Row gutter={24}>
       <Col span={16}>{cropper.element}</Col>
       <Col span={8}>
         <Prompt
