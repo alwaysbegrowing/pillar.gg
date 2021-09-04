@@ -34,24 +34,13 @@ interface VideoProps {
   onReady: any;
   onPlay: any;
   onBuffer: any;
-  selectedClipId: string;
 }
-const Video = ({
-  url,
-  duration,
-  progress,
-  videoRef,
-  playing,
-  setPlaying,
-  onReady,
-  selectedClipId,
-}: VideoProps) => {
+const Video = ({ url, duration, progress, videoRef, playing, setPlaying, onReady }: VideoProps) => {
   const [muted, setMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
-    console.log(progress, selectedClipId, duration);
   }, [url]);
 
   const togglePlaying = () => {
@@ -71,7 +60,6 @@ const Video = ({
       <div style={styles.playerWrapper}>
         {/* @ts-ignore */}
         <ReactPlayer
-          key={selectedClipId}
           onReady={onPlayReady}
           style={styles.reactPlayer}
           ref={videoRef}
