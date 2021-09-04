@@ -216,8 +216,8 @@ export default () => {
     showSuccessNotification(message);
   };
 
-  const handleFinishCrop = (faceDimensions, gameplayDimensions) => {
-    console.log(faceDimensions, gameplayDimensions);
+  const handleSubmitExport = (faceDimensions, gameplayDimensions, template) => {
+    console.log(faceDimensions, gameplayDimensions, template);
   };
 
   return (
@@ -233,9 +233,9 @@ export default () => {
         showExportController ? (
           // export to mobile component screen here
           <ExportController
-            onConfirm={(faceDimensions, gameplayDimensions) => {
+            onConfirm={(faceDimensions, gameplayDimensions, template) => {
               setShowExportController(false);
-              handleFinishCrop(faceDimensions, gameplayDimensions);
+              handleSubmitExport(faceDimensions, gameplayDimensions, template);
             }}
             onCancel={() => setShowExportController(false)}
           />

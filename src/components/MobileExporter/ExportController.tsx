@@ -36,7 +36,8 @@ function ExportController({ onConfirm, onCancel }) {
     setStage(Stages.PREVIEW);
   };
 
-  const handlePreviewAccepted = () => onConfirm(faceCropDimensions, highlightCropDimensions);
+  const handlePreviewAccepted = () =>
+    onConfirm(faceCropDimensions, highlightCropDimensions, template);
 
   return (
     <>
