@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, Row, Col } from 'antd';
-import TemplateCard from './TC';
+import TemplateCard from './TemplateCard';
 import templates from './Templates';
 import Stages from './Stages';
 
@@ -12,7 +12,6 @@ function TemplateSelector({ stage, onSelect }) {
       <Row>
         <Title level={5}>Select A Template</Title>
       </Row>
-
       <Row gutter={[24, 24]}>
         {templates.map((template) => (
           <Col key={template.name}>

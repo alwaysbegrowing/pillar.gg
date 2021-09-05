@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Cropper from 'react-cropper';
 import picture from './HD_transparent_picture.png';
 
