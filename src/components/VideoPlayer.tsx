@@ -16,13 +16,14 @@ const styles = {
   reactPlayer: {
     position: 'absolute',
     top: 0,
-    left: 0
+    left: 0,
   },
 
   icon: {
     color: '#f1f7fe',
   },
 };
+
 interface VideoProps {
   url: string;
   duration: number;
@@ -36,6 +37,7 @@ interface VideoProps {
   onBuffer: any;
   selectedClipId: string;
 }
+
 const Video = ({
   url,
   duration,

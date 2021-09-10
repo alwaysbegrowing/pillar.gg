@@ -233,6 +233,7 @@ export default () => {
         showExportController ? (
           // export to mobile component screen here
           <ExportController
+            videoUrl={`https://twitch.tv/videos/${videoId}`}
             onConfirm={(faceDimensions, gameplayDimensions, template) => {
               setShowExportController(false);
               handleSubmitExport(faceDimensions, gameplayDimensions, template);
