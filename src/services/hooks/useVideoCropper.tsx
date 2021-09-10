@@ -3,7 +3,7 @@ import VideoCropper from '../../components/MobileExporter/VideoCropper';
 
 const ASPECT_NAN_VAL = -1;
 
-const useVideoCropper = (aspectRatio) => {
+const useVideoCropper = (aspectRatio: number) => {
   const cropperRef = useRef(null);
 
   const getCropper = () => {
@@ -27,7 +27,7 @@ const useVideoCropper = (aspectRatio) => {
     };
   };
 
-  const setAspectRatio = (val: number) => {
+  const setAspectRatio = (val: number): void => {
     const ratio = val === ASPECT_NAN_VAL ? NaN : val;
     getCropper().setAspectRatio(ratio);
   };

@@ -40,12 +40,12 @@ const blurred = {
 
 const fullscreen = {
   name: 'Fullscreen',
-  description: 'Display your footage in fullscreen portrait mode.',
+  description: 'Display your footage in portrait mode. Great for clips with no facecam.',
   lockAspectRatio: true,
   image:
     'https://i0.wp.com/www.alphr.com/wp-content/uploads/2021/03/image1-34.png?resize=690%2C1192&ssl=1',
   highlight: {
-    aspect: 1 / 2,
+    aspect: 9 / 19.5,
     left: 0,
     top: 0,
     z: 1,
@@ -72,6 +72,11 @@ const smallcam = {
   },
 };
 
-const templates = [stacked, blurred, fullscreen, smallcam];
+const templates = [
+  // stacked,  ---Removed for now
+  blurred,
+  fullscreen,
+  smallcam,
+];
 
 export default templates;

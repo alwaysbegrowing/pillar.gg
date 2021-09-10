@@ -15,7 +15,7 @@ function ExportController({ onConfirm, onCancel }) {
   const faceCamCropper = useVideoCropper(template.face?.aspect);
   const highlightCropper = useVideoCropper(template.highlight.aspect);
 
-  const handleTemplateSelected = (selection) => {
+  const handleTemplateSelected = (selection): void => {
     setTemplate(selection);
     if (selection.face) {
       setStage(Stages.SELECT_FACE);
@@ -24,22 +24,22 @@ function ExportController({ onConfirm, onCancel }) {
     }
   };
 
-  const handleFaceCamSelected = () => {
+  const handleFaceCamSelected = (): void => {
     setFaceCropDimensions(faceCamCropper.getCropData());
     setStage(Stages.SELECT_HIGHLIGHT);
   };
 
-  const handleGameplaySelected = () => {
+  const handleGameplaySelected = (): void => {
     setHighlightCropDimensions(highlightCropper.getCropData());
     setStage(Stages.PREVIEW);
   };
 
-  const handlePreviewAccepted = () =>
+  const handlePreviewAccepted = (): void =>
     onConfirm(faceCropDimensions, highlightCropDimensions, template);
 
   return (
     <>
-      <TemplateSelector stage={stage} onSelect={handleTemplateSelected} />
+      <TemplateSelector stage={stage} onSelect={handleTemplateSelected} onCancel={onCancel} />
       {template.face && (
         <FaceCamPrompt
           stage={stage}
