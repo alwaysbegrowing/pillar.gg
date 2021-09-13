@@ -8,7 +8,6 @@ function TemplateCard({ onClick, template }) {
     <Card
       hoverable
       style={{ width: 240 }}
-      cover={<img alt={template.name} src={template.image} />}
       actions={[
         <Button type="primary" onClick={onClick}>
           Select
