@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Cropper from 'react-cropper';
 import picture from './HD_transparent_picture.png';
 import ReactPlayer from 'react-player/twitch';
@@ -13,6 +13,13 @@ const VideoCropper = React.forwardRef(({ aspectRatio, videoUrl }, ref) => {
     padding: 'inherit',
     left: 0,
   };
+
+  useEffect(() => {
+    const cropBox = document.querySelector('.cropper-crop-box');
+    if (cropBox) {
+      cropBox.style['box-shadow'] = '0 0 0 9999px rgb(0 0 0 / 50%)';
+    }
+  });
 
   return (
     <>
@@ -35,6 +42,8 @@ const VideoCropper = React.forwardRef(({ aspectRatio, videoUrl }, ref) => {
         dragMode={'move'}
         responsive={true}
         restore={true}
+        highlight={false}
+        modal={false}
         viewMode={1}
         autoCropArea={0.4}
         background={false}
@@ -45,6 +54,7 @@ const VideoCropper = React.forwardRef(({ aspectRatio, videoUrl }, ref) => {
         toggleDragModeOnDblclick={false}
         crop={() => {}}
         ref={ref}
+        style={{ overflow: 'hidden' }}
       />
     </>
   );

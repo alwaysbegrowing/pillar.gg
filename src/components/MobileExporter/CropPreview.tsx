@@ -1,16 +1,17 @@
 import React from 'react';
 import { Row } from 'antd';
 import Phone from './Phone';
-import usePreviewVideo from '../../services/hooks/useVideoPreview';
+import useVideoPreview from '@/services/hooks/useVideoPreview';
 
 const SCREEN_WIDTH = 375;
 const SCREEN_HEIGHT = 812;
 
-function CropPreview({ faceCrop, gameplayCrop, template }) {
-  const previewVideo = usePreviewVideo(
+function CropPreview({ faceCrop, gameplayCrop, template, videoUrl }) {
+  const previewVideo = useVideoPreview(
     template,
     faceCrop,
     gameplayCrop,
+    videoUrl,
     SCREEN_WIDTH,
     SCREEN_HEIGHT,
   );
