@@ -30,7 +30,7 @@
   ],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "npm i && npm i -g npm@latest && sudo npm i -g vercel",
+  "postCreateCommand": "npm i -g npm@latest && npm i && sudo npm i -g vercel",
 
   // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "node"
