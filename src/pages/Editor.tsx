@@ -2,21 +2,22 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
 import QueueAnim from 'rc-queue-anim';
-import { useClips, useVideo } from '../services/hooks/api';
+import { useClips, useVideo } from '@/services/hooks/api';
 import { Button, Row, Col, notification, Empty, Input, Tooltip } from 'antd';
 import { DislikeTwoTone, LikeTwoTone } from '@ant-design/icons';
-import ClipList from '../components/ClipList';
+import ClipList from '@/components/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
-import VideoPlayer from '../components/VideoPlayer';
-import TimeSlider from '../components/TimeSlider/TimeSlider';
-import ExportController from '../components/MobileExporter/ExportController';
-import type { IndividualTimestamp } from '../services/hooks/api';
+import VideoPlayer from '@/components/VideoPlayer';
+import TimeSlider from '@/components/TimeSlider/TimeSlider';
+import ExportController from '@/components/MobileExporter/ExportController';
+import type { IndividualTimestamp } from '@/services/hooks/api';
 import { useIntl } from 'umi';
-import { useTime } from '../services/hooks/playtime';
+import { useTime } from '@/services/hooks/playtime';
 import 'cropperjs/dist/cropper.css';
 
 import ExportButton from '@/components/ExportButton';
+import { ClipContext } from '@/services/contexts/ClipContext';
 
 const { Search } = Input;
 
@@ -232,14 +233,18 @@ export default () => {
         // {' '}
         showExportController ? (
           // export to mobile component screen here
-          <ExportController
-            videoUrl={`https://twitch.tv/videos/${videoId}`}
-            onConfirm={(faceDimensions, gameplayDimensions, template) => {
-              setShowExportController(false);
-              handleSubmitExport(faceDimensions, gameplayDimensions, template);
-            }}
-            onCancel={() => setShowExportController(false)}
-          />
+          <ClipContext.Provider
+            value={{ startTime, endTime, source: `https://twitch.tv/videos/${videoId}` }}
+          >
+            <ExportController
+              videoUrl={`https://twitch.tv/videos/${videoId}`}
+              onConfirm={(faceDimensions, gameplayDimensions, template) => {
+                setShowExportController(false);
+                handleSubmitExport(faceDimensions, gameplayDimensions, template);
+              }}
+              onCancel={() => setShowExportController(false)}
+            />
+          </ClipContext.Provider>
         ) : (
           [
             <Row gutter={24} key="a">

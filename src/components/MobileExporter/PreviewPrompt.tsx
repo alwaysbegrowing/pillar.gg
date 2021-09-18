@@ -9,7 +9,6 @@ function PreviewPrompt({
   template,
   faceCropDimensions,
   highlightCropDimensions,
-  videoUrl,
   onNext,
   onCancel,
 }) {
@@ -20,7 +19,6 @@ function PreviewPrompt({
           faceCrop={faceCropDimensions}
           gameplayCrop={highlightCropDimensions}
           template={template}
-          videoUrl={videoUrl}
         />
       </Col>
       <Col span={8}>

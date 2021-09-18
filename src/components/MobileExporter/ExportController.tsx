@@ -61,7 +61,6 @@ function ExportController({ videoUrl, onConfirm, onCancel }) {
         template={template}
         faceCropDimensions={faceCropDimensions}
         highlightCropDimensions={highlightCropDimensions}
-        videoUrl={videoUrl}
         onNext={handlePreviewAccepted}
         onCancel={onCancel}
       />

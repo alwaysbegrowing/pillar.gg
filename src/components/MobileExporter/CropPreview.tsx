@@ -6,12 +6,11 @@ import useVideoPreview from '@/services/hooks/useVideoPreview';
 const SCREEN_WIDTH = 375;
 const SCREEN_HEIGHT = 812;
 
-function CropPreview({ faceCrop, gameplayCrop, template, videoUrl }) {
+function CropPreview({ faceCrop, gameplayCrop, template }) {
   const previewVideo = useVideoPreview(
     template,
     faceCrop,
     gameplayCrop,
-    videoUrl,
     SCREEN_WIDTH,
     SCREEN_HEIGHT,
   );

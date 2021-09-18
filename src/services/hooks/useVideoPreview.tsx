@@ -1,11 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Spin } from 'antd';
-import ReactPlayer from 'react-player';
+import ClipPlayer from '@/components/ClipPlayer';
 
-function useVideoPreview(template, faceCrop, highlightCrop, videoUrl, width, height) {
-  const faceRef = useRef(null);
-  const highlightRef = useRef(null);
-  const backgroundRef = useRef(null);
+function useVideoPreview(template, faceCrop, highlightCrop, width, height) {
   const [playing, setPlaying] = useState(false);
   const [readyCount, setReadyCount] = useState(0);
 
@@ -70,18 +67,11 @@ function useVideoPreview(template, faceCrop, highlightCrop, videoUrl, width, hei
             zIndex: template.face.z,
           }}
         >
-          <ReactPlayer
-            key={'face'}
-            onReady={onReady}
+          <ClipPlayer
             style={styles.face}
-            ref={faceRef}
             width={`${1920 * faceScale}px`}
             height={`${1080 * faceScale}px`}
-            playing={playing}
-            muted={true}
-            url={videoUrl}
-            loop={true}
-            onPlay={() => {}}
+            onReady={onReady}
           />
         </div>
       </>
@@ -108,18 +98,11 @@ function useVideoPreview(template, faceCrop, highlightCrop, videoUrl, width, hei
             zIndex: template.highlight.z,
           }}
         >
-          <ReactPlayer
-            key={'highlight'}
-            onReady={onReady}
+          <ClipPlayer
             style={styles.highlight}
-            ref={highlightRef}
             width={`${1920 * highlightScale}px`}
             height={`${1080 * highlightScale}px`}
-            playing={playing}
-            muted={true}
-            url={videoUrl}
-            loop={true}
-            onPlay={() => {}}
+            onReady={onReady}
           />
         </div>
         {template.background && (
@@ -134,18 +117,11 @@ function useVideoPreview(template, faceCrop, highlightCrop, videoUrl, width, hei
               zIndex: -1,
             }}
           >
-            <ReactPlayer
-              key={'background'}
-              onReady={onReady}
+            <ClipPlayer
               style={styles.background}
-              ref={backgroundRef}
               width={'1920px'}
               height={'1080px'}
-              playing={playing}
-              muted={true}
-              url={videoUrl}
-              loop={true}
-              onPlay={() => {}}
+              onReady={onReady}
             />
           </div>
         )}
