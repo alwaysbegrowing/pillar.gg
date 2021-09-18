@@ -2,7 +2,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
 import QueueAnim from 'rc-queue-anim';
-import { useClips, useVideo } from '@/services/hooks/api';
+import { useClips, useUser, useVideo } from '../services/hooks/api';
 import { Button, Row, Col, notification, Empty, Input, Tooltip } from 'antd';
 import { DislikeTwoTone, LikeTwoTone } from '@ant-design/icons';
 import ClipList from '@/components/ClipList';
@@ -18,6 +18,7 @@ import 'cropperjs/dist/cropper.css';
 
 import ExportButton from '@/components/ExportButton';
 import { ClipContext } from '@/services/contexts/ClipContext';
+import { sendHubspotEvent } from '@/services/send';
 
 const { Search } = Input;
 
@@ -29,6 +30,8 @@ const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[])
 };
 
 export default () => {
+  const { data: twitchData } = useUser();
+  const { id: twitchId } = twitchData || {};
   const { id: videoId } = useParams<{ id: string }>();
   // const { data: userData } = useUser();
   const { data, isLoading, isError } = useClips(videoId);
@@ -61,14 +64,9 @@ export default () => {
 
   const seek = useCallback(
     async (seekTime: number) => {
-      setPlaying(true);
-
-      // this pointless line is to hack a fix twitch bug where you can't seek while paused
-      // this is the same reason we are calling setPlaying before seeking
-      // https://github.com/cookpete/react-player/issues/924
-      await new Promise((resolve) => setTimeout(resolve, 10));
       if (videoRef.current?.seekTo) {
         videoRef.current.seekTo(seekTime, 'seconds');
+        setPlaying(true);
       }
     },
     [videoRef],
@@ -76,7 +74,6 @@ export default () => {
 
   const play = useCallback(
     (seekTime: number, clipId: string) => {
-      setIsReady(false);
       seek(seekTime);
       setSecPlayed(seekTime);
       setSelectedClipId(clipId);
@@ -85,16 +82,23 @@ export default () => {
   );
 
   useEffect(() => {
-    if (data?.brain) {
+    if (data?.brain?.length) {
       const clipsDefaultChecked = data.brain.map((timestamp) => ({ ...timestamp, selected: true }));
       setClips((prev) => [...prev, ...clipsDefaultChecked]);
       // setSelectedClipId(clipsDefaultChecked[0].id);
       play(clipsDefaultChecked[0].startTime, clipsDefaultChecked[0].id);
     }
-    if (data?.ccc) {
+    if (data?.ccc?.length) {
       const append = data.ccc.map((d) => ({
         ...d,
-        verifiedTwitch: true,
+        sourceAttribution: 'Clipped By Chat',
+      }));
+      setClips((prev) => [...prev, ...append]);
+    }
+    if (data?.manual?.length) {
+      const append = data.manual.map((d) => ({
+        ...d,
+        sourceAttribution: 'From !clip',
       }));
       setClips((prev) => [...prev, ...append]);
     }
@@ -178,17 +182,31 @@ export default () => {
     return true;
   };
 
+  const isCurrentClip = (element: IndividualTimestamp) => element.id === selectedClipId;
+
   const saveAdjustedClip = async () => {
     if (!trimClipUpdateValues[0]) {
       setConfirmChangeClip(false);
       return true;
     }
 
+    const currentClipIndex = clips.findIndex(isCurrentClip);
+
     // this poopy code is to hardcode a user feedback sequence when they adjust a clip
     setConfirmChangeClip(true);
     setTimeout(triggerLoadingStartSequence, 1000);
     setTimeout(triggerActiveLoadingButton, 900);
     setTimeout(triggerLoadingEndAnimation, 1600);
+    // if(clips[currentClipIndex].selected != true){
+    setTimeout(() => {
+      clips[currentClipIndex].selected = true;
+      return true;
+    }, 1600);
+    // }
+
+    if (twitchId) {
+      sendHubspotEvent(twitchId, 'SAVED_ADJUSTED_CLIP_EVENT', videoId);
+    }
 
     return true;
   };

@@ -111,6 +111,7 @@ interface TimestampStructure {
   clips: Algorithm;
   ccc: IndividualTimestamp[];
   thumbnails: ThumbnailData[];
+  manual: IndividualTimestamp[];
 }
 
 interface UseClipsDataProps {
@@ -124,7 +125,7 @@ function useClips(clipId: number | string | undefined) {
     fetcher,
   );
   const alldata = useMemo(
-    () => ({ ...data?.clips, ccc: data?.ccc, thumbnails: data?.thumbnails }),
+    () => ({ ...data?.clips, ccc: data?.ccc, manual: data?.manual, thumbnails: data?.thumbnails }),
     [JSON.stringify(data)],
   );
 

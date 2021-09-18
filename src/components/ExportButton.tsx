@@ -5,7 +5,7 @@ import { isDebugMode } from '@/pages/Vods';
 import { Button, Menu, Dropdown, Popconfirm, message } from 'antd';
 import { useIntl } from 'umi';
 import { showSuccessNotification } from '@/utils/utils';
-import { sendClips } from '@/services/send';
+import { sendClips, sendHubspotEvent } from '@/services/send';
 
 const ExportWrapper = ({ children, onConfirm, title, okText, cancelText }: any) => {
   const [loading, setLoading] = useState(false);
@@ -94,12 +94,26 @@ const ExportButton = ({ clips, videoId }: any) => {
     id: 'pages.editor.exportCancelText',
   });
 
+  const handleConfirmYouTube = async () => {
+    if (data?.id) {
+      sendHubspotEvent(data?.id, 'EXPORT_CLIP_EVENT', videoId);
+    }
+    await startYoutubeExport(data.id, videoId, clips, formatMessage);
+  };
+
+  const handleConfirmExport = async () => {
+    if (data?.id) {
+      sendHubspotEvent(data?.id, 'EXPORT_CLIP_EVENT', videoId);
+    }
+    await startExport(videoId, clips, formatMessage);
+  };
+
   const menu = (
     <Menu>
       {isDebugMode() && (
         <Menu.Item key="youtube" icon={<YoutubeOutlined />}>
           <ExportWrapper
-            onConfirm={() => startYoutubeExport(data.id, videoId, clips, formatMessage)}
+            onConfirm={handleConfirmYouTube}
             title={title}
             okText={okText}
             cancelText={cancelText}
@@ -110,7 +124,7 @@ const ExportButton = ({ clips, videoId }: any) => {
       )}
       <Menu.Item key="email" icon={<MailOutlined />}>
         <ExportWrapper
-          onConfirm={() => startExport(videoId, clips, formatMessage)}
+          onConfirm={handleConfirmExport}
           title={title}
           okText={okText}
           cancelText={cancelText}

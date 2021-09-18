@@ -4,9 +4,11 @@ import { CSS } from '@dnd-kit/utilities';
 import { List, Badge, Switch } from 'antd';
 import { CaretRightOutlined } from '@ant-design/icons';
 import type { IndividualTimestamp } from '../services/hooks/api';
+import { useUser } from '../services/hooks/api';
 import { Divider } from 'antd';
 import { useIntl } from 'umi';
 import Text from 'antd/lib/typography/Text';
+import { sendHubspotEvent } from '@/services/send';
 
 const toTime = (seconds: number) => new Date(seconds * 1000).toISOString().substr(11, 8);
 
@@ -37,20 +39,24 @@ export function SortableClipCard({
   thumbnail,
   timestamp,
   play,
-  verifiedTwitch,
+  sourceAttribution,
   selectedClipId,
   setClips,
   i,
+  videoId,
 }: {
   play: () => any;
-  verifiedTwitch?: boolean;
+  sourceAttribution?: string;
   selectedClipId: string;
   id: string;
   setClips: any;
   i: number;
   thumbnail: string;
   timestamp: IndividualTimestamp;
+  videoId: string | number;
 }) {
+  const { data: twitchData } = useUser();
+  const { id: twitchId } = twitchData || {};
   const { formatMessage } = useIntl();
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
   const style = {
@@ -83,8 +89,13 @@ export function SortableClipCard({
     );
   };
 
+  const handleClick = () => {
+    play();
+    sendHubspotEvent(twitchId, 'CLICKED_CLIP_EVENT', videoId, { selectedClipId });
+  };
+
   const card = (
-    <div style={selectedStyle} onClick={() => play()}>
+    <div style={selectedStyle} onClick={handleClick}>
       <CardNumber />
       <div>
         <List.Item.Meta
@@ -150,14 +161,8 @@ export function SortableClipCard({
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      {verifiedTwitch && (
-        <Badge.Ribbon
-          text={formatMessage({ id: 'component.SortableClipCard.div.Badge.Ribbon.text' })}
-        >
-          {card}
-        </Badge.Ribbon>
-      )}
-      {!verifiedTwitch && card}
+      {sourceAttribution && <Badge.Ribbon text={sourceAttribution}>{card}</Badge.Ribbon>}
+      {!sourceAttribution && card}
     </div>
   );
 }
