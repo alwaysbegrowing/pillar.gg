@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { Spin } from 'antd';
 import ReactPlayer from 'react-player';
 
 function useVideoPreview(template, faceCrop, highlightCrop, videoUrl, width, height) {
@@ -88,7 +89,7 @@ function useVideoPreview(template, faceCrop, highlightCrop, videoUrl, width, hei
   }
 
   return (
-    <>
+    <Spin spinning={!playing}>
       <div
         style={{
           width: `${width}px`,
@@ -149,7 +150,7 @@ function useVideoPreview(template, faceCrop, highlightCrop, videoUrl, width, hei
           </div>
         )}
       </div>
-    </>
+    </Spin>
   );
 }
 
