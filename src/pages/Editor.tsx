@@ -235,8 +235,53 @@ export default () => {
     showSuccessNotification(message);
   };
 
-  const handleSubmitExport = (faceDimensions, gameplayDimensions, template) => {
-    console.log(faceDimensions, gameplayDimensions, template);
+  const handleSubmitExport = async (faceCrop, contentCrop) => {
+    const roundEven = (x: number): number => 2 * Math.round(x / 2);
+    const resp = await fetch('https://0rjzhy35ld.execute-api.us-east-1.amazonaws.com/prod/export', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: 'Bearer 7005i3c6sgh7pmdsiicdaud1hurdyv',
+      },
+      body: JSON.stringify({
+        ClipData: {
+          videoId: selectedClipId,
+          upscale: true,
+          clip: {
+            startTime,
+            endTime,
+          },
+        },
+        Outputs: {
+          background: {
+            x: 656,
+            y: 0,
+            width: 606,
+            height: 1080,
+            res_x: 1080,
+            res_y: 1920,
+          },
+          content: {
+            x: roundEven(contentCrop.left),
+            y: roundEven(contentCrop.top),
+            width: roundEven(contentCrop.width),
+            height: roundEven(contentCrop.height),
+            res_x: 1080,
+            res_y: 1920,
+          },
+          facecam: {
+            x: roundEven(faceCrop.left),
+            y: roundEven(faceCrop.top),
+            width: roundEven(faceCrop.width),
+            height: roundEven(faceCrop.height),
+            res_x: 1080,
+            res_y: 1920,
+          },
+        },
+      }),
+    });
+
+    console.log(resp);
   };
 
   return (
@@ -256,9 +301,9 @@ export default () => {
           >
             <ExportController
               videoUrl={`https://twitch.tv/videos/${videoId}`}
-              onConfirm={(faceDimensions, gameplayDimensions, template) => {
+              onConfirm={(faceDimensions, gameplayDimensions) => {
                 setShowExportController(false);
-                handleSubmitExport(faceDimensions, gameplayDimensions, template);
+                handleSubmitExport(faceDimensions, gameplayDimensions);
               }}
               onCancel={() => setShowExportController(false)}
             />

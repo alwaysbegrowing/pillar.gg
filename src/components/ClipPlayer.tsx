@@ -21,6 +21,7 @@ const ClipPlayer = ({ style, height, width, onReady }) => {
   );
 
   useEffect(() => {
+    console.log(videoRef.current);
     if (isClipOver) {
       seek(startTime);
       setSecPlayed(startTime);

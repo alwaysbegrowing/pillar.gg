@@ -34,8 +34,7 @@ function ExportController({ videoUrl, onConfirm, onCancel }) {
     setStage(Stages.PREVIEW);
   };
 
-  const handlePreviewAccepted = (): void =>
-    onConfirm(faceCropDimensions, highlightCropDimensions, template);
+  const handlePreviewAccepted = (): void => onConfirm(faceCropDimensions, highlightCropDimensions);
 
   return (
     <>
