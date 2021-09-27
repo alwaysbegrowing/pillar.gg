@@ -1,9 +1,8 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect, ReactNode } from 'react';
 import type ReactPlayer from 'react-player/twitch';
-import QueueAnim from 'rc-queue-anim';
 import { useClips, useUser, useVideo } from '../services/hooks/api';
-import { Button, Row, Col, notification, Empty, Input, Tooltip } from 'antd';
+import { Button, Row, Col, notification, Empty, Input, Tooltip, Alert } from 'antd';
 import { DislikeTwoTone, LikeTwoTone } from '@ant-design/icons';
 import ClipList from '@/components/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -42,6 +41,7 @@ export default () => {
   const [playing, setPlaying] = useState<boolean>(false);
   const [selectedClipId, setSelectedClipId] = useState<string>('');
   const [confirmChangeClip, setConfirmChangeClip] = React.useState(false);
+  const [alert, setAlert] = useState<ReactNode>(null);
   const { formatMessage } = useIntl();
   const [clipFeedbackText, setClipFeedbackText] = useState('');
   const [showClipHandles, setShowClipHandles] = useState<boolean>(false);
@@ -49,7 +49,7 @@ export default () => {
   const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, 0]);
   const isPlaying = playing && isReady;
   const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId, clips);
-  const [showExportController, setShowExportController] = useState<boolean>(true);
+  const [showExportController, setShowExportController] = useState<boolean>(false);
   const { setSecPlayed, playedSeconds, isClipOver, intervalInMs } = useTime(
     isPlaying,
     startTime,
@@ -235,52 +235,44 @@ export default () => {
     showSuccessNotification(message);
   };
 
-  const handleSubmitExport = async (faceCrop, contentCrop) => {
-    const roundEven = (x: number): number => 2 * Math.round(x / 2);
+  const handleSubmitExport = async (cropConfigs) => {
+    setShowExportController(false);
+
+    const body = {
+      ClipData: {
+        videoId,
+        upscale: true,
+        clip: {
+          startTime,
+          endTime,
+        },
+      },
+      Outputs: cropConfigs,
+    };
+
+    console.log(body);
     const resp = await fetch('https://0rjzhy35ld.execute-api.us-east-1.amazonaws.com/prod/export', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        authorization: 'Bearer 7005i3c6sgh7pmdsiicdaud1hurdyv',
+        authorization: 'Bearer 76pszjko5oixhhy7vhpraqhz2i3c5e',
       },
-      body: JSON.stringify({
-        ClipData: {
-          videoId: selectedClipId,
-          upscale: true,
-          clip: {
-            startTime,
-            endTime,
-          },
-        },
-        Outputs: {
-          background: {
-            x: 656,
-            y: 0,
-            width: 606,
-            height: 1080,
-            res_x: 1080,
-            res_y: 1920,
-          },
-          content: {
-            x: roundEven(contentCrop.left),
-            y: roundEven(contentCrop.top),
-            width: roundEven(contentCrop.width),
-            height: roundEven(contentCrop.height),
-            res_x: 1080,
-            res_y: 1920,
-          },
-          facecam: {
-            x: roundEven(faceCrop.left),
-            y: roundEven(faceCrop.top),
-            width: roundEven(faceCrop.width),
-            height: roundEven(faceCrop.height),
-            res_x: 1080,
-            res_y: 1920,
-          },
-        },
-      }),
+      body: JSON.stringify(body),
     });
 
+    if (resp.status === 200) {
+      setAlert(
+        <Alert
+          message="Success! Your exported clip will be emailed to you shortly."
+          type="success"
+          closable
+        />,
+      );
+    } else {
+      setAlert(
+        <Alert message="Oops! Something went wrong. Please try again." type="error" closable />,
+      );
+    }
     console.log(resp);
   };
 
@@ -292,8 +284,6 @@ export default () => {
       extra={<ExportButton videoId={videoId} clips={clips?.filter((clip) => clip.selected)} />}
     >
       {clips.length !== 0 ? (
-        // <QueueAnim className="demo-content">
-        // {' '}
         showExportController ? (
           // export to mobile component screen here
           <ClipContext.Provider
@@ -301,16 +291,14 @@ export default () => {
           >
             <ExportController
               videoUrl={`https://twitch.tv/videos/${videoId}`}
-              onConfirm={(faceDimensions, gameplayDimensions) => {
-                setShowExportController(false);
-                handleSubmitExport(faceDimensions, gameplayDimensions);
-              }}
+              onConfirm={handleSubmitExport}
               onCancel={() => setShowExportController(false)}
             />
           </ClipContext.Provider>
         ) : (
           [
-            <Row gutter={24} key="a">
+            <Row gutter={[24, 24]} key="a">
+              {alert && <Col span={24}>{alert}</Col>}
               <Col span={14} style={{ marginBottom: 24 }}>
                 <VideoPlayer
                   videoRef={videoRef}
@@ -404,7 +392,7 @@ export default () => {
                   </Col>
                 </Row>
               </Col>
-              <Col style={{ alignItems: 'flex-start' }} span={8}>
+              <Col style={{ alignItems: 'flex-start' }} span={10}>
                 {clips.length ? (
                   <ClipList
                     clipInfo={{ clips, setClips }}
@@ -426,7 +414,6 @@ export default () => {
           ]
         )
       ) : (
-        // </QueueAnim>
         'No clips found! Please select another VOD. '
       )}
     </PageContainer>

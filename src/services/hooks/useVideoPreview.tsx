@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Spin } from 'antd';
 import ClipPlayer from '@/components/ClipPlayer';
 
 function useVideoPreview(template, faceCrop, highlightCrop, width, height) {
@@ -64,7 +63,6 @@ function useVideoPreview(template, faceCrop, highlightCrop, width, height) {
             width: `${faceWidth}px`,
             height: `${template.face.height}px`,
             overflow: 'hidden',
-            zIndex: template.face.z,
           }}
         >
           <ClipPlayer
@@ -79,54 +77,51 @@ function useVideoPreview(template, faceCrop, highlightCrop, width, height) {
   }
 
   return (
-    <Spin spinning={!playing}>
+    <div
+      style={{
+        width: `${width}px`,
+        height: `${height}px`,
+      }}
+    >
+      {facePreview}
       <div
         style={{
-          width: `${width}px`,
-          height: `${height}px`,
+          position: 'absolute',
+          top: `${template.highlight.top}px`,
+          left: `${(width - highlightWidth) / 2}px`,
+          width: `${highlightWidth}px`,
+          height: `${template.highlight.height}px`,
+          overflow: 'hidden',
         }}
       >
-        {facePreview}
+        <ClipPlayer
+          style={styles.highlight}
+          width={`${1920 * highlightScale}px`}
+          height={`${1080 * highlightScale}px`}
+          onReady={onReady}
+        />
+      </div>
+      {template.background && (
         <div
           style={{
             position: 'absolute',
-            top: `${template.highlight.top}px`,
-            left: `${(width - highlightWidth) / 2}px`,
-            width: `${highlightWidth}px`,
-            height: `${template.highlight.height}px`,
+            top: '0px',
+            left: '0px',
+            width: `${width}px`,
+            height: `${height}px`,
             overflow: 'hidden',
-            zIndex: template.highlight.z,
+            zIndex: -1,
           }}
         >
           <ClipPlayer
-            style={styles.highlight}
-            width={`${1920 * highlightScale}px`}
-            height={`${1080 * highlightScale}px`}
+            style={styles.background}
+            width={'1920px'}
+            height={'1080px'}
             onReady={onReady}
           />
         </div>
-        {template.background && (
-          <div
-            style={{
-              position: 'absolute',
-              top: '0px',
-              left: '0px',
-              width: `${width}px`,
-              height: `${height}px`,
-              overflow: 'hidden',
-              zIndex: -1,
-            }}
-          >
-            <ClipPlayer
-              style={styles.background}
-              width={'1920px'}
-              height={'1080px'}
-              onReady={onReady}
-            />
-          </div>
-        )}
-      </div>
-    </Spin>
+      )}
+    </div>
   );
 }
 

@@ -10,10 +10,12 @@ import useVideoCropper from '@/services/hooks/useVideoCropper';
 function ExportController({ videoUrl, onConfirm, onCancel }) {
   const [template, setTemplate] = useState(templates[0]);
   const [stage, setStage] = useState(Stages.SELECT_TEMPLATE);
-  const [faceCropDimensions, setFaceCropDimensions] = useState({});
-  const [highlightCropDimensions, setHighlightCropDimensions] = useState({});
+  const [faceCropDimensions, setFaceCropDimensions] = useState(null);
+  const [highlightCropDimensions, setHighlightCropDimensions] = useState(null);
   const faceCamCropper = useVideoCropper(template.face?.aspect, videoUrl);
   const highlightCropper = useVideoCropper(template.highlight.aspect, videoUrl);
+
+  const roundEven = (x: number): number => 2 * Math.round(x / 2);
 
   const handleTemplateSelected = (selection): void => {
     setTemplate(selection);
@@ -34,7 +36,88 @@ function ExportController({ videoUrl, onConfirm, onCancel }) {
     setStage(Stages.PREVIEW);
   };
 
-  const handlePreviewAccepted = (): void => onConfirm(faceCropDimensions, highlightCropDimensions);
+  const handlePreviewAccepted = (): void => {
+    let cropConfigs = {};
+
+    switch (template.name) {
+      case 'Fullscreen':
+        cropConfigs = makeFullscreenCrops();
+        break;
+      case 'Small Facecam':
+        cropConfigs = makeSmallFacecamCrops();
+        break;
+      case 'Blurred':
+        cropConfigs = makeBlurredCrops();
+        break;
+      default:
+        break;
+    }
+
+    onConfirm(cropConfigs);
+  };
+
+  const makeFullscreenCrops = () => {
+    return {
+      background: {
+        x: roundEven(highlightCropDimensions.left),
+        y: roundEven(highlightCropDimensions.top),
+        width: roundEven(highlightCropDimensions.width),
+        height: roundEven(highlightCropDimensions.height),
+        res_x: 1080,
+        res_y: 1920,
+      },
+    };
+  };
+
+  const makeSmallFacecamCrops = () => {
+    return {
+      content: {
+        x: roundEven(highlightCropDimensions.left),
+        y: roundEven(highlightCropDimensions.top),
+        width: roundEven(highlightCropDimensions.width),
+        height: roundEven(highlightCropDimensions.height),
+        res_x: 1080,
+        res_y: 1080,
+      },
+      facecam: {
+        x: roundEven(faceCropDimensions.left),
+        y: roundEven(faceCropDimensions.top),
+        width: roundEven(faceCropDimensions.width),
+        height: roundEven(faceCropDimensions.height),
+        res_x: 1080,
+        res_y: 1920,
+      },
+      background: {
+        x: 656,
+        y: 0,
+        width: 606,
+        height: 1080,
+        res_x: 1080,
+        res_y: 1920,
+      },
+    };
+  };
+
+  const makeBlurredCrops = () => {
+    return {
+      content: {
+        x: roundEven(highlightCropDimensions.left),
+        y: roundEven(highlightCropDimensions.top),
+        width: roundEven(highlightCropDimensions.width),
+        height: roundEven(highlightCropDimensions.height),
+        res_x: 1080,
+        res_y: 1080,
+      },
+      background: {
+        x: 656,
+        y: 0,
+        width: 606,
+        height: 1080,
+        res_x: 1080,
+        res_y: 1920,
+      },
+    };
+  };
 
   return (
     <>
