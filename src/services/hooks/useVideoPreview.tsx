@@ -70,6 +70,7 @@ function useVideoPreview(template, faceCrop, highlightCrop, width, height) {
             width={`${1920 * faceScale}px`}
             height={`${1080 * faceScale}px`}
             onReady={onReady}
+            play={playing}
           />
         </div>
       </>
@@ -99,6 +100,7 @@ function useVideoPreview(template, faceCrop, highlightCrop, width, height) {
           width={`${1920 * highlightScale}px`}
           height={`${1080 * highlightScale}px`}
           onReady={onReady}
+          play={playing}
         />
       </div>
       {template.background && (
@@ -118,6 +120,7 @@ function useVideoPreview(template, faceCrop, highlightCrop, width, height) {
             width={'1920px'}
             height={'1080px'}
             onReady={onReady}
+            play={playing}
           />
         </div>
       )}

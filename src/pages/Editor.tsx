@@ -1,5 +1,6 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState, useRef, useCallback, useEffect, ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
 import { useClips, useUser, useVideo } from '../services/hooks/api';
 import { Button, Row, Col, notification, Empty, Input, Tooltip, Alert } from 'antd';
@@ -14,7 +15,6 @@ import type { IndividualTimestamp } from '@/services/hooks/api';
 import { useIntl } from 'umi';
 import { useTime } from '@/services/hooks/playtime';
 import 'cropperjs/dist/cropper.css';
-
 import ExportButton from '@/components/ExportButton';
 import { ClipContext } from '@/services/contexts/ClipContext';
 import { sendHubspotEvent } from '@/services/send';
@@ -250,12 +250,11 @@ export default () => {
       Outputs: cropConfigs,
     };
 
-    console.log(body);
     const resp = await fetch('https://0rjzhy35ld.execute-api.us-east-1.amazonaws.com/prod/export', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        authorization: 'Bearer 76pszjko5oixhhy7vhpraqhz2i3c5e',
+        authorization: 'Bearer 9dgttf37zgwdgbzjlu8mw5y2nuhoh0',
       },
       body: JSON.stringify(body),
     });
@@ -266,14 +265,19 @@ export default () => {
           message="Success! Your exported clip will be emailed to you shortly."
           type="success"
           closable
+          onClose={() => setAlert(null)}
         />,
       );
     } else {
       setAlert(
-        <Alert message="Oops! Something went wrong. Please try again." type="error" closable />,
+        <Alert
+          message="Oops! Something went wrong. Please try again."
+          type="error"
+          closable
+          onClose={() => setAlert(null)}
+        />,
       );
     }
-    console.log(resp);
   };
 
   return (

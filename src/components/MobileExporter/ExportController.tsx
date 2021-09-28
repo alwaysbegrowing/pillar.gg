@@ -17,45 +17,6 @@ function ExportController({ videoUrl, onConfirm, onCancel }) {
 
   const roundEven = (x: number): number => 2 * Math.round(x / 2);
 
-  const handleTemplateSelected = (selection): void => {
-    setTemplate(selection);
-    if (selection.face) {
-      setStage(Stages.SELECT_FACE);
-    } else {
-      setStage(Stages.SELECT_HIGHLIGHT);
-    }
-  };
-
-  const handleFaceCamSelected = (): void => {
-    setFaceCropDimensions(faceCamCropper.getCropData());
-    setStage(Stages.SELECT_HIGHLIGHT);
-  };
-
-  const handleGameplaySelected = (): void => {
-    setHighlightCropDimensions(highlightCropper.getCropData());
-    setStage(Stages.PREVIEW);
-  };
-
-  const handlePreviewAccepted = (): void => {
-    let cropConfigs = {};
-
-    switch (template.name) {
-      case 'Fullscreen':
-        cropConfigs = makeFullscreenCrops();
-        break;
-      case 'Small Facecam':
-        cropConfigs = makeSmallFacecamCrops();
-        break;
-      case 'Blurred':
-        cropConfigs = makeBlurredCrops();
-        break;
-      default:
-        break;
-    }
-
-    onConfirm(cropConfigs);
-  };
-
   const makeFullscreenCrops = () => {
     return {
       background: {
@@ -117,6 +78,45 @@ function ExportController({ videoUrl, onConfirm, onCancel }) {
         res_y: 1920,
       },
     };
+  };
+
+  const handleTemplateSelected = (selectedTemplate): void => {
+    setTemplate(selectedTemplate);
+    if (selectedTemplate.face) {
+      setStage(Stages.SELECT_FACE);
+    } else {
+      setStage(Stages.SELECT_HIGHLIGHT);
+    }
+  };
+
+  const handleFaceCamSelected = (): void => {
+    setFaceCropDimensions(faceCamCropper.getCropData());
+    setStage(Stages.SELECT_HIGHLIGHT);
+  };
+
+  const handleGameplaySelected = (): void => {
+    setHighlightCropDimensions(highlightCropper.getCropData());
+    setStage(Stages.PREVIEW);
+  };
+
+  const handlePreviewAccepted = (): void => {
+    let cropConfigs = {};
+
+    switch (template.name) {
+      case 'Fullscreen':
+        cropConfigs = makeFullscreenCrops();
+        break;
+      case 'Small Facecam':
+        cropConfigs = makeSmallFacecamCrops();
+        break;
+      case 'Blurred':
+        cropConfigs = makeBlurredCrops();
+        break;
+      default:
+        break;
+    }
+
+    onConfirm(cropConfigs);
   };
 
   return (
