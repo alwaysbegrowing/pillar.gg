@@ -45,8 +45,8 @@ function ExportController({ videoUrl, onConfirm, onCancel }) {
         y: roundEven(faceCropDimensions.top),
         width: roundEven(faceCropDimensions.width),
         height: roundEven(faceCropDimensions.height),
-        res_x: 1080,
-        res_y: 1920,
+        res_x: 560, // this is the max face size
+        res_y: 420, // until we support custom resolutions
       },
       background: {
         x: 656,
