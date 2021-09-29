@@ -23,6 +23,7 @@ const styles = {
     color: '#f1f7fe',
   },
 };
+
 interface VideoProps {
   url: string;
   duration: number;
