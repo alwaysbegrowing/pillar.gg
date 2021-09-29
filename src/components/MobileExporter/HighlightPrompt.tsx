@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Row, Col, Divider, Radio, Typography } from 'antd';
-import Prompt from './Prompt';
+import Prompt from './ExportStepPrompt';
 import Stages from './Stages';
 
 const { Title } = Typography;

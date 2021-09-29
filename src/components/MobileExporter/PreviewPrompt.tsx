@@ -1,6 +1,6 @@
 import React from 'react';
 import { Col, Row } from 'antd';
-import Prompt from './Prompt';
+import Prompt from './ExportStepPrompt';
 import Stages from './Stages';
 import CropPreview from './CropPreview';
 

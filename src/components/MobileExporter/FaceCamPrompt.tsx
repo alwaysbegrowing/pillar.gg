@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Prompt from './Prompt';
+import Prompt from './ExportStepPrompt';
 import { Col, Row, Radio, Divider, Typography } from 'antd';
 import Stages from './Stages';
 

@@ -18,6 +18,8 @@ import 'cropperjs/dist/cropper.css';
 import ExportButton from '@/components/ExportButton';
 import { ClipContext } from '@/services/contexts/ClipContext';
 import { sendHubspotEvent } from '@/services/send';
+import { MOBILE_EXPORT_URL } from '@/constants/apiUrls';
+import { getHeaders } from '@/services/fetcher';
 
 const { Search } = Input;
 
@@ -250,12 +252,9 @@ export default () => {
       Outputs: cropConfigs,
     };
 
-    const resp = await fetch('https://0rjzhy35ld.execute-api.us-east-1.amazonaws.com/prod/export', {
+    const resp = await fetch(MOBILE_EXPORT_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: 'Bearer 9dgttf37zgwdgbzjlu8mw5y2nuhoh0',
-      },
+      headers: getHeaders() || undefined,
       body: JSON.stringify(body),
     });
 
