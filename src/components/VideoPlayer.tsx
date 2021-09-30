@@ -36,6 +36,7 @@ interface VideoProps {
   onPlay: any;
   onBuffer: any;
 }
+
 const Video = ({ url, duration, progress, videoRef, playing, setPlaying, onReady }: VideoProps) => {
   const [muted, setMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,6 +56,12 @@ const Video = ({ url, duration, progress, videoRef, playing, setPlaying, onReady
     onReady();
     setIsLoading(false);
   };
+
+  const ProgressCounter = () => (
+    <div style={{ fontSize: '.9em', color: 'white' }}>
+      {`${Math.round(progress)} / ${duration}`}
+    </div>
+  );
 
   return (
     <Spin spinning={isLoading}>
@@ -80,7 +87,7 @@ const Video = ({ url, duration, progress, videoRef, playing, setPlaying, onReady
             backgroundColor: 'rgba(0,0,0,.7)',
           }}
         >
-          <Row justify="space-between" style={{ marginLeft: 16, marginRight: 16, marginBottom: 8 }}>
+          <Row justify="space-between" align="middle" style={{ margin: '.3rem .9rem' }}>
             <Space size="middle">
               {playing ? (
                 <PauseOutlined style={styles.icon} onClick={togglePlaying} />
@@ -92,9 +99,7 @@ const Video = ({ url, duration, progress, videoRef, playing, setPlaying, onReady
               ) : (
                 <SoundOutlined style={styles.icon} onClick={toggleMuted} />
               )}
-              <div style={{ fontSize: 12, color: 'white' }}>{`${Math.round(
-                progress,
-              )} / ${duration}`}</div>
+              <ProgressCounter />
             </Space>
           </Row>
         </div>
