@@ -62,7 +62,7 @@ const Video = ({ url, duration, progress, videoRef, playing, setPlaying, onReady
     setMuted((isMuted) => !isMuted);
   };
 
-  const onPlayReady = () => {
+  const onPlayerReady = () => {
     onReady();
     setIsLoading(false);
   };
@@ -73,11 +73,25 @@ const Video = ({ url, duration, progress, videoRef, playing, setPlaying, onReady
     </div>
   );
 
+  const getPlayIcon = () =>
+    playing ? (
+      <PauseOutlined style={styles.icon} onClick={togglePlaying} />
+    ) : (
+      <CaretRightOutlined style={styles.icon} onClick={togglePlaying} />
+    );
+
+  const getVolumeIcon = () =>
+    muted ? (
+      <NotificationOutlined style={styles.icon} onClick={toggleMuted} />
+    ) : (
+      <SoundOutlined style={styles.icon} onClick={toggleMuted} />
+    );
+
   return (
     <Spin spinning={isLoading}>
       <div style={styles.playerWrapper}>
         <ReactPlayer
-          onReady={onPlayReady}
+          onReady={onPlayerReady}
           style={styles.reactPlayer}
           ref={videoRef}
           height="100%"
@@ -90,16 +104,8 @@ const Video = ({ url, duration, progress, videoRef, playing, setPlaying, onReady
         <div style={styles.controlBarWrapper}>
           <Row justify="space-between" align="middle" style={styles.controlBarRow}>
             <Space size="middle">
-              {playing ? (
-                <PauseOutlined style={styles.icon} onClick={togglePlaying} />
-              ) : (
-                <CaretRightOutlined style={styles.icon} onClick={togglePlaying} />
-              )}
-              {muted ? (
-                <NotificationOutlined style={styles.icon} onClick={toggleMuted} />
-              ) : (
-                <SoundOutlined style={styles.icon} onClick={toggleMuted} />
-              )}
+              {getPlayIcon()}
+              {getVolumeIcon()}
               <ProgressCounter />
             </Space>
           </Row>
