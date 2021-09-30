@@ -308,10 +308,8 @@ export default () => {
                   playing={playing}
                   setPlaying={setPlaying}
                   progress={playedSeconds}
-                  onProgress={() => {}}
                   duration={clipLength}
                   onReady={() => setIsReady(true)}
-                  selectedClipId={selectedClipId}
                   url={`https://twitch.tv/videos/${videoId}`}
                 />
                 <div style={{ padding: '1em', display: 'flex' }}>

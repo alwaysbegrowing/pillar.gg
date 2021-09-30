@@ -1,3 +1,4 @@
+import type { VideoProps } from '@/types/types';
 import {
   CaretRightOutlined,
   NotificationOutlined,
@@ -33,19 +34,6 @@ const styles: Record<string, React.CSSProperties> = {
 
   controlBarRow: { margin: '.3rem .9rem' },
 };
-
-interface VideoProps {
-  url: string;
-  duration: number;
-  progress: number;
-  videoRef: ReactPlayer;
-  controlKeys: boolean;
-  playing: boolean;
-  setPlaying: React.Dispatch<React.SetStateAction<boolean>>;
-  onReady: any;
-  onPlay: any;
-  onBuffer: any;
-}
 
 const Video = ({ url, duration, progress, videoRef, playing, setPlaying, onReady }: VideoProps) => {
   const [muted, setMuted] = useState(false);
