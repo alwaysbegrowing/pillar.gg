@@ -1,4 +1,4 @@
-import type { VideoProps } from '@/types/types';
+import type { VideoPlayerProps } from '@/types/componentTypes';
 import {
   CaretRightOutlined,
   NotificationOutlined,
@@ -35,7 +35,15 @@ const styles: Record<string, React.CSSProperties> = {
   controlBarRow: { margin: '.3rem .9rem' },
 };
 
-const Video = ({ url, duration, progress, videoRef, playing, setPlaying, onReady }: VideoProps) => {
+const Video = ({
+  url,
+  duration,
+  progress,
+  videoRef,
+  playing,
+  setPlaying,
+  onReady,
+}: VideoPlayerProps) => {
   const [muted, setMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 

@@ -5,7 +5,7 @@ import type ReactPlayer from 'react-player/twitch';
 import { useClips, useUser, useVideo } from '../services/hooks/api';
 import { Button, Row, Col, notification, Empty, Input, Tooltip, Alert } from 'antd';
 import { DislikeTwoTone, LikeTwoTone } from '@ant-design/icons';
-import ClipList from '@/components/ClipList';
+import ClipList from '@/components/ClipList/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
 import VideoPlayer from '@/components/VideoPlayer/VideoPlayer';
