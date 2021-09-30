@@ -4,9 +4,12 @@ import React from 'react';
 import type { IndividualTimestamp } from '@/services/hooks/api';
 import { SortableClipCard } from './SortableClipCard';
 import styled from 'styled-components';
+import { Typography } from 'antd';
+
+const { Title } = Typography;
 
 const ClipListWrapper = styled.div`
-  height: 600;
+  height: 600px;
   width: 100%;
   overflow-y: scroll;
   background-color: white;
@@ -47,7 +50,7 @@ const ClipList = ({
 
   return (
     <ClipListWrapper>
-      {clips.length} Clips Found:
+      <Title level={5}>{clips.length} Clips Found:</Title>
       <List
         grid={{ gutter: 8, column: 1 }}
         dataSource={clips}

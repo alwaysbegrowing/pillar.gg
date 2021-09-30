@@ -33,8 +33,7 @@ const PlayIconWrapper = styled.div`
 `;
 
 const TimestampsWrapper = styled.div`
-  display: flex;
-  font-size: 14;
+  font-size: 0.9em;
 `;
 
 export function SortableClipCard({
