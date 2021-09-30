@@ -8,7 +8,7 @@ import { DislikeTwoTone, LikeTwoTone } from '@ant-design/icons';
 import ClipList from '@/components/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
-import VideoPlayer from '@/components/VideoPlayer';
+import VideoPlayer from '@/components/VideoPlayer/VideoPlayer';
 import TimeSlider from '@/components/TimeSlider/TimeSlider';
 import ExportController from '@/components/MobileExporter/ExportController';
 import type { IndividualTimestamp } from '@/services/hooks/api';

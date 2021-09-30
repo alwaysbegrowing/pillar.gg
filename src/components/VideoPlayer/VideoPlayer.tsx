@@ -8,7 +8,7 @@ import { Row, Space, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import ReactPlayer from 'react-player/twitch';
 
-const styles = {
+const styles: Record<string, React.CSSProperties> = {
   playerWrapper: {
     paddingTop: '56.25%',
   },
@@ -22,6 +22,16 @@ const styles = {
   icon: {
     color: '#f1f7fe',
   },
+
+  controlBarWrapper: {
+    width: '100%',
+    bottom: 0,
+    position: 'absolute',
+    display: 'block',
+    backgroundColor: 'rgba(0,0,0,.7)',
+  },
+
+  controlBarRow: { margin: '.3rem .9rem' },
 };
 
 interface VideoProps {
@@ -66,7 +76,6 @@ const Video = ({ url, duration, progress, videoRef, playing, setPlaying, onReady
   return (
     <Spin spinning={isLoading}>
       <div style={styles.playerWrapper}>
-        {/* @ts-ignore */}
         <ReactPlayer
           onReady={onPlayReady}
           style={styles.reactPlayer}
@@ -78,16 +87,8 @@ const Video = ({ url, duration, progress, videoRef, playing, setPlaying, onReady
           url={url}
           onPlay={() => setPlaying(true)}
         />
-        <div
-          style={{
-            width: '100%',
-            bottom: 0,
-            position: 'absolute',
-            display: 'block',
-            backgroundColor: 'rgba(0,0,0,.7)',
-          }}
-        >
-          <Row justify="space-between" align="middle" style={{ margin: '.3rem .9rem' }}>
+        <div style={styles.controlBarWrapper}>
+          <Row justify="space-between" align="middle" style={styles.controlBarRow}>
             <Space size="middle">
               {playing ? (
                 <PauseOutlined style={styles.icon} onClick={togglePlaying} />
