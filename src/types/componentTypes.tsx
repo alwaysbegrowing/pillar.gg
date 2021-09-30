@@ -20,3 +20,16 @@ export interface ClipListProps {
   videoId: string;
   thumbnails?: any[];
 }
+
+export interface SortableClipCardProps {
+  play: () => any;
+  sourceAttribution?: string;
+  selectedClipId: string;
+  id: string;
+  setClips: any;
+  cardNumber: number;
+  thumbnail: string;
+  timestamp: IndividualTimestamp;
+  videoId: string | number;
+  isSelected: boolean;
+}

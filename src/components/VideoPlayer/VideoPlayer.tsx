@@ -1,4 +1,4 @@
-import type { VideoPlayerProps } from '@/types/types';
+import type { VideoPlayerProps } from '@/types/componentTypes';
 import {
   CaretRightOutlined,
   NotificationOutlined,

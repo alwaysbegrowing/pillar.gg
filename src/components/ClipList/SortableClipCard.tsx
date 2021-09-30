@@ -9,30 +9,33 @@ import { Divider } from 'antd';
 import { useIntl } from 'umi';
 import Text from 'antd/lib/typography/Text';
 import { sendHubspotEvent } from '@/services/send';
+import type { SortableClipCardProps } from '@/types/componentTypes';
+import styled from 'styled-components';
 
 const toTime = (seconds: number) => new Date(seconds * 1000).toISOString().substr(11, 8);
 
-const itemStyle = {
-  display: 'flex',
-  boxSizing: 'border-box',
-  padding: '1rem',
-  borderRadius: '0.15rem',
-};
+const CardWrapper = styled.div<{ isSelected: boolean }>`
+  display: flex;
+  box-sizing: border-box;
+  padding: 1rem;
+  border-radius: 0.15rem;
+  background-color: ${(props) => (props.isSelected ? '#d3adf7' : '')};
+`;
 
-const selectedItemStyle = {
-  ...itemStyle,
-  backgroundColor: '#D3ADF7',
-};
+const CardNumberWrapper = styled.div`
+  padding-right: 1rem;
+  align-self: center;
+`;
 
-const numberStyle = {
-  paddingRight: '1rem',
-  alignSelf: 'center',
-};
+const PlayIconWrapper = styled.div`
+  padding-right: 0.6rem;
+  align-self: center;
+`;
 
-const playIconStyle = {
-  paddingRight: '0.6rem',
-  alignSelf: 'center',
-};
+const TimestampsWrapper = styled.div`
+  display: flex;
+  font-size: 14;
+`;
 
 export function SortableClipCard({
   id,
@@ -42,121 +45,76 @@ export function SortableClipCard({
   sourceAttribution,
   selectedClipId,
   setClips,
-  i,
+  cardNumber,
   videoId,
-}: {
-  play: () => any;
-  sourceAttribution?: string;
-  selectedClipId: string;
-  id: string;
-  setClips: any;
-  i: number;
-  thumbnail: string;
-  timestamp: IndividualTimestamp;
-  videoId: string | number;
-}) {
+  isSelected,
+}: SortableClipCardProps) {
   const { data: twitchData } = useUser();
   const { id: twitchId } = twitchData || {};
   const { formatMessage } = useIntl();
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
 
-  const selectedStyle = selectedClipId === id ? selectedItemStyle : itemStyle;
-
-  const che = (isChecked: boolean) => {
+  const changeClip = (isChecked: boolean) => {
     setClips((clips: IndividualTimestamp[]) => {
       const newClips = [...clips];
-      newClips[i].selected = isChecked;
+      newClips[cardNumber].selected = isChecked;
       return newClips;
     });
   };
 
-  const CardNumber = () => {
-    if (selectedClipId === id) {
-      return (
-        <div style={playIconStyle}>
-          <CaretRightOutlined />
-        </div>
-      );
-    }
-    return (
-      <div style={numberStyle}>
-        <Text type="secondary">{i + 1}</Text>
-      </div>
+  const CardNumber = () =>
+    isSelected ? (
+      <PlayIconWrapper>
+        <CaretRightOutlined />
+      </PlayIconWrapper>
+    ) : (
+      <CardNumberWrapper>
+        <Text type="secondary">{cardNumber + 1}</Text>
+      </CardNumberWrapper>
     );
-  };
 
   const handleClick = () => {
     play();
     sendHubspotEvent(twitchId, 'CLICKED_CLIP_EVENT', videoId, { selectedClipId });
   };
 
+  const Timestamps = () => (
+    <TimestampsWrapper>
+      {toTime(timestamp.startTime)} <Divider type="vertical" /> {toTime(timestamp.endTime)}
+    </TimestampsWrapper>
+  );
+
   const card = (
-    <div style={selectedStyle} onClick={handleClick}>
+    <CardWrapper isSelected={isSelected} onClick={handleClick}>
       <CardNumber />
-      <div>
-        <List.Item.Meta
-          avatar={
-            <img
-              alt="Twitch Thumbnail"
-              src={thumbnail}
-              style={{ width: '12rem', height: '6.66rem' }}
-            />
-          }
-          title={
-            <div style={{ display: 'flex', fontSize: 14 }}>
-              {toTime(timestamp.startTime)} <Divider type="vertical" /> {toTime(timestamp.endTime)}
-            </div>
-          }
-          description={
-            <Switch
-              onChange={che}
-              checked={timestamp.selected}
-              checkedChildren={formatMessage({
-                id: 'component.SortableClipCard.Card.Switch.checkedChildren',
-              })}
-              unCheckedChildren={formatMessage({
-                id: 'component.SortableClipCard.Card.Switch.unCheckedChildren',
-              })}
-            />
-          }
-        />
-      </div>
-    </div>
-    // <Card
-    //   style={selectedStyle}
-    //   hoverable
-    //   cover={<img alt="Twitch Thumbnail" src={thumbnail} />}
-    //   actions={[
-    //     <Tooltip title={formatMessage({ id: 'component.SortableClipCard.Card.Tooltip.title' })}>
-    //       <Button size="small" onClick={() => play()} icon={<PlayCircleOutlined />}>
-    //         {formatMessage({ id: 'component.SortableClipCard.Card.Tooltip.Button' })}
-    //       </Button>
-    //     </Tooltip>,
-    //
-    //     <Switch
-    //       onChange={che}
-    //       checked={timestamp.selected}
-    //       checkedChildren={formatMessage({
-    //         id: 'component.SortableClipCard.Card.Switch.checkedChildren',
-    //       })}
-    //       unCheckedChildren={formatMessage({
-    //         id: 'component.SortableClipCard.Card.Switch.unCheckedChildren',
-    //       })}
-    //     />,
-    //   ]}
-    // >
-    //   <Meta
-    //     description={
-    //       <>
-    //         {toTime(timestamp.startTime)} <Divider type="vertical" /> {toTime(timestamp.endTime)}
-    //       </>
-    //     }
-    //   />
-    // </Card>
+      <List.Item.Meta
+        avatar={
+          <img
+            alt="Twitch Thumbnail"
+            src={thumbnail}
+            style={{ width: '12rem', height: '6.66rem' }}
+          />
+        }
+        title={<Timestamps />}
+        description={
+          <Switch
+            onChange={changeClip}
+            checked={timestamp.selected}
+            checkedChildren={formatMessage({
+              id: 'component.SortableClipCard.Card.Switch.checkedChildren',
+            })}
+            unCheckedChildren={formatMessage({
+              id: 'component.SortableClipCard.Card.Switch.unCheckedChildren',
+            })}
+          />
+        }
+      />
+    </CardWrapper>
   );
 
   return (

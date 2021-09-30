@@ -1,4 +1,4 @@
-import type { ClipListProps } from '@/types/types';
+import type { ClipListProps } from '@/types/componentTypes';
 import { List } from 'antd';
 import React from 'react';
 import type { IndividualTimestamp } from '@/services/hooks/api';
@@ -24,7 +24,7 @@ const ClipList = ({
   const { selectedClipId } = clipIdInfo;
   const { clips, setClips } = clipInfo;
 
-  const renderListItem = (timestamp: IndividualTimestamp, i: number) => {
+  const renderListItem = (timestamp: IndividualTimestamp, index: number) => {
     return (
       <List.Item style={{ width: '100%' }}>
         <SortableClipCard
@@ -33,12 +33,13 @@ const ClipList = ({
           key={timestamp.id}
           sourceAttribution={timestamp.sourceAttribution}
           id={timestamp.id}
-          i={i}
+          cardNumber={index}
           videoId={videoId}
           /* TODO potential bug: if s3 upload failed and image does not exist in thumbnails array, this will probably error out */
           thumbnail={thumbnails === undefined ? thumbnail : thumbnails[timestamp.id]}
           selectedClipId={selectedClipId}
           setClips={setClips}
+          isSelected={selectedClipId === timestamp.id}
         />
       </List.Item>
     );
