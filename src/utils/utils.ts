@@ -28,3 +28,12 @@ export const showSuccessNotification = (successMessage: string) => {
     description: successMessage,
   });
 };
+
+export const isDebugMode = () => {
+  const { NODE_ENV } = process.env;
+  const code = new URLSearchParams(window.location.search).get('debug') || false;
+  if (NODE_ENV === 'development' || code === 'true') {
+    return true;
+  }
+  return false;
+};

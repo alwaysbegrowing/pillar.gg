@@ -4,16 +4,9 @@ import React from 'react';
 import { useVideos } from '../services/hooks/api';
 import VodCard from '../components/VodCard';
 import SelectUser from '../components/SelectUser';
+import { isDebugMode } from '@/utils/utils';
 
-export const isDebugMode = () => {
-  const { NODE_ENV } = process.env;
-  const code = new URLSearchParams(window.location.search).get('debug') || false;
-  if (NODE_ENV === 'development' || code === 'true') {
-    return true;
-  }
-  return false;
-};
-const Videos = () => {
+const Vods = () => {
   const { data: videos, isLoading, isError } = useVideos();
 
   if (isLoading) return 'loading...';
@@ -34,4 +27,4 @@ const Videos = () => {
   );
 };
 
-export default Videos;
+export default Vods;
