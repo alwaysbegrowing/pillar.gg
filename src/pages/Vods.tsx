@@ -1,9 +1,9 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { List } from 'antd';
 import React from 'react';
-import { useVideos } from '../services/hooks/api';
-import VodCard from '../components/VodCard';
-import SelectUser from '../components/SelectUser';
+import { useVideos } from '@/services/hooks/api';
+import VodCard from '@/components/VodCard/VodCard';
+import SelectUser from '@/components/SelectUser';
 import { isDebugMode } from '@/utils/utils';
 
 const Vods = () => {

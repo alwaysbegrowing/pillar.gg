@@ -33,3 +33,14 @@ export interface SortableClipCardProps {
   videoId: string | number;
   isSelected: boolean;
 }
+
+export interface VodCardProps {
+  thumbnail_url: string;
+  title: string;
+  description: string;
+  duration: number;
+  view_count: number;
+  url: string;
+  published_at: any;
+  id: number;
+}
