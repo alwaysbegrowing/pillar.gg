@@ -26,7 +26,7 @@ const Settings = () => {
         <Paragraph>
           For example, you go live on Twitch, and you or your moderators send the message{' '}
           <Text code>!clip</Text> to your chat. Pillar will find your wakeword and create a clip at
-          that timestamp. The clip is automatically imported into the Pillar Editor, and you can
+          that timestamp. The clip is automatically imported into the Pillar Editor and you can
           watch it when viewing the clips for your stream.
         </Paragraph>
 
