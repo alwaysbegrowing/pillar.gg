@@ -14,7 +14,6 @@ interface TwitchUserData {
   view_count: number;
   email: string;
   created_at: string;
-  lead_status: string;
 }
 
 export default async (twitchUserData: TwitchUserData) => {
@@ -30,8 +29,7 @@ export default async (twitchUserData: TwitchUserData) => {
         twitch_profile_image_url: twitchUserData.profile_image_url,
         twitch_offline_image_url: twitchUserData.offline_image_url,
         twitch_view_count: String(twitchUserData.view_count),
-        email: twitchUserData.email,
-        lead_status: 'Lead',
+        email: twitchUserData.email
       },
     };
     const hubspotClient = new Client({ apiKey: HUBSPOT_API_KEY });
