@@ -17,7 +17,9 @@ const hubspotEvent = async (req: VercelRequest, res: VercelResponse) => {
   });
 
   if (!contact?.email || !contact?.hubspot_contact_id) {
-    return res.status(404).send({});
+    return res.status(400).send({
+      message: `Contact not found. Contact ID: ${contact?.hubspot_contact_id}`,
+    });
   }
 
   const { email, hubspot_contact_id: contactId } = contact;
@@ -31,7 +33,7 @@ const hubspotEvent = async (req: VercelRequest, res: VercelResponse) => {
 
   try {
     await logCustomEvent(event);
-    const properties: UpdateContactInput = { lead_status: 'qualifying' };
+    const properties: UpdateContactInput = { hs_lead_status: 'QUALIFYING' };
     await updateContact(contactId, properties);
   } catch (error) {
     return res.status(500).send({ error });
