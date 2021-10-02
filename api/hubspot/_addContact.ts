@@ -2,8 +2,7 @@ import { Client } from '@hubspot/api-client';
 
 const { HUBSPOT_API_KEY } = process.env;
 
-// see here for valid lead statuses: https://files.slack.com/files-pri/T01Q3R9MCH1-F02GHQ7P91A/image.png
-// plus QUALIFYING
+// see here for valid lead statuses: https://git.io/J22uK
 
 interface TwitchUserData {
   id: string;
