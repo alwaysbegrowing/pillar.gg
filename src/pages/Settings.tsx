@@ -24,16 +24,17 @@ const Settings = () => {
         </Paragraph>
 
         <Paragraph>
-          For example, you go live on Twitch and you or your moderators send the message{' '}
+          For example, you go live on Twitch, and you or your moderators send the message{' '}
           <Text code>!clip</Text> to your chat. Pillar will find your wakeword and create a clip at
           that timestamp. The clip is automatically imported into the Pillar Editor, and you can
           watch it when viewing the clips for your stream.
         </Paragraph>
 
-        <Paragraph>
+        {/* Card has padding, use Text as last child to not create extra whitespace */}
+        <Text>
           Use wakewords to let your moderators clip great moments from your stream and easily see
           them in the Pillar Editor.
-        </Paragraph>
+        </Text>
       </Card>
     </PageContainer>
   );
