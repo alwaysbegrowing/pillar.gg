@@ -21,7 +21,7 @@ export const sendClips = async (
 export const sendHubspotEvent = async (
   twitchId: string | number,
   eventName: string = 'MAJOR_EVENT',
-  videoId: string | number = '',
+  videoid: string | number = '',
   additionalProperties: any = {},
 ) => {
   const apiUrl = `/api/hubspot/event`;
