@@ -32,8 +32,8 @@ const Settings = () => {
 
         {/* Card has padding, use Text as last child to not create extra whitespace */}
         <Text>
-          Use wakewords to let your moderators clip great moments from your stream and easily see
-          them in the Pillar Editor.
+          Wakewords allow you and your moderators to clip great moments from your stream and easily
+          access them in the Pillar Editor.
         </Text>
       </Card>
     </PageContainer>
