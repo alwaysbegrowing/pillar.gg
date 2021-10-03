@@ -1,8 +1,10 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Input } from 'antd';
-import StripeCustomerPortalPlugin from '../components/StripePlugin/StripeCustomerPortalPlugin';
+import { Card, Typography } from 'antd';
+// import StripeCustomerPortalPlugin from '../components/StripePlugin/StripeCustomerPortalPlugin';
 // import styles from './Settings.less';
+
+const { Text, Paragraph } = Typography;
 
 const Settings = () => {
   // const data:any = [
@@ -11,21 +13,28 @@ const Settings = () => {
 
   return (
     <PageContainer>
-      <Card title={'Wakeword'}>
-        <div>
-          Your wakeword: <b>CLIPIT</b>
-        </div>
-        <br />
-        <div>
-          Pillar will automatically create a clip when it finds a wakeword in your chat. <br />
-          <br />
-          Example: You send a message "CLIPIT" to your chat while streaming, and Pillar
-          automatically finds your wakeword and creates a clip that contains your chat message.
-          <br />
-          <br />
-          Use wakewords to create clips manually, and have those clips be easily editable +
-          exportable inside the Pillar editor.
-        </div>
+      <Card title="Wakeword">
+        <Paragraph>
+          Your wakeword: <Text code>!clip</Text>
+        </Paragraph>
+
+        <Paragraph>
+          Pillar will automatically create a clip when it finds a wakeword sent by you or your
+          moderators in your Twitch chat.
+        </Paragraph>
+
+        <Paragraph>
+          For example, you go live on Twitch, and you or your moderators send the message{' '}
+          <Text code>!clip</Text> to your chat. Pillar will find your wakeword and create a clip at
+          that timestamp. The clip is automatically imported into the Pillar Editor and you can
+          watch it when viewing the clips for your stream.
+        </Paragraph>
+
+        {/* Card has padding, use Text as last child to not create extra whitespace */}
+        <Text>
+          Wakewords allow you and your moderators to clip great moments from your stream and easily
+          access them in the Pillar Editor.
+        </Text>
       </Card>
     </PageContainer>
   );
