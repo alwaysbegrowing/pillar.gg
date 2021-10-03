@@ -10,6 +10,16 @@ const connectToDatabase = require('../_connectToDatabase');
 
 const hubspotEvent = async (req: VercelRequest, res: VercelResponse) => {
   const { twitchId, contactProperties, eventName } = req.body;
+  // create new contactProperties object with all lowercase keys
+  var properties = {'selectedClipId': "2513234"}
+  var key, keys = Object.keys(contactProperties)
+  var n = keys.length
+  var contactPropertiesLowercaseWithLowercaseKeys = {}
+  while (n--) {
+    key = keys[n]
+    contactPropertiesLowercaseWithLowercaseKeys[key.toLowerCase()] = contactProperties[key]
+  }
+
 
   const db = await connectToDatabase();
   const contact = await db.collection('users').findOne({
@@ -28,7 +38,7 @@ const hubspotEvent = async (req: VercelRequest, res: VercelResponse) => {
     eventName: events[eventName],
     email,
     objectId: String(contactId), // objectId is a string or an array of strings
-    properties: contactProperties,
+    properties: contactPropertiesLowercaseWithLowercaseKeys,
   };
 
   try {
