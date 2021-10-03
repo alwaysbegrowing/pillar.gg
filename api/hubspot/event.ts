@@ -10,8 +10,7 @@ const connectToDatabase = require('../_connectToDatabase');
 
 const hubspotEvent = async (req: VercelRequest, res: VercelResponse) => {
   const { twitchId, contactProperties, eventName } = req.body;
-  // create new contactProperties object with all lowercase keys
-  var properties = {'selectedClipId': "2513234"}
+  // keys in contactProperties have to be lowercase to fit hubspot's internal names for properties
   var key, keys = Object.keys(contactProperties)
   var n = keys.length
   var contactPropertiesLowercaseWithLowercaseKeys = {}
