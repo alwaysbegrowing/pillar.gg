@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 
-const { NEXT_PUBLIC_TWITCH_CLIENT_ID } = process.env;
+const { TWITCH_CLIENT_ID } = process.env;
 
 const getTwitchUserData = async (accessToken) => {
   const url = `https://api.twitch.tv/helix/users`;
@@ -9,7 +9,7 @@ const getTwitchUserData = async (accessToken) => {
     const resp = await fetch(url, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        'Client-ID': NEXT_PUBLIC_TWITCH_CLIENT_ID,
+        'Client-ID': TWITCH_CLIENT_ID,
       },
     });
     const result = await resp.json();
@@ -19,6 +19,7 @@ const getTwitchUserData = async (accessToken) => {
     }
     return result;
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error(e);
     return e;
   }

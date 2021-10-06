@@ -4,9 +4,7 @@ const getUserTwitchCredentials = async (code) => {
   const url =
     `https://id.twitch.tv/oauth2/token?` +
     `code=${code}&` +
-    // adding "NEXT_PUBLIC_" to an environment variable
-    // makes it available to the client
-    `client_id=${process.env.NEXT_PUBLIC_NEXT_PUBLIC_TWITCH_CLIENT_ID}&` +
+    `client_id=${process.env.TWITCH_CLIENT_ID}&` +
     `client_secret=${process.env.TWITCH_CLIENT_SECRET}&` +
     // `redirect_uri=http://localhost:8000/TwitchAuth&`+
     `redirect_uri=https://app.pillar.gg/TwitchAuth&` +

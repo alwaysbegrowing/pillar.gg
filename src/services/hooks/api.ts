@@ -14,7 +14,7 @@ interface UseDBUserProps {
   error?: boolean;
 }
 
-const twitchClientId = process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID;
+const twitchClientId = 'jmyfr3xqjeyjkvzmnbyiexsf5864c1';
 const redirectURI = `${window.location.origin}/TwitchAuth`;
 
 const onErrorRetry = (error: any) => {
