@@ -3,7 +3,8 @@
  * Reference - https://dev.twitch.tv/docs/authentication#types-of-tokens under "App access token"
  */
 
- import fetch from 'node-fetch';
+import fetch from 'node-fetch';
+
 let cachedAccessToken: any = null;
 
 /**
@@ -15,12 +16,12 @@ async function isAccessTokenValid() {
   const url = `https://id.twitch.tv/oauth2/validate`;
   // fetch status of access token
   const isValid = await fetch(url, {
-    method: "GET",
+    method: 'GET',
     headers: {
-      'Authorization': `OAuth ${cachedAccessToken}`
-    }
-  })
-return isValid.ok
+      Authorization: `OAuth ${cachedAccessToken}`,
+    },
+  });
+  return isValid.ok;
 }
 
 /**
@@ -30,24 +31,24 @@ return isValid.ok
 async function connectCached() {
   if (cachedAccessToken) {
     const isValid = await isAccessTokenValid();
-    if(isValid) {
+    if (isValid) {
       return cachedAccessToken;
     }
   }
 
-  const url = `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_CLIENT_ID}&client_secret=${process.env.TWITCH_CLIENT_SECRET}&grant_type=client_credentials`;
+  const url = `https://id.twitch.tv/oauth2/token?client_id=${process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID}&client_secret=${process.env.TWITCH_CLIENT_SECRET}&grant_type=client_credentials`;
   try {
     // get a new app access token from twitch
     const tokenData = await fetch(url, {
-      method: "POST"
+      method: 'POST',
     });
     const resp = await tokenData.json();
     cachedAccessToken = resp.access_token;
-    return(resp.access_token);
-  } catch(e) {
-    console.error(e)
+    return resp.access_token;
+  } catch (e) {
+    console.error(e);
     return null;
-  };
-};
+  }
+}
 
 export default connectCached;
