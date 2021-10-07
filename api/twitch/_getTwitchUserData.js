@@ -19,6 +19,7 @@ const getTwitchUserData = async (accessToken) => {
     }
     return result;
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error(e);
     return e;
   }
