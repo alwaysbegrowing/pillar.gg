@@ -1,17 +1,25 @@
+/* eslint-disable no-nested-ternary */
+import type { ReactNode } from 'react';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
-import { useClips, useVideo } from '../services/hooks/api';
-import { Button, Row, Col, notification, Empty, Input, Tooltip } from 'antd';
+import { useClips, useUser, useVideo } from '../services/hooks/api';
+import { Button, Row, Col, notification, Empty, Input, Tooltip, Alert } from 'antd';
 import { DislikeTwoTone, LikeTwoTone } from '@ant-design/icons';
-import ClipList from '../components/ClipList';
+import ClipList from '@/components/ClipList/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
-import VideoPlayer from '../components/VideoPlayer';
-import TimeSlider from '../components/TimeSlider/TimeSlider';
-import type { IndividualTimestamp } from '../services/hooks/api';
+import VideoPlayer from '@/components/VideoPlayer/VideoPlayer';
+import TimeSlider from '@/components/TimeSlider/TimeSlider';
+import ExportController from '@/components/MobileExporter/ExportController';
+import type { IndividualTimestamp } from '@/services/hooks/api';
 import { useIntl } from 'umi';
-import { useTime } from '../services/hooks/playtime';
+import { useTime } from '@/services/hooks/playtime';
+import 'cropperjs/dist/cropper.css';
 import ExportButton from '@/components/ExportButton';
+import { ClipContext } from '@/services/contexts/ClipContext';
+import { sendHubspotEvent } from '@/services/send';
+import { MOBILE_EXPORT_URL } from '@/constants/apiUrls';
+import { getHeaders } from '@/services/fetcher';
 
 const { Search } = Input;
 
@@ -23,6 +31,8 @@ const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[])
 };
 
 export default () => {
+  const { data: twitchData } = useUser();
+  const { id: twitchId } = twitchData || {};
   const { id: videoId } = useParams<{ id: string }>();
   // const { data: userData } = useUser();
   const { data, isLoading, isError } = useClips(videoId);
@@ -33,6 +43,7 @@ export default () => {
   const [playing, setPlaying] = useState<boolean>(false);
   const [selectedClipId, setSelectedClipId] = useState<string>('');
   const [confirmChangeClip, setConfirmChangeClip] = React.useState(false);
+  const [alert, setAlert] = useState<ReactNode>(null);
   const { formatMessage } = useIntl();
   const [clipFeedbackText, setClipFeedbackText] = useState('');
   const [showClipHandles, setShowClipHandles] = useState<boolean>(false);
@@ -40,11 +51,13 @@ export default () => {
   const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, 0]);
   const isPlaying = playing && isReady;
   const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId, clips);
+  const [showExportController, setShowExportController] = useState<boolean>(false);
   const { setSecPlayed, playedSeconds, isClipOver, intervalInMs } = useTime(
     isPlaying,
     startTime,
     endTime,
   );
+
   useEffect(() => {
     if (isClipOver) {
       setPlaying(false);
@@ -53,21 +66,16 @@ export default () => {
 
   const seek = useCallback(
     async (seekTime: number) => {
-      setPlaying(true);
-
-      // this pointless line is to hack a fix twitch bug where you can't seek while paused
-      // this is the same reason we are calling setPlaying before seeking
-      // https://github.com/cookpete/react-player/issues/924
-      await new Promise((resolve) => setTimeout(resolve, 10));
       if (videoRef.current?.seekTo) {
         videoRef.current.seekTo(seekTime, 'seconds');
+        setPlaying(true);
       }
     },
     [videoRef],
   );
+
   const play = useCallback(
     (seekTime: number, clipId: string) => {
-      setIsReady(false);
       seek(seekTime);
       setSecPlayed(seekTime);
       setSelectedClipId(clipId);
@@ -76,20 +84,20 @@ export default () => {
   );
 
   useEffect(() => {
-    if (data?.brain) {
+    if (data?.brain?.length) {
       const clipsDefaultChecked = data.brain.map((timestamp) => ({ ...timestamp, selected: true }));
       setClips((prev) => [...prev, ...clipsDefaultChecked]);
       // setSelectedClipId(clipsDefaultChecked[0].id);
       play(clipsDefaultChecked[0].startTime, clipsDefaultChecked[0].id);
     }
-    if (data?.ccc) {
+    if (data?.ccc?.length) {
       const append = data.ccc.map((d) => ({
         ...d,
         sourceAttribution: 'Clipped By Chat',
       }));
       setClips((prev) => [...prev, ...append]);
     }
-    if (data?.manual) {
+    if (data?.manual?.length) {
       const append = data.manual.map((d) => ({
         ...d,
         sourceAttribution: 'From !clip',
@@ -102,6 +110,10 @@ export default () => {
   if (isError) return formatMessage({ id: 'pages.editor.error' });
   if (!data) return formatMessage({ id: 'pages.editor.noData' });
 
+  const handleShowOnClick = () => {
+    setShowExportController(true);
+  };
+
   const showSuccessNotification = (successMessage: string) => {
     notification.success({
       message: formatMessage({
@@ -110,6 +122,7 @@ export default () => {
       description: successMessage,
     });
   };
+
   const setPlaytime = (playtime: number) => {
     const newTime = startTime + playtime;
     setSecPlayed(newTime);
@@ -193,6 +206,10 @@ export default () => {
     }, 1600);
     // }
 
+    if (twitchId) {
+      sendHubspotEvent(twitchId, 'SAVED_ADJUSTED_CLIP_EVENT', videoId);
+    }
+
     return true;
   };
 
@@ -220,6 +237,48 @@ export default () => {
     showSuccessNotification(message);
   };
 
+  const handleSubmitExport = async (cropConfigs) => {
+    setShowExportController(false);
+
+    const body = {
+      ClipData: {
+        videoId,
+        upscale: true,
+        clip: {
+          startTime,
+          endTime,
+        },
+      },
+      Outputs: cropConfigs,
+    };
+
+    const resp = await fetch(MOBILE_EXPORT_URL, {
+      method: 'POST',
+      headers: getHeaders() || undefined,
+      body: JSON.stringify(body),
+    });
+
+    if (resp.status === 200) {
+      setAlert(
+        <Alert
+          message="Success! Your exported clip will be emailed to you shortly."
+          type="success"
+          closable
+          onClose={() => setAlert(null)}
+        />,
+      );
+    } else {
+      setAlert(
+        <Alert
+          message="Oops! Something went wrong. Please try again."
+          type="error"
+          closable
+          onClose={() => setAlert(null)}
+        />,
+      );
+    }
+  };
+
   return (
     <PageContainer
       content={formatMessage({
@@ -228,107 +287,133 @@ export default () => {
       extra={<ExportButton videoId={videoId} clips={clips?.filter((clip) => clip.selected)} />}
     >
       {clips.length !== 0 ? (
-        <div>
-          <Row gutter={24}>
-            <Col span={14} style={{ marginBottom: 24 }}>
-              <VideoPlayer
-                videoRef={videoRef}
-                playing={playing}
-                setPlaying={setPlaying}
-                progress={playedSeconds}
-                onProgress={() => {}}
-                duration={clipLength}
-                onReady={() => setIsReady(true)}
-                selectedClipId={selectedClipId}
-                url={`https://twitch.tv/videos/${videoId}`}
-              />
-              <div style={{ padding: '1em', display: 'flex' }}>
-                <Tooltip title={'I like this clip'}>
-                  <Button
-                    size="large"
-                    shape="circle"
-                    icon={
-                      <LikeTwoTone
-                        twoToneColor="#52c41a"
-                        onClick={() => handleBinaryFeedback(1, 'You liked this video')}
-                      />
-                    }
-                  />
-                </Tooltip>
-                <Tooltip title={'I dislike this clip'}>
-                  <Button
-                    size="large"
-                    shape="circle"
-                    icon={
-                      <DislikeTwoTone
-                        twoToneColor="#eb2f96"
-                        onClick={() => handleBinaryFeedback(0, 'You disliked this video')}
-                      />
-                    }
-                  />
-                </Tooltip>
-                <Search
-                  placeholder={'What did you think about this clip? '}
-                  onChange={onChange}
-                  value={clipFeedbackText}
-                  enterButton={'Submit'}
-                  onSearch={onSubmitClipFeedback}
-                  style={{ paddingBottom: '1rem', paddingLeft: '.5em', paddingTop: '.15em' }}
+        showExportController ? (
+          // export to mobile component screen here
+          <ClipContext.Provider
+            value={{ startTime, endTime, source: `https://twitch.tv/videos/${videoId}` }}
+          >
+            <ExportController
+              videoUrl={`https://twitch.tv/videos/${videoId}`}
+              onConfirm={handleSubmitExport}
+              onCancel={() => setShowExportController(false)}
+            />
+          </ClipContext.Provider>
+        ) : (
+          [
+            <Row gutter={[24, 24]} key="a">
+              {alert && <Col span={24}>{alert}</Col>}
+              <Col span={14} style={{ marginBottom: 24 }}>
+                <VideoPlayer
+                  videoRef={videoRef}
+                  playing={playing}
+                  setPlaying={setPlaying}
+                  progress={playedSeconds}
+                  duration={clipLength}
+                  onReady={() => setIsReady(true)}
+                  url={`https://twitch.tv/videos/${videoId}`}
                 />
-              </div>
-              <div></div>
-              <Row>
-                <Col style={{ width: '100%' }}>
-                  <TimeSlider
-                    trimClipUpdateValues={trimClipUpdateValues}
-                    setTrimClipUpdateValues={setTrimClipUpdateValues}
-                    showClipHandles={!showClipHandles}
-                    duration={clipLength}
-                    progress={playedSeconds}
-                    setPlaytime={setPlaytime}
-                    setPlaying={setPlaying}
-                    changeInterval={intervalInMs}
-                  />
-                  <Button
-                    style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
-                    onClick={() => setShowClipHandles(!showClipHandles)}
-                  >
-                    {showClipHandles ? 'Cancel' : 'Adjust Clip'}
-                  </Button>
-
-                  {showClipHandles ? (
+                <div style={{ padding: '1em', display: 'flex' }}>
+                  <Tooltip title={'I like this clip'}>
                     <Button
-                      style={{ marginRight: '1%' }}
-                      loading={confirmChangeClip}
-                      onClick={saveAdjustedClip}
-                    >
-                      Save Changes
-                    </Button>
-                  ) : null}
-                  {showClipHandles ? <Button onClick={seekToStartTime}>Preview</Button> : null}
-                </Col>
-              </Row>
-            </Col>
-            <Col style={{ alignItems: 'flex-start' }} span={8}>
-              {clips.length ? (
-                <ClipList
-                  clipInfo={{ clips, setClips }}
-                  clipIdInfo={{ selectedClipId, setSelectedClipId }}
-                  play={play}
-                  thumbnail={thumbnail}
-                  videoId={videoId}
-                  thumbnails={thumbnails}
-                />
-              ) : (
-                <Empty
-                  description={formatMessage({
-                    id: 'pages.editor.noClips',
-                  })}
-                />
-              )}
-            </Col>
-          </Row>
-        </div>
+                      size="large"
+                      shape="circle"
+                      icon={
+                        <LikeTwoTone
+                          twoToneColor="#52c41a"
+                          onClick={() => handleBinaryFeedback(1, 'You liked this video')}
+                        />
+                      }
+                    />
+                  </Tooltip>
+                  <Tooltip title={'I dislike this clip'}>
+                    <Button
+                      size="large"
+                      shape="circle"
+                      icon={
+                        <DislikeTwoTone
+                          twoToneColor="#eb2f96"
+                          onClick={() => handleBinaryFeedback(0, 'You disliked this video')}
+                        />
+                      }
+                    />
+                  </Tooltip>
+                  <Search
+                    placeholder={'What did you think about this clip? '}
+                    onChange={onChange}
+                    value={clipFeedbackText}
+                    enterButton={'Submit'}
+                    onSearch={onSubmitClipFeedback}
+                    style={{ paddingBottom: '1rem', paddingLeft: '.5em', paddingTop: '.15em' }}
+                  />
+                </div>
+                <div></div>
+                <Row>
+                  <Col style={{ width: '100%' }}>
+                    <TimeSlider
+                      trimClipUpdateValues={trimClipUpdateValues}
+                      setTrimClipUpdateValues={setTrimClipUpdateValues}
+                      showClipHandles={!showClipHandles}
+                      duration={clipLength}
+                      progress={playedSeconds}
+                      setPlaytime={setPlaytime}
+                      setPlaying={setPlaying}
+                      changeInterval={intervalInMs}
+                    />
+                    {showClipHandles ? (
+                      <Button
+                        style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
+                        onClick={() => setShowClipHandles(!showClipHandles)}
+                      >
+                        Cancel
+                      </Button>
+                    ) : (
+                      <div>
+                        <Button
+                          type="primary"
+                          style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
+                          onClick={() => setShowClipHandles(!showClipHandles)}
+                        >
+                          Adjust Clip
+                        </Button>
+                        <Button type="default" onClick={() => handleShowOnClick()}>
+                          Export To Mobile
+                        </Button>
+                      </div>
+                    )}
+                    {showClipHandles ? (
+                      <Button
+                        style={{ marginRight: '1%' }}
+                        loading={confirmChangeClip}
+                        onClick={saveAdjustedClip}
+                      >
+                        Save Changes
+                      </Button>
+                    ) : null}
+                    {showClipHandles ? <Button onClick={seekToStartTime}>Preview</Button> : null}
+                  </Col>
+                </Row>
+              </Col>
+              <Col style={{ alignItems: 'flex-start' }} span={10}>
+                {clips.length ? (
+                  <ClipList
+                    clipInfo={{ clips, setClips }}
+                    clipIdInfo={{ selectedClipId, setSelectedClipId }}
+                    play={play}
+                    thumbnail={thumbnail}
+                    videoId={videoId}
+                    thumbnails={thumbnails}
+                  />
+                ) : (
+                  <Empty
+                    description={formatMessage({
+                      id: 'pages.editor.noClips',
+                    })}
+                  />
+                )}
+              </Col>
+            </Row>,
+          ]
+        )
       ) : (
         'No clips found! Please select another VOD. '
       )}

@@ -1,6 +1,8 @@
-const hubspot = require('@hubspot/api-client');
+import { Client } from '@hubspot/api-client';
 
 const { HUBSPOT_API_KEY } = process.env;
+
+// see here for valid lead statuses: https://git.io/J22uK
 
 interface TwitchUserData {
   id: string;
@@ -14,6 +16,7 @@ interface TwitchUserData {
   view_count: number;
   email: string;
   created_at: string;
+  hs_lead_status: string;
 }
 
 export default async (twitchUserData: TwitchUserData) => {
@@ -28,11 +31,12 @@ export default async (twitchUserData: TwitchUserData) => {
         twitch_description: twitchUserData.description,
         twitch_profile_image_url: twitchUserData.profile_image_url,
         twitch_offline_image_url: twitchUserData.offline_image_url,
-        twitch_view_count: twitchUserData.view_count,
+        twitch_view_count: String(twitchUserData.view_count),
         email: twitchUserData.email,
+        hs_lead_status: 'NEW',
       },
     };
-    const hubspotClient = new hubspot.Client({ apiKey: HUBSPOT_API_KEY });
+    const hubspotClient = new Client({ apiKey: HUBSPOT_API_KEY });
     const createContactResponse = await hubspotClient.crm.contacts.basicApi.create(contactObj);
     return { hubspot_contact_id: createContactResponse.body.id };
   } catch (e: any) {
@@ -41,7 +45,7 @@ export default async (twitchUserData: TwitchUserData) => {
         'Contact already exists. Existing ID: ',
         '',
       );
-      return existingHubspotClientID;
+      return { hubspot_contact_id: existingHubspotClientID };
     }
     return { hubspot_contact_id: null };
   }

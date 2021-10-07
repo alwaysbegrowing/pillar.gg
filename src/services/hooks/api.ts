@@ -26,7 +26,8 @@ interface UseModeratorProps {
   error?: boolean;
 }
 
-const twitchClientId = 'phpnjz4llxez4zpw3iurfthoi573c8';
+// const twitchClientId = 'phpnjz4llxez4zpw3iurfthoi573c8';
+const twitchClientId = 'jmyfr3xqjeyjkvzmnbyiexsf5864c1';
 const redirectURI = `${window.location.origin}/TwitchAuth`;
 
 const onErrorRetry = (error: any) => {
@@ -108,6 +109,7 @@ function useVideo(id: string | number) {
 }
 
 export interface IndividualTimestamp {
+  sourceAttribution: any;
   startTime: number;
   endTime: number;
   selected?: boolean;

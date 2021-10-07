@@ -5,14 +5,14 @@ import StripeCheckoutPlugin from '../components/StripePlugin/StripeCheckoutPlugi
 // import styles from './Analysis.less';
 
 const Analysis = () => {
-    return (
-      <PageContainer>
-        <Card>
-          <h1>Coming Soon</h1>
-          <StripeCheckoutPlugin />
-        </Card>
-      </PageContainer>
-    );
-  }
+  return (
+    <PageContainer>
+      <Card>
+        <h1>Coming Soon</h1>
+        <StripeCheckoutPlugin />
+      </Card>
+    </PageContainer>
+  );
+};
 
 export default Analysis;
