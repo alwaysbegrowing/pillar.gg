@@ -1,2 +1,2 @@
 export const MOBILE_EXPORT_URL =
-  'https://0rjzhy35ld.execute-api.us-east-1.amazonaws.com/prod/export';
+  'https://lfh9xm104e.execute-api.us-east-1.amazonaws.com/prod/export';
