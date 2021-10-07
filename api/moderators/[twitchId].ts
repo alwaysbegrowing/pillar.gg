@@ -12,7 +12,7 @@ const moderators = async (req: VercelRequest, res: VercelResponse) => {
   const moderatorIds = await db.collection('moderators').findOne({ twitch_id: twitchId });
 
   if (!moderatorIds) {
-    res.status(404).end();
+    res.status(200).json({ msg: 'no moderators found' });
     return;
   }
 
