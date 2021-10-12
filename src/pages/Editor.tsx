@@ -3,8 +3,7 @@ import type { ReactNode } from 'react';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
 import { useClips, useUser, useVideo } from '../services/hooks/api';
-import { Button, Row, Col, notification, Empty, Input, Tooltip, Alert, Drawer } from 'antd';
-import { DislikeTwoTone, LikeTwoTone } from '@ant-design/icons';
+import { Button, Row, Col, notification, Empty, Alert, Drawer } from 'antd';
 import ClipList from '@/components/ClipList/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
@@ -20,8 +19,6 @@ import { ClipContext } from '@/services/contexts/ClipContext';
 import { sendHubspotEvent } from '@/services/send';
 import { MOBILE_EXPORT_URL } from '@/constants/apiUrls';
 import { getHeaders } from '@/services/fetcher';
-
-const { Search } = Input;
 
 const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[]): number[] => {
   if (clipId == null) return [0, 1];
@@ -45,7 +42,6 @@ export default () => {
   const [confirmChangeClip, setConfirmChangeClip] = React.useState(false);
   const [alert, setAlert] = useState<ReactNode>(null);
   const { formatMessage } = useIntl();
-  const [clipFeedbackText, setClipFeedbackText] = useState('');
   const [showClipHandles, setShowClipHandles] = useState<boolean>(false);
   const [isReady, setIsReady] = useState(false);
   const [trimClipUpdateValues, setTrimClipUpdateValues] = useState<number[]>([0, 0]);
@@ -137,29 +133,6 @@ export default () => {
     ? thumbnail_url.replace('%{width}', '195').replace('%{height}', '108')
     : '';
 
-  const onChange = (event: any) => {
-    setClipFeedbackText(event.target.value);
-  };
-
-  const onSubmitClipFeedback = async () => {
-    const clipData = getStartEndTimeFromClipId(selectedClipId, clips);
-    const resp = await fetch('/api/submitClipFeedback', {
-      method: 'POST',
-      body: JSON.stringify({
-        videoId,
-        feedbackText: clipFeedbackText,
-        clip: { startTime: clipData[0], endTime: clipData[1] },
-      }),
-    });
-    const successMessage = formatMessage({
-      id: 'pages.editor.onSubmitClipFeedback.successMessage',
-    });
-    showSuccessNotification(successMessage);
-    setClipFeedbackText('');
-
-    return resp.ok;
-  };
-
   const seekToStartTime = () => {
     setPlaytime(trimClipUpdateValues[0]);
   };
@@ -212,25 +185,6 @@ export default () => {
     }
 
     return true;
-  };
-
-  const onSubmitBinaryFeedback = async (binaryFeedback: boolean) => {
-    const clipData = getStartEndTimeFromClipId(selectedClipId, clips);
-    const resp = await fetch('/api/submitClipFeedback', {
-      method: 'POST',
-      body: JSON.stringify({
-        videoId,
-        binaryFeedback,
-        clip: { startTime: clipData[0], endTime: clipData[1] },
-      }),
-    });
-
-    return resp.ok;
-  };
-
-  const handleBinaryFeedback = async (feedback: any, message: string) => {
-    await onSubmitBinaryFeedback(feedback);
-    showSuccessNotification(message);
   };
 
   const handleSubmitExport = async (cropConfigs: any) => {
@@ -319,41 +273,7 @@ export default () => {
             onReady={() => setIsReady(true)}
             url={`https://twitch.tv/videos/${videoId}`}
           />
-          <div style={{ padding: '1em', display: 'flex' }}>
-            <Tooltip title={'I like this clip'}>
-              <Button
-                size="large"
-                shape="circle"
-                icon={
-                  <LikeTwoTone
-                    twoToneColor="#52c41a"
-                    onClick={() => handleBinaryFeedback(1, 'You liked this video')}
-                  />
-                }
-              />
-            </Tooltip>
-            <Tooltip title={'I dislike this clip'}>
-              <Button
-                size="large"
-                shape="circle"
-                icon={
-                  <DislikeTwoTone
-                    twoToneColor="#eb2f96"
-                    onClick={() => handleBinaryFeedback(0, 'You disliked this video')}
-                  />
-                }
-              />
-            </Tooltip>
-            <Search
-              placeholder={'What did you think about this clip? '}
-              onChange={onChange}
-              value={clipFeedbackText}
-              enterButton={'Submit'}
-              onSearch={onSubmitClipFeedback}
-              style={{ paddingBottom: '1rem', paddingLeft: '.5em', paddingTop: '.15em' }}
-            />
-          </div>
-          <div></div>
+
           <Row>
             <Col style={{ width: '100%' }}>
               <TimeSlider
@@ -380,7 +300,7 @@ export default () => {
                     style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
                     onClick={() => setShowClipHandles(!showClipHandles)}
                   >
-                    Adjust Clip
+                    Trim Clip
                   </Button>
                 </div>
               )}
@@ -390,7 +310,7 @@ export default () => {
                   loading={confirmChangeClip}
                   onClick={saveAdjustedClip}
                 >
-                  Save Changes
+                  Save Trim
                 </Button>
               ) : null}
               {showClipHandles ? <Button onClick={seekToStartTime}>Preview</Button> : null}
