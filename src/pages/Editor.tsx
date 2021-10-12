@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
 import { useClips, useUser, useVideo } from '../services/hooks/api';
-import { Button, Row, Col, notification, Empty, Alert, Drawer, Space } from 'antd';
+import { Button, Row, Col, notification, Alert, Drawer, Space } from 'antd';
 import ClipList from '@/components/ClipList/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
@@ -309,23 +309,15 @@ export default () => {
           </Space>
         </Col>
 
-        <Col style={{ alignItems: 'flex-start' }} span={10}>
-          {clips.length ? (
-            <ClipList
-              clipInfo={{ clips, setClips }}
-              clipIdInfo={{ selectedClipId, setSelectedClipId }}
-              play={play}
-              thumbnail={thumbnail}
-              videoId={videoId}
-              thumbnails={thumbnails}
-            />
-          ) : (
-            <Empty
-              description={formatMessage({
-                id: 'pages.editor.noClips',
-              })}
-            />
-          )}
+        <Col span={10}>
+          <ClipList
+            clipInfo={{ clips, setClips }}
+            clipIdInfo={{ selectedClipId, setSelectedClipId }}
+            play={play}
+            thumbnail={thumbnail}
+            videoId={videoId}
+            thumbnails={thumbnails}
+          />
         </Col>
       </Row>
     </PageContainer>
