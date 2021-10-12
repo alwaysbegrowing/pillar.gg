@@ -59,7 +59,7 @@
     "@stripe/stripe-js": "^1.10.0",
     "@umijs/route-utils": "^1.0.33",
     "@vercel/node": "^1.8.4",
-    "antd": "^4.7.2",
+    "antd": "4.17.0-alpha.6",
     "classnames": "^2.2.6",
     "d3-array": "^2.8.0",
     "date-fns": "^2.19.0",

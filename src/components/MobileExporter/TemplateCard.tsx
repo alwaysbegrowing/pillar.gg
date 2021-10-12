@@ -3,10 +3,14 @@ import { Button, Card } from 'antd';
 
 const { Meta } = Card;
 
-function TemplateCard({ onClick, template }) {
+interface TemplateCardProps {
+  template: { name: string; description: string };
+  onClick: () => any;
+}
+function TemplateCard({ onClick, template }: TemplateCardProps) {
   return (
     <Card
-      style={{ width: 240 }}
+      style={{ width: 210 }}
       actions={[
         <Button type="default" onClick={onClick}>
           Select
