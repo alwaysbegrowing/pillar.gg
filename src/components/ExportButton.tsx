@@ -136,7 +136,7 @@ const ExportButton = ({ clips, videoId }: any) => {
   );
   return (
     <Dropdown overlay={menu}>
-      <Button type="primary" icon={<ExportOutlined />}>
+      <Button type="default" icon={<ExportOutlined />}>
         Export Compilation <DownOutlined />
       </Button>
     </Dropdown>
