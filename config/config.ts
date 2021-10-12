@@ -49,11 +49,6 @@ export default defineConfig({
           path: '/vods/:id',
           name: 'Select Clips',
           component: './Editor',
-          // routes: [{
-          //   path: '/export',
-          //   name: 'Mobile Export',
-          //   component: './MobileExporter',
-          // }]
         },
       ],
     },
