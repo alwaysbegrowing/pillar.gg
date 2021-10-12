@@ -284,7 +284,14 @@ export default () => {
       content={formatMessage({
         id: 'pages.editor.instructions',
       })}
-      extra={<ExportButton videoId={videoId} clips={clips?.filter((clip) => clip.selected)} />}
+      extra={
+        <>
+          <ExportButton videoId={videoId} clips={clips?.filter((clip) => clip.selected)} />
+          <Button type="primary" onClick={() => handleShowOnClick()}>
+            Export To Mobile
+          </Button>
+        </>
+      }
     >
       {clips.length !== 0 ? (
         showExportController ? (
@@ -369,14 +376,11 @@ export default () => {
                     ) : (
                       <div>
                         <Button
-                          type="primary"
+                          type="default"
                           style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
                           onClick={() => setShowClipHandles(!showClipHandles)}
                         >
                           Adjust Clip
-                        </Button>
-                        <Button type="default" onClick={() => handleShowOnClick()}>
-                          Export To Mobile
                         </Button>
                       </div>
                     )}
