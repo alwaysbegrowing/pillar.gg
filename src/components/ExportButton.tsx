@@ -1,10 +1,9 @@
 import { DownOutlined, ExportOutlined, MailOutlined, YoutubeOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 import { useUser } from '@/services/hooks/api';
-import { isDebugMode } from '@/pages/Vods';
 import { Button, Menu, Dropdown, Popconfirm, message } from 'antd';
 import { useIntl } from 'umi';
-import { showSuccessNotification } from '@/utils/utils';
+import { isDebugMode, showSuccessNotification } from '@/utils/utils';
 import { sendClips, sendHubspotEvent } from '@/services/send';
 
 const ExportWrapper = ({ children, onConfirm, title, okText, cancelText }: any) => {

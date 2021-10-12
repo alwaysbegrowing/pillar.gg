@@ -1,6 +1,7 @@
 import React from 'react';
 import { Space, Typography, Button } from 'antd';
 import type { PromptProps } from '@/types/componentTypes';
+
 const { Title, Text } = Typography;
 
 function Prompt({ title, text, buttonText, onNext }: PromptProps) {

@@ -35,6 +35,17 @@ export interface SortableClipCardProps {
   isSelected: boolean;
 }
 
+export interface VodCardProps {
+  thumbnail_url: string;
+  title: string;
+  description: string;
+  duration: number;
+  view_count: number;
+  url: string;
+  published_at: any;
+  id: number;
+}
+
 export interface PromptProps {
   title: string;
   text: string;
