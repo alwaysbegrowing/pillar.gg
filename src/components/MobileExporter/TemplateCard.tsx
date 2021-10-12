@@ -1,15 +1,15 @@
 import React from 'react';
 import { Button, Card } from 'antd';
+import type { TemplateCardProps } from '@/types/componentTypes';
 
 const { Meta } = Card;
 
-function TemplateCard({ onClick, template }) {
+function TemplateCard({ onClick, template }: TemplateCardProps) {
   return (
     <Card
-      hoverable
-      style={{ width: 240 }}
+      style={{ width: 210 }}
       actions={[
-        <Button type="primary" onClick={onClick}>
+        <Button type="default" onClick={onClick}>
           Select
         </Button>,
       ]}
