@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
 import { useClips, useUser, useVideo } from '../services/hooks/api';
-import { Button, Row, Col, notification, Empty, Alert, Drawer } from 'antd';
+import { Button, Row, Col, notification, Empty, Alert, Drawer, Space } from 'antd';
 import ClipList from '@/components/ClipList/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
@@ -100,7 +100,7 @@ export default () => {
       }));
       setClips((prev) => [...prev, ...append]);
     }
-  }, [data]);
+  }, [data, play]);
 
   if (isLoading) return formatMessage({ id: 'pages.editor.loading' });
   if (isError) return formatMessage({ id: 'pages.editor.error' });
@@ -263,60 +263,52 @@ export default () => {
 
       <Row gutter={[24, 24]} key="a">
         {alert && <Col span={24}>{alert}</Col>}
-        <Col span={14} style={{ marginBottom: 24 }}>
-          <VideoPlayer
-            videoRef={videoRef}
-            playing={playing}
-            setPlaying={setPlaying}
-            progress={playedSeconds}
-            duration={clipLength}
-            onReady={() => setIsReady(true)}
-            url={`https://twitch.tv/videos/${videoId}`}
-          />
+        <Col span={14}>
+          <Space direction="vertical" style={{ width: '100%' }}>
+            <VideoPlayer
+              videoRef={videoRef}
+              playing={playing}
+              setPlaying={setPlaying}
+              progress={playedSeconds}
+              duration={clipLength}
+              onReady={() => setIsReady(true)}
+              url={`https://twitch.tv/videos/${videoId}`}
+            />
 
-          <Row>
-            <Col style={{ width: '100%' }}>
-              <TimeSlider
-                trimClipUpdateValues={trimClipUpdateValues}
-                setTrimClipUpdateValues={setTrimClipUpdateValues}
-                showClipHandles={!showClipHandles}
-                duration={clipLength}
-                progress={playedSeconds}
-                setPlaytime={setPlaytime}
-                setPlaying={setPlaying}
-                changeInterval={intervalInMs}
-              />
-              {showClipHandles ? (
-                <Button
-                  style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
-                  onClick={() => setShowClipHandles(!showClipHandles)}
-                >
-                  Cancel
-                </Button>
-              ) : (
-                <div>
+            <Row style={{ marginTop: 12 }}>
+              <Col style={{ width: '100%' }}>
+                <TimeSlider
+                  trimClipUpdateValues={trimClipUpdateValues}
+                  setTrimClipUpdateValues={setTrimClipUpdateValues}
+                  showClipHandles={!showClipHandles}
+                  duration={clipLength}
+                  progress={playedSeconds}
+                  setPlaytime={setPlaytime}
+                  setPlaying={setPlaying}
+                  changeInterval={intervalInMs}
+                />
+                {showClipHandles ? (
+                  <Space style={{ marginTop: '6rem' }}>
+                    <Button onClick={() => setShowClipHandles((flag) => !flag)}>Cancel</Button>
+                    <Button loading={confirmChangeClip} onClick={saveAdjustedClip}>
+                      Save Trim
+                    </Button>
+                    <Button onClick={seekToStartTime}>Preview</Button>
+                  </Space>
+                ) : (
                   <Button
                     type="default"
-                    style={{ marginTop: '6rem', marginLeft: '35%', marginRight: '1%' }}
-                    onClick={() => setShowClipHandles(!showClipHandles)}
+                    style={{ marginTop: '6rem' }}
+                    onClick={() => setShowClipHandles((flag) => !flag)}
                   >
                     Trim Clip
                   </Button>
-                </div>
-              )}
-              {showClipHandles ? (
-                <Button
-                  style={{ marginRight: '1%' }}
-                  loading={confirmChangeClip}
-                  onClick={saveAdjustedClip}
-                >
-                  Save Trim
-                </Button>
-              ) : null}
-              {showClipHandles ? <Button onClick={seekToStartTime}>Preview</Button> : null}
-            </Col>
-          </Row>
+                )}
+              </Col>
+            </Row>
+          </Space>
         </Col>
+
         <Col style={{ alignItems: 'flex-start' }} span={10}>
           {clips.length ? (
             <ClipList
