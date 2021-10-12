@@ -2,6 +2,8 @@ import { Client } from '@hubspot/api-client';
 
 const { HUBSPOT_API_KEY } = process.env;
 
+// see here for valid lead statuses: https://git.io/J22uK
+
 interface TwitchUserData {
   id: string;
   login: string;
@@ -14,7 +16,7 @@ interface TwitchUserData {
   view_count: number;
   email: string;
   created_at: string;
-  lead_status: string;
+  hs_lead_status: string;
 }
 
 export default async (twitchUserData: TwitchUserData) => {
@@ -31,7 +33,7 @@ export default async (twitchUserData: TwitchUserData) => {
         twitch_offline_image_url: twitchUserData.offline_image_url,
         twitch_view_count: String(twitchUserData.view_count),
         email: twitchUserData.email,
-        lead_status: 'Lead',
+        hs_lead_status: 'NEW',
       },
     };
     const hubspotClient = new Client({ apiKey: HUBSPOT_API_KEY });

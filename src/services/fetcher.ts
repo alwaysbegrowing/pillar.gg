@@ -2,7 +2,7 @@ import { notification } from 'antd';
 import type { ResponseError } from 'umi-request';
 import request from 'umi-request';
 
-const twitchClientId = 'phpnjz4llxez4zpw3iurfthoi573c8';
+const twitchClientId = 'jmyfr3xqjeyjkvzmnbyiexsf5864c1';
 
 const codeMessage = {
   200: 'The server successfully returned the requested data. ',
