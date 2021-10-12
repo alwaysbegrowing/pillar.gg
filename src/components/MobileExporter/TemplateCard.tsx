@@ -1,12 +1,9 @@
 import React from 'react';
 import { Button, Card } from 'antd';
+import type { TemplateCardProps } from '@/types/componentTypes';
 
 const { Meta } = Card;
 
-interface TemplateCardProps {
-  template: { name: string; description: string };
-  onClick: () => any;
-}
 function TemplateCard({ onClick, template }: TemplateCardProps) {
   return (
     <Card

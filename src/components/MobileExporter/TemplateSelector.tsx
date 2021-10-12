@@ -3,11 +3,8 @@ import { Row, Col } from 'antd';
 import TemplateCard from './TemplateCard';
 import templates from './Templates';
 import Stages from './Stages';
+import type { TemplateSelectorProps } from '@/types/componentTypes';
 
-interface TemplateSelectorProps {
-  onSelect: (template: any) => any;
-  stage: Stages;
-}
 function TemplateSelector({ stage, onSelect }: TemplateSelectorProps) {
   return stage !== Stages.SELECT_TEMPLATE ? null : (
     <Row gutter={[24, 24]}>
