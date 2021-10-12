@@ -6,10 +6,9 @@ const { Meta } = Card;
 function TemplateCard({ onClick, template }) {
   return (
     <Card
-      hoverable
       style={{ width: 240 }}
       actions={[
-        <Button type="primary" onClick={onClick}>
+        <Button type="default" onClick={onClick}>
           Select
         </Button>,
       ]}
