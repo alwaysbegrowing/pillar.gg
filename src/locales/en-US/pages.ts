@@ -7,7 +7,7 @@ export default {
   'pages.editor.noData': 'no data',
   'pages.editor.combineClips.error': 'Error combining clips',
   'pages.editor.instructions':
-    "Hide clips you don't want in your compilation video. Click and drag clips to re-order them on the timeline. Click the Export Video button when you are ready. ",
+    "Hide clips you don't want in your compilation video. Export a single clip to mobile or export a compilation. ",
   'pages.editor.exportConfirmFile1': 'Are you ready to export your video?',
   'pages.editor.exportConfirmFile2':
     'You will receive an email at {email} with the combined video once it has been processed.',
