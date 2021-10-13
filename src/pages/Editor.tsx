@@ -19,6 +19,11 @@ import { ClipContext } from '@/services/contexts/ClipContext';
 import { sendHubspotEvent } from '@/services/send';
 import { MOBILE_EXPORT_URL } from '@/constants/apiUrls';
 import { getHeaders } from '@/services/fetcher';
+import styled from 'styled-components';
+
+const HeaderText = styled.div`
+  margin-bottom: 8px;
+`;
 
 const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[]): number[] => {
   if (clipId == null) return [0, 1];
@@ -248,9 +253,13 @@ export default () => {
   );
   return (
     <PageContainer
-      content={formatMessage({
-        id: 'pages.editor.instructions',
-      })}
+      content={
+        <HeaderText>
+          {formatMessage({
+            id: 'pages.editor.instructions',
+          })}
+        </HeaderText>
+      }
       extra={
         <>
           <ExportButton videoId={videoId} clips={clips?.filter((clip) => clip.selected)} />
