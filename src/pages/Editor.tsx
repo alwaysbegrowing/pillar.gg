@@ -228,7 +228,24 @@ export default () => {
       );
     }
   };
-
+  const getClipHandles = () => (
+    <Space style={{ marginTop: '6rem' }}>
+      <Button onClick={() => setShowClipHandles((flag) => !flag)}>Cancel</Button>
+      <Button loading={confirmChangeClip} onClick={saveAdjustedClip}>
+        Save Trim
+      </Button>
+      <Button onClick={seekToStartTime}>Preview</Button>
+    </Space>
+  );
+  const getTrimClipButton = () => (
+    <Button
+      type="default"
+      style={{ marginTop: '6rem' }}
+      onClick={() => setShowClipHandles((flag) => !flag)}
+    >
+      Trim Clip
+    </Button>
+  );
   return (
     <PageContainer
       content={formatMessage({
@@ -287,23 +304,7 @@ export default () => {
                   setPlaying={setPlaying}
                   changeInterval={intervalInMs}
                 />
-                {showClipHandles ? (
-                  <Space style={{ marginTop: '6rem' }}>
-                    <Button onClick={() => setShowClipHandles((flag) => !flag)}>Cancel</Button>
-                    <Button loading={confirmChangeClip} onClick={saveAdjustedClip}>
-                      Save Trim
-                    </Button>
-                    <Button onClick={seekToStartTime}>Preview</Button>
-                  </Space>
-                ) : (
-                  <Button
-                    type="default"
-                    style={{ marginTop: '6rem' }}
-                    onClick={() => setShowClipHandles((flag) => !flag)}
-                  >
-                    Trim Clip
-                  </Button>
-                )}
+                {showClipHandles ? getClipHandles() : getTrimClipButton()}
               </Col>
             </Row>
           </Space>
