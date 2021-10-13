@@ -263,7 +263,7 @@ export default () => {
 
       <Row gutter={[24, 24]} key="a">
         {alert && <Col span={24}>{alert}</Col>}
-        <Col span={14}>
+        <Col span={16}>
           <Space direction="vertical" style={{ width: '100%' }}>
             <VideoPlayer
               videoRef={videoRef}
@@ -309,7 +309,7 @@ export default () => {
           </Space>
         </Col>
 
-        <Col span={10}>
+        <Col span={8}>
           <ClipList
             clipInfo={{ clips, setClips }}
             clipIdInfo={{ selectedClipId, setSelectedClipId }}
