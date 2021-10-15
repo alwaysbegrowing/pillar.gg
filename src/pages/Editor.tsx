@@ -86,9 +86,8 @@ export default () => {
 
   useEffect(() => {
     if (data?.brain?.length) {
-      const clipsDefaultChecked = data.brain.map((timestamp) => ({ ...timestamp, selected: true }));
+      const clipsDefaultChecked = data.brain.map((timestamp) => ({ ...timestamp, selected: true, sourceAttribution: 'Clipped By Pillar AI }));
       setClips((prev) => [...prev, ...clipsDefaultChecked]);
-      // setSelectedClipId(clipsDefaultChecked[0].id);
       play(clipsDefaultChecked[0].startTime, clipsDefaultChecked[0].id);
     }
     if (data?.ccc?.length) {
@@ -98,7 +97,7 @@ export default () => {
       }));
       setClips((prev) => [...prev, ...append]);
     }
-    if (data?.manual?.length) {
+    else if (data?.manual?.length) {
       const append = data.manual.map((d) => ({
         ...d,
         sourceAttribution: 'From !clip',
