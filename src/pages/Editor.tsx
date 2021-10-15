@@ -86,7 +86,7 @@ export default () => {
 
   useEffect(() => {
     if (data?.brain?.length) {
-      const clipsDefaultChecked = data.brain.map((timestamp) => ({ ...timestamp, selected: true, sourceAttribution: 'Clipped By Pillar AI }));
+      const clipsDefaultChecked = data.brain.map((timestamp) => ({ ...timestamp, selected: true, sourceAttribution: 'Clipped By Pillar AI' }));
       setClips((prev) => [...prev, ...clipsDefaultChecked]);
       play(clipsDefaultChecked[0].startTime, clipsDefaultChecked[0].id);
     }
