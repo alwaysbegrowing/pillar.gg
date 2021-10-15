@@ -97,7 +97,7 @@ export default () => {
       }));
       setClips((prev) => [...prev, ...append]);
     }
-    else if (data?.manual?.length) {
+    if (data?.manual?.length) {
       const append = data.manual.map((d) => ({
         ...d,
         sourceAttribution: 'From !clip',
