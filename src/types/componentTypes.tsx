@@ -1,6 +1,7 @@
 import type { IndividualTimestamp } from '@/services/hooks/api';
 import type { LegacyRef } from 'react';
 import type TwitchPlayer from 'react-player/twitch';
+import type Stages from '@/components/MobileExporter/Stages';
 
 export interface VideoPlayerProps {
   url: string;
@@ -32,4 +33,32 @@ export interface SortableClipCardProps {
   timestamp: IndividualTimestamp;
   videoId: string | number;
   isSelected: boolean;
+}
+
+export interface VodCardProps {
+  thumbnail_url: string;
+  title: string;
+  description: string;
+  duration: number;
+  view_count: number;
+  url: string;
+  published_at: any;
+  id: number;
+}
+
+export interface PromptProps {
+  title: string;
+  text: string;
+  buttonText: string;
+  onNext: () => any;
+}
+
+export interface TemplateCardProps {
+  template: { name: string; description: string };
+  onClick: () => any;
+}
+
+export interface TemplateSelectorProps {
+  onSelect: (template: any) => any;
+  stage: Stages;
 }

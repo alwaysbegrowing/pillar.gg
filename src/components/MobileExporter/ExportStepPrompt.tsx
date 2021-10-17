@@ -1,9 +1,10 @@
 import React from 'react';
 import { Space, Typography, Button } from 'antd';
+import type { PromptProps } from '@/types/componentTypes';
 
 const { Title, Text } = Typography;
 
-function Prompt({ title, text, buttonText, onNext, onCancel }) {
+function Prompt({ title, text, buttonText, onNext }: PromptProps) {
   return (
     <Space direction="vertical">
       <Title level={5}>{title}</Title>
@@ -11,9 +12,6 @@ function Prompt({ title, text, buttonText, onNext, onCancel }) {
       <Space>
         <Button type="primary" onClick={onNext}>
           {buttonText}
-        </Button>
-        <Button type="primary" onClick={onCancel}>
-          Cancel
         </Button>
       </Space>
     </Space>

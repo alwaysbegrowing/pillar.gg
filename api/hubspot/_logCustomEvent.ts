@@ -28,6 +28,7 @@ export const logCustomEvent = async (event: IHubspotEvent) => {
 };
 
 export default (eventName: string, contactId: string, email: string) => {
+
   const hubspotEvent: IHubspotEvent = {
     eventName,
     email,

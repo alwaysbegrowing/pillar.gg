@@ -3,8 +3,9 @@ import { Button, Card, List, Space } from 'antd';
 import formatDistance from 'date-fns/formatDistance';
 import React from 'react';
 import { history } from 'umi';
-import { useClips } from '../services/hooks/api';
+import { useClips } from '@/services/hooks/api';
 import { useIntl } from 'umi';
+import type { VodCardProps } from '@/types/componentTypes';
 
 const IconText = ({ icon, text }: any) => (
   <Space>
@@ -25,30 +26,19 @@ const ProcessingButton = () => (
   </Button>
 );
 
-interface VodCardProps {
-  thumbnail_url: string;
-  title: string;
-  description: string;
-  duration: number;
-  view_count: number;
-  url: string;
-  published_at: any;
-  id: number;
-}
-
 const VodCard = ({
-  thumbnail_url,
+  thumbnail_url: thumbnailUrl,
   title,
   description,
   duration,
   view_count,
   url,
-  published_at,
+  published_at: publishedAt,
   id,
 }: VodCardProps) => {
   const { data } = useClips(id);
-  const thumbnail = thumbnail_url.replace('%{width}', '216').replace('%{height}', '120');
-  const simpleTime = formatDistance(new Date(published_at), new Date(), { addSuffix: true });
+  const thumbnail = thumbnailUrl.replace('%{width}', '216').replace('%{height}', '120');
+  const simpleTime = formatDistance(new Date(publishedAt), new Date(), { addSuffix: true });
 
   return (
     <Card>
