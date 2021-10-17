@@ -11,9 +11,9 @@ const connectToDatabase = require('../_connectToDatabase');
 const hubspotEvent = async (req: VercelRequest, res: VercelResponse) => {
   const { twitchId, contactProperties, eventName } = req.body;
   // keys in contactProperties have to be lowercase to fit hubspot's internal names for properties
-  var key, keys = Object.keys(contactProperties)
-  var n = keys.length
-  var contactPropertiesLowercaseWithLowercaseKeys = {}
+  let key, keys = Object.keys(contactProperties)
+  let n = keys.length
+  const contactPropertiesLowercaseWithLowercaseKeys = {}
   while (n--) {
     key = keys[n]
     contactPropertiesLowercaseWithLowercaseKeys[key.toLowerCase()] = contactProperties[key]
@@ -42,7 +42,10 @@ const hubspotEvent = async (req: VercelRequest, res: VercelResponse) => {
 
   try {
     await logCustomEvent(event);
-    const properties: UpdateContactInput = { hs_lead_status: 'QUALIFYING' };
+    const timestamp = Number(new Date());
+    const date = new Date(timestamp).toDateString(); 
+  
+    const properties: UpdateContactInput = { hs_lead_status: 'QUALIFYING', pillar_last_activity_date: date };
     await updateContact(contactId, properties);
   } catch (error) {
     return res.status(500).send({ error });

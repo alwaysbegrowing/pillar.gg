@@ -28,14 +28,12 @@ export const logCustomEvent = async (event: IHubspotEvent) => {
 };
 
 export default (eventName: string, contactId: string, email: string) => {
-  var timestamp = Number(new Date());
-  var date = new Date(timestamp).toDateString(); // todo, standardize on eastern timezone? 
 
   const hubspotEvent: IHubspotEvent = {
     eventName,
     email,
     objectId: contactId,
-    properties: {"pillar_last_activity_date":date}, // if we need more properties, we can add them here
+    properties: {}, // if we need more properties, we can add them here
   };
 
   return logCustomEvent(hubspotEvent);
