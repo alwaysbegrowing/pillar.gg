@@ -169,7 +169,6 @@ export default () => {
       setConfirmChangeClip(false);
       return true;
     }
-    console.log("TES!T")
 
     const currentClipIndex = clips.findIndex(isCurrentClip);
 
