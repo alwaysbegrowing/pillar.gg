@@ -7,10 +7,15 @@ import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 
 const connectToDatabase = require('../_connectToDatabase');
 const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
+const { SIGNUP_SNS_TOPIC_ARN, SIGNUPEVENT_AWS_ACCESS_KEY_ID, SIGNUPEVENT_AWS_SECRET_ACCESS_KEY } =
+  process.env;
 
+if (!SIGNUP_SNS_TOPIC_ARN || !SIGNUPEVENT_AWS_ACCESS_KEY_ID || !SIGNUPEVENT_AWS_SECRET_ACCESS_KEY) {
+  throw new Error('misisng env variables');
+}
 const snsCredentials = {
-  accessKeyId: process.env.SIGNUPEVENT_AWS_ACCESS_KEY_ID || '',
-  secretAccessKey: process.env.SIGNUPEVENT_AWS_SECRET_ACCESS_KEY || '',
+  accessKeyId: SIGNUPEVENT_AWS_ACCESS_KEY_ID,
+  secretAccessKey: SIGNUPEVENT_AWS_SECRET_ACCESS_KEY,
 };
 
 const login = async (req: VercelRequest, res: VercelResponse) => {
@@ -36,10 +41,9 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
       $set: { ...twitchUserData, ...hubspotID },
     };
 
-    const resp = db.collection('users').updateOne(filter, updateDoc, options);
-
+    const resp = await db.collection('users').updateOne(filter, updateDoc, options);
     const isNewUser = resp.upsertedCount > 0;
-
+    console.log('is the user new?', { isNewUser });
     if (isNewUser) {
       const sns = new SNSClient({ region: 'us-east-1', credentials: snsCredentials });
 
@@ -51,10 +55,11 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
             StringValue: twitchUserData.id,
           },
         },
-        TopicArn: process.env.SNS_TOPIC_ARN,
+        TopicArn: SIGNUP_SNS_TOPIC_ARN,
       });
-
+      console.log('about to send sns command', { command });
       await sns.send(command);
+      console.log('sent SNS command');
       await logHubspotEvent(SIGNUP_EVENT, hubspotID.hubspot_contact_id, twitchUserData.email);
     } else {
       await logHubspotEvent(LOGIN_EVENT, hubspotID.hubspot_contact_id, twitchUserData.email);

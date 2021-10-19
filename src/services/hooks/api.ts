@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 import useSWR from 'swr';
 import { fetcher } from '../fetcher';
 import { GlobalContext } from '../../ContextWrapper';
@@ -81,38 +81,20 @@ function useVideo(id: string | number) {
 }
 
 export interface IndividualTimestamp {
-  sourceAttribution: any;
+  sourceAttribution?: string;
   startTime: number;
   endTime: number;
   selected?: boolean;
+  thumbnail_url: string;
+  type: 'ai' | 'manual' | 'ccc';
   verifiedTwitch?: boolean;
   id: string;
-}
-
-interface Algorithm {
-  algo1: IndividualTimestamp[];
-  algo2?: IndividualTimestamp[];
-  algo3?: IndividualTimestamp[];
-  algo4?: IndividualTimestamp[];
-  algo5?: IndividualTimestamp[];
-  brain: IndividualTimestamp[];
-}
-
-export interface IndividualThumbnail {
-  string: any;
-}
-
-interface ThumbnailData {
-  thumbnail: IndividualThumbnail;
 }
 
 interface TimestampStructure {
   videoId: string;
   _id: string;
-  clips: Algorithm;
-  ccc: IndividualTimestamp[];
-  thumbnails: ThumbnailData[];
-  manual: IndividualTimestamp[];
+  clips: IndividualTimestamp[];
 }
 
 interface UseClipsDataProps {
@@ -125,13 +107,9 @@ function useClips(clipId: number | string | undefined) {
     clipId ? () => `/api/timestamps/${clipId}` : null,
     fetcher,
   );
-  const alldata = useMemo(
-    () => ({ ...data?.clips, ccc: data?.ccc, manual: data?.manual, thumbnails: data?.thumbnails }),
-    [JSON.stringify(data)],
-  );
 
   return {
-    data: alldata,
+    data: data?.clips,
     isLoading: !error && !data,
     isError: error,
   };
