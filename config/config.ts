@@ -34,6 +34,8 @@ export default defineConfig({
     //   icon: 'HomeOutlined',
     //   component: './Home',
     // },
+    { exact: true, path: '/', redirect: '/vods' },
+
     {
       path: '/vods',
       name: 'Vods',

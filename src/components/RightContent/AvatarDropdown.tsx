@@ -46,7 +46,9 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
       const { key } = event;
       if (key === 'logout') {
         localStorage.removeItem('access_token');
-        history.push(`/`);
+        // history.push(`https://pillar.gg`);
+        window.open('https://pillar.gg', '_self');
+
         // loginOut();
         return;
       }
