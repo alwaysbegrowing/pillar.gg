@@ -2,7 +2,7 @@
 import type { ReactNode } from 'react';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
-import { useClips, useUser, useVideo } from '../services/hooks/api';
+import { useClips, useUser } from '../services/hooks/api';
 import { Button, Row, Col, notification, Alert, Drawer, Space } from 'antd';
 import ClipList from '@/components/ClipList/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -26,7 +26,7 @@ const HeaderText = styled.div`
 `;
 
 const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[]): number[] => {
-  if (clipId == null) return [0, 1];
+  if (!clipId) return [0, 1];
   const selectedClip = clips.find((clip) => clip.id === clipId);
   if (!selectedClip) return [0, 1];
   return [selectedClip.startTime, selectedClip.endTime];
@@ -39,8 +39,6 @@ export default () => {
   // const { data: userData } = useUser();
   const { data, isLoading, isError } = useClips(videoId);
   const [clips, setClips] = useState<IndividualTimestamp[] | []>([]);
-  const { data: videoData } = useVideo(videoId);
-  const { thumbnail_url } = videoData || {};
   const videoRef = useRef<ReactPlayer>(null);
   const [playing, setPlaying] = useState<boolean>(false);
   const [selectedClipId, setSelectedClipId] = useState<string>('');
@@ -85,26 +83,23 @@ export default () => {
   );
 
   useEffect(() => {
-    if (data?.brain?.length) {
-      const clipsDefaultChecked = data.brain.map((timestamp) => ({ ...timestamp, selected: true, sourceAttribution: 'Clipped By Pillar AI' }));
-      setClips((prev) => [...prev, ...clipsDefaultChecked]);
-      play(clipsDefaultChecked[0].startTime, clipsDefaultChecked[0].id);
+    if (data) {
+      const formattedData = data.map((clip) => {
+        if (clip.type === 'ai') {
+          return { ...clip, sourceAttribution: 'Clipped by Pillar AI', selected: true };
+        }
+        if (clip.type === 'manual') {
+          return { ...clip, sourceAttribution: 'Clipped by !clip', selected: true };
+        }
+        if (clip.type === 'ccc') {
+          return { ...clip, sourceAttribution: 'Clipped by Chat' };
+        }
+        return clip;
+      });
+      setClips(formattedData);
+      console.log(formattedData);
     }
-    if (data?.ccc?.length) {
-      const append = data.ccc.map((d) => ({
-        ...d,
-        sourceAttribution: 'Clipped By Chat',
-      }));
-      setClips((prev) => [...prev, ...append]);
-    }
-    if (data?.manual?.length) {
-      const append = data.manual.map((d) => ({
-        ...d,
-        sourceAttribution: 'From !clip',
-      }));
-      setClips((prev) => [...prev, ...append]);
-    }
-  }, [data, play]);
+  }, [data]);
 
   if (isLoading) return formatMessage({ id: 'pages.editor.loading' });
   if (isError) return formatMessage({ id: 'pages.editor.error' });
@@ -131,11 +126,6 @@ export default () => {
   };
 
   const clipLength = Math.round(endTime - startTime);
-  const { thumbnails } = data || {};
-
-  const thumbnail = thumbnail_url
-    ? thumbnail_url.replace('%{width}', '195').replace('%{height}', '108')
-    : '';
 
   const seekToStartTime = () => {
     setPlaytime(trimClipUpdateValues[0]);
@@ -156,7 +146,7 @@ export default () => {
     return true;
   };
   const triggerLoadingEndAnimation = () => {
-    const successMessage = 'Changes saved! ';
+    const successMessage = 'Changes saved!';
     showSuccessNotification(successMessage);
     setShowClipHandles(false);
     return true;
@@ -323,9 +313,7 @@ export default () => {
             clipInfo={{ clips, setClips }}
             clipIdInfo={{ selectedClipId, setSelectedClipId }}
             play={play}
-            thumbnail={thumbnail}
             videoId={videoId}
-            thumbnails={thumbnails}
           />
         </Col>
       </Row>

@@ -13,14 +13,7 @@ const ClipListWrapper = styled.div`
   height: calc(100vh - 200px);
   overflow-y: scroll;
 `;
-const ClipList = ({
-  thumbnail,
-  play,
-  clipIdInfo,
-  clipInfo,
-  thumbnails,
-  videoId,
-}: ClipListProps) => {
+const ClipList = ({ play, clipIdInfo, clipInfo, videoId }: ClipListProps) => {
   const { selectedClipId } = clipIdInfo;
   const { clips, setClips } = clipInfo;
 
@@ -35,7 +28,7 @@ const ClipList = ({
         cardNumber={index}
         videoId={videoId}
         /* TODO potential bug: if s3 upload failed and image does not exist in thumbnails array, this will probably error out */
-        thumbnail={thumbnails === undefined ? thumbnail : thumbnails[timestamp.id]}
+        thumbnail={timestamp.thumbnail_url}
         selectedClipId={selectedClipId}
         setClips={setClips}
         isSelected={selectedClipId === timestamp.id}

@@ -16,10 +16,8 @@ export interface VideoPlayerProps {
 export interface ClipListProps {
   clipIdInfo: { selectedClipId: string; setSelectedClipId: any };
   play: (timestamp: number, clipId: string) => any;
-  thumbnail: string;
   clipInfo: { clips: IndividualTimestamp[]; setClips: any };
   videoId: string;
-  thumbnails?: any[];
 }
 
 export interface SortableClipCardProps {
