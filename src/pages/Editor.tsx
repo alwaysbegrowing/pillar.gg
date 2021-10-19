@@ -57,12 +57,6 @@ export default () => {
     endTime,
   );
 
-  useEffect(() => {
-    if (isClipOver) {
-      setPlaying(false);
-    }
-  }, [setPlaying, isClipOver]);
-
   const seek = useCallback(
     async (seekTime: number) => {
       if (videoRef.current?.seekTo) {
@@ -72,6 +66,26 @@ export default () => {
     },
     [videoRef],
   );
+
+  const setPlaytime = (playtime: number) => {
+    const newTime = startTime + playtime;
+    setSecPlayed(newTime);
+    seek(newTime);
+  };
+
+  useEffect(() => {
+    if (isClipOver) {
+      setPlaying(false);
+    }
+  }, [setPlaying, isClipOver]);
+
+  useEffect(() => {
+    if (data && !selectedClipId) {
+      console.log(data[0].id);
+      setSelectedClipId(data[0].id);
+      setPlaytime(data[0].startTime);
+    }
+  }, [data, selectedClipId]);
 
   const play = useCallback(
     (seekTime: number, clipId: string) => {
@@ -117,12 +131,6 @@ export default () => {
       }),
       description: successMessage,
     });
-  };
-
-  const setPlaytime = (playtime: number) => {
-    const newTime = startTime + playtime;
-    setSecPlayed(newTime);
-    seek(newTime);
   };
 
   const clipLength = Math.round(endTime - startTime);
