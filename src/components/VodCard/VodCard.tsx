@@ -15,7 +15,7 @@ const IconText = ({ icon, text }: any) => (
 );
 
 const ViewVideoButton = ({ id }: { id: number | string }) => (
-  <Button onClick={() => history.push(`/vods/${id}`)}>
+  <Button type="primary" onClick={() => history.push(`/vods/${id}`)}>
     {useIntl().formatMessage({ id: 'component.VodCard.ViewVideoButton' })}
   </Button>
 );
@@ -26,6 +26,13 @@ const ProcessingButton = () => (
   </Button>
 );
 
+const NoClipsFound = () => <Button disabled={true}>No clips found for this VOD</Button>;
+
+const renderButton = (data: any, id: any) => {
+  if (!data) return <ProcessingButton />;
+  if (data.length === 0) return <NoClipsFound />;
+  return <ViewVideoButton id={id} />;
+};
 const VodCard = ({
   thumbnail_url: thumbnailUrl,
   title,
@@ -64,7 +71,7 @@ const VodCard = ({
         }
       >
         <List.Item.Meta title={<a href={`/vods/${id}`}>{title}</a>} description={description} />
-        {data ? <ViewVideoButton id={id} /> : <ProcessingButton />}
+        {renderButton(data, id)}
       </List.Item>
     </Card>
   );

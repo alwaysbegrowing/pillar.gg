@@ -1,5 +1,5 @@
 import type { ClipListProps } from '@/types/componentTypes';
-import { List } from 'antd';
+import { List, ConfigProvider, Empty } from 'antd';
 import React from 'react';
 import type { IndividualTimestamp } from '@/services/hooks/api';
 import { SortableClipCard } from './SortableClipCard';
@@ -38,12 +38,14 @@ const ClipList = ({ play, clipIdInfo, clipInfo, videoId }: ClipListProps) => {
 
   return (
     <ClipListWrapper>
-      <List
-        header={<Title level={5}>{`${clips.length} Clips Found`}</Title>}
-        dataSource={clips}
-        itemLayout="vertical"
-        renderItem={renderListItem}
-      />
+      <ConfigProvider renderEmpty={() => <Empty description="No Clips found" />}>
+        <List
+          header={<Title level={5}>{`${clips.length} Clips Found`}</Title>}
+          dataSource={clips}
+          itemLayout="vertical"
+          renderItem={renderListItem}
+        />
+      </ConfigProvider>
     </ClipListWrapper>
   );
 };
