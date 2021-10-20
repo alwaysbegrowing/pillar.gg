@@ -94,6 +94,10 @@ export interface IndividualTimestamp {
   type: 'ai' | 'manual' | 'ccc';
   verifiedTwitch?: boolean;
   id: string;
+  title?: string;
+  view_count?: number;
+  duration?: number;
+  creator_name?: string;
 }
 
 interface TimestampStructure {

@@ -105,6 +105,7 @@ export function SortableClipCard({
       <CardNumber />
       <List.Item style={{ width: '100%' }}>
         <List.Item.Meta
+          title={timestamp.title}
           description={
             <>
               <Timestamps />

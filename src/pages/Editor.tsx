@@ -114,7 +114,10 @@ export default () => {
           };
         }
         if (clip.type === 'ccc') {
-          return { ...clip, banner: { sourceAttribution: 'Clipped by Chat', color: '#40a9ff' } };
+          return {
+            ...clip,
+            banner: { sourceAttribution: `Clipped by ${clip.creator_name}`, color: '#40a9ff' },
+          };
         }
         return clip;
       });

@@ -4,7 +4,7 @@ const connectToDatabase = require('../_connectToDatabase');
 
 export default async (req: VercelRequest, res: VercelResponse) => {
   const {
-    query: { videoId, limit = 10 },
+    query: { videoId, limit = 100 },
   } = req;
 
   const lim = parseInt(limit as string, 10);
