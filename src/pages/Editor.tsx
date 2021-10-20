@@ -100,13 +100,24 @@ export default () => {
     if (data) {
       const formattedData = data.map((clip) => {
         if (clip.type === 'ai') {
-          return { ...clip, sourceAttribution: 'Clipped by Pillar AI (beta)', selected: true };
+          return {
+            ...clip,
+            banner: { sourceAttribution: 'Clipped by Pillar AI (beta)', color: '#b37feb' },
+            selected: true,
+          };
         }
         if (clip.type === 'manual') {
-          return { ...clip, sourceAttribution: 'Clipped by !clip', selected: true };
+          return {
+            ...clip,
+            banner: { sourceAttribution: 'Clipped by !clip', color: '#ffadd2' },
+            selected: true,
+          };
         }
         if (clip.type === 'ccc') {
-          return { ...clip, sourceAttribution: 'Clipped by Chat' };
+          return {
+            ...clip,
+            banner: { sourceAttribution: `Clipped by ${clip.creator_name}`, color: '#40a9ff' },
+          };
         }
         return clip;
       });

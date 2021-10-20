@@ -80,8 +80,13 @@ function useVideo(id: string | number) {
   };
 }
 
+export interface Banner {
+  sourceAttribution: string;
+  color: string;
+}
+
 export interface IndividualTimestamp {
-  sourceAttribution?: string;
+  banner?: Banner;
   startTime: number;
   endTime: number;
   selected?: boolean;
@@ -89,6 +94,10 @@ export interface IndividualTimestamp {
   type: 'ai' | 'manual' | 'ccc';
   verifiedTwitch?: boolean;
   id: string;
+  title?: string;
+  view_count?: number;
+  duration?: number;
+  creator_name?: string;
 }
 
 interface TimestampStructure {
