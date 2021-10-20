@@ -34,7 +34,7 @@ export function SortableClipCard({
   thumbnail,
   timestamp,
   play,
-  sourceAttribution,
+  banner,
   selectedClipId,
   setClips,
   cardNumber,
@@ -62,8 +62,8 @@ export function SortableClipCard({
   );
 
   const getAvatar = () =>
-    sourceAttribution ? (
-      <Badge.Ribbon placement="start" color="#b37feb" text={sourceAttribution}>
+    banner ? (
+      <Badge.Ribbon placement="start" color={banner.color} text={banner.sourceAttribution}>
         <TwitchThumbnail />
       </Badge.Ribbon>
     ) : (

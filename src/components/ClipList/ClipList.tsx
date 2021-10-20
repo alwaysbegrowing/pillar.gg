@@ -23,7 +23,7 @@ const ClipList = ({ play, clipIdInfo, clipInfo, videoId }: ClipListProps) => {
         play={() => play(timestamp.startTime, timestamp.id)}
         timestamp={timestamp}
         key={timestamp.id}
-        sourceAttribution={timestamp.sourceAttribution}
+        banner={timestamp.banner}
         id={timestamp.id}
         cardNumber={index}
         videoId={videoId}

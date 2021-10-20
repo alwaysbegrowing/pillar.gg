@@ -80,8 +80,13 @@ function useVideo(id: string | number) {
   };
 }
 
+export interface Banner {
+  sourceAttribution: string;
+  color: string;
+}
+
 export interface IndividualTimestamp {
-  sourceAttribution?: string;
+  banner?: Banner;
   startTime: number;
   endTime: number;
   selected?: boolean;
