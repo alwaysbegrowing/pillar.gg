@@ -100,7 +100,7 @@ export default () => {
     if (data) {
       const formattedData = data.map((clip) => {
         if (clip.type === 'ai') {
-          return { ...clip, sourceAttribution: 'Clipped by Pillar AI', selected: true };
+          return { ...clip, sourceAttribution: 'Clipped by Pillar AI (beta)', selected: true };
         }
         if (clip.type === 'manual') {
           return { ...clip, sourceAttribution: 'Clipped by !clip', selected: true };
