@@ -119,6 +119,9 @@ export default () => {
   if (isError) return formatMessage({ id: 'pages.editor.error' });
   if (!data) return formatMessage({ id: 'pages.editor.noData' });
 
+  const selectedThumbnail = clips.find(
+    (clip: IndividualTimestamp) => clip.id === selectedClipId,
+  )?.thumbnail_url;
   const handleShowOnClick = () => {
     setShowExportController(true);
     setPlaying(false);
@@ -280,6 +283,7 @@ export default () => {
             videoUrl={`https://twitch.tv/videos/${videoId}`}
             onConfirm={handleSubmitExport}
             onCancel={() => setShowExportController(false)}
+            thumbnailUrl={selectedThumbnail}
           />
         </ClipContext.Provider>
       </Drawer>

@@ -7,13 +7,13 @@ import Stages from './Stages';
 import templates from './Templates';
 import useVideoCropper from '@/services/hooks/useVideoCropper';
 
-function ExportController({ videoUrl, onConfirm, onCancel }) {
+function ExportController({ videoUrl, onConfirm, onCancel, thumbnailUrl }) {
   const [template, setTemplate] = useState(templates[0]);
   const [stage, setStage] = useState(Stages.SELECT_TEMPLATE);
   const [faceCropDimensions, setFaceCropDimensions] = useState(null);
   const [highlightCropDimensions, setHighlightCropDimensions] = useState(null);
-  const faceCamCropper = useVideoCropper(template.face?.aspect, videoUrl);
-  const highlightCropper = useVideoCropper(template.highlight.aspect, videoUrl);
+  const faceCamCropper = useVideoCropper(template.face?.aspect, videoUrl, thumbnailUrl);
+  const highlightCropper = useVideoCropper(template.highlight.aspect, videoUrl, thumbnailUrl);
 
   const roundEven = (x: number): number => 2 * Math.round(x / 2);
 

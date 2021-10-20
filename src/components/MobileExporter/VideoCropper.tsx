@@ -1,9 +1,9 @@
 import React from 'react';
 import Cropper from 'react-cropper';
-import ClipPlayer from '@/components/ClipPlayer';
+import { Image } from 'antd';
 import picture from './HD_transparent_picture.png';
 
-const VideoCropper = React.forwardRef(({ aspectRatio }, ref) => {
+const VideoCropper = React.forwardRef(({ aspectRatio, thumbnailUrl }, ref) => {
   const playerStyles = {
     position: 'absolute',
     width: '100%',
@@ -17,7 +17,9 @@ const VideoCropper = React.forwardRef(({ aspectRatio }, ref) => {
 
   return (
     <>
-      <ClipPlayer style={playerStyles} />
+      <div style={playerStyles}>
+        <Image src={thumbnailUrl} />
+      </div>
       <Cropper
         src={picture}
         aspectRatio={aspectRatio}
