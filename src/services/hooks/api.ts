@@ -26,7 +26,6 @@ interface UseModeratorProps {
   error?: boolean;
 }
 
-// const twitchClientId = 'phpnjz4llxez4zpw3iurfthoi573c8';
 const twitchClientId = 'jmyfr3xqjeyjkvzmnbyiexsf5864c1';
 const redirectURI = `${window.location.origin}/TwitchAuth`;
 
@@ -70,7 +69,7 @@ function useModerators() {
   const { data: userData } = useUser();
 
   const { data, error }: UseModeratorProps = useSWR(
-    userData ? () => `/api/moderators/${userData.id}` : null,
+    userData ? `/api/moderators/${userData.id}` : null,
     fetcher,
   );
 

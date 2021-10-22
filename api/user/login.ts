@@ -37,34 +37,31 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
       $set: { ...twitchUserData, ...hubspotID },
     };
 
-    const resp = db.collection('users').updateOne(filter, updateDoc, options);
-
+    const resp = await db.collection('users').updateOne(filter, updateDoc, options);
     // if resp has an upserted value, then we have a new user
     const isNewUser = resp.upsertedCount > 0;
 
     if (isNewUser) {
-      
       const twitchModeratorData = await getTwitchModeratorData(
         credentials.access_token,
         twitchUserData.id,
       );
 
+      const bulk = db.collection('moderators').initializeUnorderedBulkOp();
       // eslint-disable-next-line no-restricted-syntax
       for (const moderator_id of twitchModeratorData) {
-        // eslint-disable-next-line no-await-in-loop
-        await db
-          .collection('moderators')
-          .updateOne(
-            { twitch_id: moderator_id.user_id },
-            {
-              $set: { user_name: moderator_id.user_name },
-              $push: {
-                mod_for: { id: twitchUserData.id, display_name: twitchUserData.display_name },
-              },
+        bulk
+          .find({ twitch_id: moderator_id.user_id })
+          .upsert()
+          .update({
+            $setOnInsert: { twitch_id: moderator_id.user_id },
+            $set: { user_name: moderator_id.user_name },
+            $push: {
+              mod_for: { id: twitchUserData.id, display_name: twitchUserData.display_name },
             },
-            options,
-          );
+          });
       }
+      bulk.execute();
 
       const sns = new SNSClient({ region: 'us-east-1', credentials: snsCredentials });
 
