@@ -95,8 +95,19 @@ export default () => {
   }, [data, selectedClipId]);
 
   useEffect(() => {
-    if (playedSeconds > 3 && !exportInvitationIsVisible && !exportInvitationWasToggled) {
+    if (localStorage.getItem('numShownInvitation') == null)
+      localStorage.setItem('numShownInvitation', '0');
+    if (
+      playedSeconds > 3 &&
+      !exportInvitationIsVisible &&
+      !exportInvitationWasToggled &&
+      parseInt(localStorage.getItem('numShownInvitation')) < 3
+    ) {
       toggleExportInvitationVisiblity();
+      const numShownInvitation = localStorage.getItem('numShownInvitation');
+      if (numShownInvitation)
+        localStorage.setItem('numShownInvitation', String(Number(numShownInvitation) + 1));
+      else localStorage.setItem('numShownInvitation', '1');
     }
   }, [
     exportInvitationIsVisible,
@@ -288,10 +299,10 @@ export default () => {
     <div>
       <p>
         Click here to easily format this clip to format this clip and make it look amazing for
-        social media!{' '}
+        social media!
       </p>
       <Button type="primary" onClick={() => handleAcceptInvitation()}>
-        Let's export!{' '}
+        Let's export!
       </Button>
       <a onClick={toggleExportInvitationVisiblity} style={{ paddingLeft: '1rem' }}>
         Close
