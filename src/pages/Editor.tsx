@@ -33,7 +33,7 @@ const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[])
 };
 
 export default () => {
-  const { data: twitchData } = useUser();
+  const { data: twitchData, isError: isUserError } = useUser();
   const { id: twitchId } = twitchData || {};
   const { id: videoId } = useParams<{ id: string }>();
   // const { data: userData } = useUser();
@@ -57,6 +57,7 @@ export default () => {
     endTime,
   );
 
+  const isUserLoggedOut = isUserError?.status === 401;
   const seek = useCallback(
     async (seekTime: number) => {
       if (videoRef.current?.seekTo) {
@@ -273,8 +274,12 @@ export default () => {
       }
       extra={
         <>
-          <ExportButton videoId={videoId} clips={clips?.filter((clip) => clip.selected)} />
-          <Button type="primary" onClick={() => handleShowOnClick()}>
+          <ExportButton
+            disabled={isUserLoggedOut}
+            videoId={videoId}
+            clips={clips?.filter((clip) => clip.selected)}
+          />
+          <Button disabled={isUserLoggedOut} type="primary" onClick={() => handleShowOnClick()}>
             Export To Mobile
           </Button>
         </>
