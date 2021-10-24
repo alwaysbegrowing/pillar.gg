@@ -62,7 +62,7 @@ const startYoutubeExport = async (
   }
 };
 
-const ExportButton = ({ clips, videoId }: any) => {
+const ExportButton = ({ clips, videoId, disabled }: any) => {
   const { formatMessage } = useIntl();
   const { data } = useUser();
 
@@ -134,7 +134,7 @@ const ExportButton = ({ clips, videoId }: any) => {
     </Menu>
   );
   return (
-    <Dropdown overlay={menu}>
+    <Dropdown disabled={disabled} overlay={menu}>
       <Button type="default" icon={<ExportOutlined />}>
         Export Compilation <DownOutlined />
       </Button>
