@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 // import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { LogoutOutlined } from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
@@ -37,25 +37,17 @@ export interface GlobalHeaderRightProps {
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
   const { data: userData, isLoading } = useUser();
 
-  const onMenuClick = useCallback(
-    (event: {
-      key: React.Key;
-      keyPath: React.Key[];
-      item: React.ReactInstance;
-      domEvent: React.MouseEvent<HTMLElement>;
-    }) => {
-      const { key } = event;
-      if (key === 'logout') {
-        localStorage.removeItem('access_token');
-        // history.push(`https://pillar.gg`);
-        history.push('/');
-        // loginOut();
-        return;
-      }
-      history.push(`/account/${key}`);
-    },
-    [],
-  );
+  const onMenuClick = (event: { key: React.Key }) => {
+    const { key } = event;
+    if (key === 'logout') {
+      localStorage.removeItem('access_token');
+      // history.push(`https://pillar.gg`);
+      history.push('/');
+      // loginOut();
+      return;
+    }
+    history.push(`/account/${key}`);
+  };
 
   const loading = (
     <span className={`${styles.action} ${styles.account}`}>
