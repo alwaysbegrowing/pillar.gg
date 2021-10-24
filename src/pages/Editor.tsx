@@ -334,7 +334,7 @@ export default () => {
             onVisibleChange={toggleExportInvitationVisiblity}
             placement="bottomLeft"
           >
-            <Button disabled={isUserLoggedOut} type="primary" onClick={() => handleShowOnClick()}>
+            <Button disabled={isUserLoggedOut} type="primary" onClick={handleShowOnClick}>
               {`Export To Mobile ${isUserLoggedOut ? '(login to export)' : ''}`}
             </Button>
           </Popover>
