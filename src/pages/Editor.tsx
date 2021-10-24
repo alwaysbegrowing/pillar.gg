@@ -302,22 +302,18 @@ export default () => {
         Click here to easily format this clip to format this clip and make it look amazing for
         social media!
       </p>
-      {isUserLoggedOut ? (
+      {!isUserLoggedOut ? (
         LoginWithTwitch()
       ) : (
         <>
           <Button type="primary" onClick={() => handleAcceptInvitation()}>
             Let's export!
           </Button>
-          <Button
-            type="text"
-            onClick={toggleExportInvitationVisiblity}
-            style={{ paddingLeft: '1rem' }}
-          >
-            Close
-          </Button>
         </>
       )}
+      <Button type="text" onClick={toggleExportInvitationVisiblity} style={{ paddingLeft: '1rem' }}>
+        Close
+      </Button>
     </div>
   );
 
