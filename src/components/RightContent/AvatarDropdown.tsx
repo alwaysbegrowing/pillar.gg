@@ -9,6 +9,7 @@ import { useUser } from '../../services/hooks/api';
 // import { stringify } from 'querystring';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
+import { useSWRConfig } from 'swr';
 
 export interface GlobalHeaderRightProps {
   menu?: boolean;
@@ -36,11 +37,13 @@ export interface GlobalHeaderRightProps {
 
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
   const { data: userData, isLoading } = useUser();
+  const { cache } = useSWRConfig();
 
   const onMenuClick = (event: { key: React.Key }) => {
     const { key } = event;
     if (key === 'logout') {
       localStorage.removeItem('access_token');
+      cache.clear();
       // history.push(`https://pillar.gg`);
       history.push('/');
       // loginOut();
