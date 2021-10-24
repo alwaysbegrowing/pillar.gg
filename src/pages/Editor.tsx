@@ -302,7 +302,7 @@ export default () => {
         Click here to easily format this clip to format this clip and make it look amazing for
         social media!
       </p>
-      {!isUserLoggedOut ? (
+      {isUserLoggedOut ? (
         LoginWithTwitch()
       ) : (
         <>
