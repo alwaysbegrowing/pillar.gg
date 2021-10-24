@@ -20,6 +20,7 @@ import { sendHubspotEvent } from '@/services/send';
 import { MOBILE_EXPORT_URL } from '@/constants/apiUrls';
 import { getHeaders } from '@/services/fetcher';
 import styled from 'styled-components';
+import LoginWithTwitch from '@/components/Login/LoginWithTwitch';
 
 const HeaderText = styled.div`
   margin-bottom: 8px;
@@ -301,12 +302,22 @@ export default () => {
         Click here to easily format this clip to format this clip and make it look amazing for
         social media!
       </p>
-      <Button type="primary" onClick={() => handleAcceptInvitation()}>
-        Let's export!
-      </Button>
-      <a onClick={toggleExportInvitationVisiblity} style={{ paddingLeft: '1rem' }}>
-        Close
-      </a>
+      {isUserLoggedOut ? (
+        LoginWithTwitch()
+      ) : (
+        <>
+          <Button type="primary" onClick={() => handleAcceptInvitation()}>
+            Let's export!
+          </Button>
+          <Button
+            type="text"
+            onClick={toggleExportInvitationVisiblity}
+            style={{ paddingLeft: '1rem' }}
+          >
+            Close
+          </Button>
+        </>
+      )}
     </div>
   );
 
