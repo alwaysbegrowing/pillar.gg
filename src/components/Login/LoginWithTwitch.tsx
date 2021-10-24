@@ -1,7 +1,10 @@
 import { Button } from 'antd';
 import React from 'react';
+import { ReactComponent as TwitchSvg } from './twitch-brands.svg';
+import Icon from '@ant-design/icons';
+import { twitchClientId } from '@/services/fetcher';
 
-const twitchClientId = 'jmyfr3xqjeyjkvzmnbyiexsf5864c1';
+export const TwitchIcon = (props: any) => <Icon component={TwitchSvg} {...props} />;
 const redirectURI = `${window.location.origin}/TwitchAuth`;
 const twitchLogin = () =>
   window.open(
@@ -9,7 +12,7 @@ const twitchLogin = () =>
     '_self',
   );
 const LoginWithTwitch = () => (
-  <Button onClick={twitchLogin} type="primary">
+  <Button onClick={twitchLogin} icon={<TwitchIcon />} type="primary">
     Connect to Twitch
   </Button>
 );
