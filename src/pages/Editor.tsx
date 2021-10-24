@@ -309,15 +309,11 @@ export default () => {
           <Button type="primary" onClick={() => handleAcceptInvitation()}>
             Let's export!
           </Button>
-          <Button
-            type="text"
-            onClick={toggleExportInvitationVisiblity}
-            style={{ paddingLeft: '1rem' }}
-          >
-            Close
-          </Button>
         </>
       )}
+      <Button type="text" onClick={toggleExportInvitationVisiblity} style={{ paddingLeft: '1rem' }}>
+        Close
+      </Button>
     </div>
   );
 
