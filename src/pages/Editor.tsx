@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
 import { useClips, useUser } from '../services/hooks/api';
-import { Button, Row, Col, notification, Alert, Drawer, Space } from 'antd';
+import { Button, Row, Col, notification, Alert, Drawer, Space, Popover } from 'antd';
 import ClipList from '@/components/ClipList/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
@@ -51,6 +51,8 @@ export default () => {
   const isPlaying = playing && isReady;
   const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId, clips);
   const [showExportController, setShowExportController] = useState<boolean>(false);
+  const [exportInvitationIsVisible, setExportInvitationIsVisible] = useState<boolean>(false);
+  const [exportInvitationWasToggled, setExportInvitationWasToggled] = useState<boolean>(false);
   const { setSecPlayed, playedSeconds, isClipOver, intervalInMs } = useTime(
     isPlaying,
     startTime,
@@ -73,6 +75,10 @@ export default () => {
     setSecPlayed(newTime);
     seek(newTime);
   };
+  const toggleExportInvitationVisiblity = useCallback(() => {
+    setExportInvitationIsVisible(!exportInvitationIsVisible);
+    setExportInvitationWasToggled(true);
+  }, [exportInvitationIsVisible, setExportInvitationIsVisible]);
 
   useEffect(() => {
     if (isClipOver) {
@@ -87,6 +93,17 @@ export default () => {
       setPlaytime(data[0].startTime);
     }
   }, [data, selectedClipId]);
+
+  useEffect(() => {
+    if (playedSeconds > 3 && !exportInvitationIsVisible && !exportInvitationWasToggled) {
+      toggleExportInvitationVisiblity();
+    }
+  }, [
+    exportInvitationIsVisible,
+    playedSeconds,
+    toggleExportInvitationVisiblity,
+    exportInvitationWasToggled,
+  ]);
 
   const play = useCallback(
     (seekTime: number, clipId: string) => {
@@ -263,6 +280,25 @@ export default () => {
       Trim Clip
     </Button>
   );
+  const handleAcceptInvitation = () => {
+    toggleExportInvitationVisiblity();
+    handleShowOnClick();
+  };
+  const exportInvitationContent = (
+    <div>
+      <p>
+        Click here to easily format this clip to format this clip and make it look amazing for
+        social media!{' '}
+      </p>
+      <Button type="primary" onClick={() => handleAcceptInvitation()}>
+        Let's export!{' '}
+      </Button>
+      <a onClick={toggleExportInvitationVisiblity} style={{ paddingLeft: '1rem' }}>
+        Close
+      </a>
+    </div>
+  );
+
   return (
     <PageContainer
       content={
@@ -279,9 +315,18 @@ export default () => {
             videoId={videoId}
             clips={clips?.filter((clip) => clip.selected)}
           />
-          <Button disabled={isUserLoggedOut} type="primary" onClick={() => handleShowOnClick()}>
-            {`Export To Mobile ${isUserLoggedOut ? '(login to export)' : ''}`}
-          </Button>
+          <Popover
+            content={exportInvitationContent}
+            title="Want to export to TikTok? "
+            trigger="focus"
+            visible={exportInvitationIsVisible}
+            onVisibleChange={toggleExportInvitationVisiblity}
+            placement="bottomLeft"
+          >
+            <Button disabled={isUserLoggedOut} type="primary" onClick={() => handleShowOnClick()}>
+              {`Export To Mobile ${isUserLoggedOut ? '(login to export)' : ''}`}
+            </Button>
+          </Popover>
         </>
       }
     >
