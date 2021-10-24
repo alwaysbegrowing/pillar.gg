@@ -10,8 +10,6 @@ import { isDebugMode } from '@/utils/utils';
 
 const Vods = () => {
   const { data: videos, isLoading, isError } = useVideos();
-  // const { isUserLoggedOut } = useUser();
-  console.log({ isError });
   if (isLoading) return 'loading...';
   if (isError) {
     if (isError.status === 401 || isError.status === 404) {
