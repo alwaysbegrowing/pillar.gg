@@ -14,19 +14,6 @@ interface UseDBUserProps {
   error?: boolean;
 }
 
-const twitchClientId = 'jmyfr3xqjeyjkvzmnbyiexsf5864c1';
-const redirectURI = `${window.location.origin}/TwitchAuth`;
-
-const onErrorRetry = (error: any) => {
-  if (error.data.status === 401 || error.data.status === 403) {
-    return window.open(
-      `https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${redirectURI}&response_type=code&scope=user_read`,
-      '_self',
-    );
-  }
-  return null;
-};
-
 function useUser() {
   const { twitchId } = useContext(GlobalContext);
 
@@ -34,12 +21,13 @@ function useUser() {
   const otherUrl = `https://api.twitch.tv/helix/users?id=${twitchId}`;
 
   const url = twitchId ? otherUrl : selfUrl;
-  const { data, error } = useSWR(url, fetcher, { onErrorRetry });
+  const { data, error, mutate } = useSWR(url, fetcher);
 
   return {
     data: data?.data?.[0],
     isLoading: !error && !data,
     isError: error,
+    mutate: mutate,
   };
 }
 
@@ -54,16 +42,17 @@ function useDbUsers() {
 }
 
 function useVideos() {
-  const { data: userData } = useUser();
+  const { data: userData, isError: isUseUserError } = useUser();
   const { data, error } = useSWR(
     () => `https://api.twitch.tv/helix/videos?first=20&type=archive&user_id=${userData.id}`,
     fetcher,
   );
+  console.log({ error });
 
   return {
     data: data?.data,
-    isLoading: !error && !data,
-    isError: error,
+    isLoading: !error && !data && !isUseUserError,
+    isError: error || isUseUserError,
   };
 }
 
