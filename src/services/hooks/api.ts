@@ -21,13 +21,13 @@ function useUser() {
   const otherUrl = `https://api.twitch.tv/helix/users?id=${twitchId}`;
 
   const url = twitchId ? otherUrl : selfUrl;
-  const { data, error } = useSWR(url, fetcher);
+  const { data, error, mutate } = useSWR(url, fetcher);
 
   return {
     data: data?.data?.[0],
     isLoading: !error && !data,
     isError: error,
-    isUserLoggedOut: error?.isUserLoggedOut,
+    mutate: mutate,
   };
 }
 

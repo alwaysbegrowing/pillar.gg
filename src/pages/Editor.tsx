@@ -280,7 +280,7 @@ export default () => {
             clips={clips?.filter((clip) => clip.selected)}
           />
           <Button disabled={isUserLoggedOut} type="primary" onClick={() => handleShowOnClick()}>
-            Export To Mobile
+            {`Export To Mobile ${isUserLoggedOut ? '(login to export)' : ''}`}
           </Button>
         </>
       }
