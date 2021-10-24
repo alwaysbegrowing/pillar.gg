@@ -6,13 +6,14 @@ import { twitchClientId } from '@/services/fetcher';
 
 export const TwitchIcon = (props: any) => <Icon component={TwitchSvg} {...props} />;
 const redirectURI = `${window.location.origin}/TwitchAuth`;
-const twitchLogin = () =>
+
+const openTwitchInNewTab = () =>
   window.open(
     `https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${redirectURI}&response_type=code&scope=user_read`,
-    '_self',
+    '_blank',
   );
 const LoginWithTwitch = () => (
-  <Button onClick={twitchLogin} icon={<TwitchIcon />} type="primary">
+  <Button onClick={openTwitchInNewTab} icon={<TwitchIcon />} type="primary">
     Connect to Twitch
   </Button>
 );
