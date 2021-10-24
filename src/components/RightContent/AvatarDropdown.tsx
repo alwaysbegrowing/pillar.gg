@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 // import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { LogoutOutlined } from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
+import LoginWithTwitch from '@/components/Login/LoginWithTwitch';
 import { history } from 'umi';
 import { useUser } from '../../services/hooks/api';
 // import { outLogin } from '@/services/login';
@@ -47,8 +48,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
       if (key === 'logout') {
         localStorage.removeItem('access_token');
         // history.push(`https://pillar.gg`);
-        window.open('https://pillar.gg', '_self');
-
+        history.push('/');
         // loginOut();
         return;
       }
@@ -74,7 +74,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
   }
 
   if (!userData || !userData.display_name) {
-    return loading;
+    return <LoginWithTwitch />;
   }
 
   const menuHeaderDropdown = (

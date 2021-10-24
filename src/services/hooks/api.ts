@@ -14,18 +14,15 @@ interface UseDBUserProps {
   error?: boolean;
 }
 
-const twitchClientId = 'jmyfr3xqjeyjkvzmnbyiexsf5864c1';
-const redirectURI = `${window.location.origin}/TwitchAuth`;
-
-const onErrorRetry = (error: any) => {
-  if (error.data.status === 401 || error.data.status === 403) {
-    return window.open(
-      `https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${redirectURI}&response_type=code&scope=user_read`,
-      '_self',
-    );
-  }
-  return null;
-};
+// const onErrorRetry = (error: any) => {
+//   if (error.data.status === 401 || error.data.status === 403) {
+//     return window.open(
+//       `https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${redirectURI}&response_type=code&scope=user_read`,
+//       '_self',
+//     );
+//   }
+//   return null;
+// };
 
 function useUser() {
   const { twitchId } = useContext(GlobalContext);
@@ -34,7 +31,7 @@ function useUser() {
   const otherUrl = `https://api.twitch.tv/helix/users?id=${twitchId}`;
 
   const url = twitchId ? otherUrl : selfUrl;
-  const { data, error } = useSWR(url, fetcher, { onErrorRetry });
+  const { data, error } = useSWR(url, fetcher);
 
   return {
     data: data?.data?.[0],

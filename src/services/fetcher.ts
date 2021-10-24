@@ -27,7 +27,7 @@ const codeMessage = {
  */
 const errorHandler = (error: ResponseError) => {
   const { response } = error;
-  if (response && response.status && response.status !== 404) {
+  if (response && response.status && (response.status >= 405 || response.status <= 400)) {
     const errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
 
