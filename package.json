@@ -1,8 +1,8 @@
 {
-  "name": "ant-design-pro",
-  "version": "5.0.0-beta.0",
+  "name": "pillar.gg",
+  "version": "1.0.0",
   "private": true,
-  "description": "An out-of-box UI solution for enterprise applications",
+  "description": "The pillar.gg website.",
   "scripts": {
     "analyze": "cross-env ANALYZE=1 umi build",
     "build": "umi build",
@@ -45,7 +45,6 @@
     "not ie <= 10"
   ],
   "dependencies": {
-    "@ant-design/compatible": "^1.0.8",
     "@ant-design/icons": "^4.7.0",
     "@ant-design/pro-descriptions": "^1.9.21",
     "@ant-design/pro-form": "^1.43.1",
@@ -131,5 +130,6 @@
   },
   "engines": {
     "node": ">=10.0.0"
-  }
+  },
+  "packageManager": "yarn@3.1.0"
 }
