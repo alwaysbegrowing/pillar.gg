@@ -149,6 +149,18 @@ export default () => {
             banner: { sourceAttribution: `Clipped by ${clip.creator_name}`, color: '#40a9ff' },
           };
         }
+        if (clip.type === 'superclip') {
+          const sourceAttribution = clip?.creator_name
+            ? `Clipped by Pillar AI (beta) & ${clip.creator_name}`
+            : 'Clipped by Pillar AI (beta) SuperClip';
+          return {
+            ...clip,
+            banner: {
+              sourceAttribution,
+              color: '#b37feb',
+            },
+          };
+        }
         return clip;
       });
       setClips(formattedData);
