@@ -66,7 +66,7 @@ function useDbUsers() {
 }
 
 function useModerators() {
-  const { data: userData } = useUser();
+  const { data: userData, isError: userError } = useUser();
 
   const { data, error }: UseModeratorProps = useSWR(
     userData ? `/api/moderators/${userData.id}` : null,
