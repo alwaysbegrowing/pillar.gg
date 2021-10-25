@@ -76,7 +76,7 @@ function useModerators() {
   return {
     data,
     isLoading: !error && !data && !userError,
-    isError: error,
+    isError: error || userError,
   };
 }
 
