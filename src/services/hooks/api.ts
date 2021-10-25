@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 import useSWR from 'swr';
 import { fetcher } from '../fetcher';
 import { GlobalContext } from '../../ContextWrapper';
@@ -46,12 +46,13 @@ function useUser() {
   const otherUrl = `https://api.twitch.tv/helix/users?id=${twitchId}`;
 
   const url = twitchId ? otherUrl : selfUrl;
-  const { data, error } = useSWR(url, fetcher, { onErrorRetry });
+  const { data, error, mutate } = useSWR(url, fetcher);
 
   return {
     data: data?.data?.[0],
     isLoading: !error && !data,
     isError: error,
+    mutate: mutate,
   };
 }
 
@@ -81,16 +82,17 @@ function useModerators() {
 }
 
 function useVideos() {
-  const { data: userData } = useUser();
+  const { data: userData, isError: isUseUserError } = useUser();
   const { data, error } = useSWR(
     () => `https://api.twitch.tv/helix/videos?first=20&type=archive&user_id=${userData.id}`,
     fetcher,
   );
+  console.log({ error });
 
   return {
     data: data?.data,
-    isLoading: !error && !data,
-    isError: error,
+    isLoading: !error && !data && !isUseUserError,
+    isError: error || isUseUserError,
   };
 }
 
@@ -107,39 +109,30 @@ function useVideo(id: string | number) {
   };
 }
 
+export interface Banner {
+  sourceAttribution: string;
+  color: string;
+}
+
 export interface IndividualTimestamp {
-  sourceAttribution: any;
+  banner?: Banner;
   startTime: number;
   endTime: number;
   selected?: boolean;
+  thumbnail_url: string;
+  type: 'ai' | 'manual' | 'ccc';
   verifiedTwitch?: boolean;
   id: string;
-}
-
-interface Algorithm {
-  algo1: IndividualTimestamp[];
-  algo2?: IndividualTimestamp[];
-  algo3?: IndividualTimestamp[];
-  algo4?: IndividualTimestamp[];
-  algo5?: IndividualTimestamp[];
-  brain: IndividualTimestamp[];
-}
-
-export interface IndividualThumbnail {
-  string: any;
-}
-
-interface ThumbnailData {
-  thumbnail: IndividualThumbnail;
+  title?: string;
+  view_count?: number;
+  duration?: number;
+  creator_name?: string;
 }
 
 interface TimestampStructure {
   videoId: string;
   _id: string;
-  clips: Algorithm;
-  ccc: IndividualTimestamp[];
-  thumbnails: ThumbnailData[];
-  manual: IndividualTimestamp[];
+  clips: IndividualTimestamp[];
 }
 
 interface UseClipsDataProps {
@@ -152,14 +145,9 @@ function useClips(clipId: number | string | undefined) {
     clipId ? () => `/api/timestamps/${clipId}` : null,
     fetcher,
   );
-  const alldata = useMemo(
-    () => ({ ...data?.clips, ccc: data?.ccc, manual: data?.manual, thumbnails: data?.thumbnails }),
-    [JSON.stringify(data)],
-  );
 
   return {
-    data: alldata,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    data: data?.clips,
     isLoading: !error && !data,
     isError: error,
   };

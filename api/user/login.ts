@@ -9,9 +9,15 @@ import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 const connectToDatabase = require('../_connectToDatabase');
 const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
 
+const { SIGNUP_SNS_TOPIC_ARN, SIGNUPEVENT_AWS_ACCESS_KEY_ID, SIGNUPEVENT_AWS_SECRET_ACCESS_KEY } =
+  process.env;
+
+if (!SIGNUP_SNS_TOPIC_ARN || !SIGNUPEVENT_AWS_ACCESS_KEY_ID || !SIGNUPEVENT_AWS_SECRET_ACCESS_KEY) {
+  throw new Error('misisng env variables');
+}
 const snsCredentials = {
-  accessKeyId: process.env.SIGNUPEVENT_AWS_ACCESS_KEY_ID || '',
-  secretAccessKey: process.env.SIGNUPEVENT_AWS_SECRET_ACCESS_KEY || '',
+  accessKeyId: SIGNUPEVENT_AWS_ACCESS_KEY_ID,
+  secretAccessKey: SIGNUPEVENT_AWS_SECRET_ACCESS_KEY,
 };
 
 const login = async (req: VercelRequest, res: VercelResponse) => {
@@ -36,11 +42,26 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
     const updateDoc = {
       $set: { ...twitchUserData, ...hubspotID },
     };
+    const sns = new SNSClient({ region: 'us-east-1', credentials: snsCredentials });
+
+    // this topic should probbaly be renamed - we want to send this on every login to refresh the users CCCs
+    const command = new PublishCommand({
+      Message: 'Pillar has a new user!',
+      MessageAttributes: {
+        TwitchId: {
+          DataType: 'String',
+          StringValue: twitchUserData.id,
+        },
+      },
+      TopicArn: SIGNUP_SNS_TOPIC_ARN,
+    });
+    console.log('about to send sns command', { command });
+    await sns.send(command);
+    console.log('sent SNS command');
 
     const resp = await db.collection('users').updateOne(filter, updateDoc, options);
-    // if resp has an upserted value, then we have a new user
     const isNewUser = resp.upsertedCount > 0;
-
+    console.log('is the user new?', { isNewUser });
     if (isNewUser) {
       const twitchModeratorData = await getTwitchModeratorData(
         credentials.access_token,
@@ -63,20 +84,6 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
       }
       bulk.execute();
 
-      const sns = new SNSClient({ region: 'us-east-1', credentials: snsCredentials });
-
-      const command = new PublishCommand({
-        Message: 'Pillar has a new user!',
-        MessageAttributes: {
-          TwitchId: {
-            DataType: 'String',
-            StringValue: twitchUserData.id,
-          },
-        },
-        TopicArn: process.env.SNS_TOPIC_ARN,
-      });
-
-      await sns.send(command);
       await logHubspotEvent(SIGNUP_EVENT, hubspotID.hubspot_contact_id, twitchUserData.email);
     } else {
       await logHubspotEvent(LOGIN_EVENT, hubspotID.hubspot_contact_id, twitchUserData.email);

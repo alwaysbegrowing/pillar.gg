@@ -2,8 +2,8 @@
 import type { ReactNode } from 'react';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
-import { useClips, useUser, useVideo } from '../services/hooks/api';
-import { Button, Row, Col, notification, Alert, Drawer, Space } from 'antd';
+import { useClips, useUser } from '../services/hooks/api';
+import { Button, Row, Col, notification, Alert, Drawer, Space, Popover } from 'antd';
 import ClipList from '@/components/ClipList/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
@@ -20,27 +20,26 @@ import { sendHubspotEvent } from '@/services/send';
 import { MOBILE_EXPORT_URL } from '@/constants/apiUrls';
 import { getHeaders } from '@/services/fetcher';
 import styled from 'styled-components';
+import LoginWithTwitch from '@/components/Login/LoginWithTwitch';
 
 const HeaderText = styled.div`
   margin-bottom: 8px;
 `;
 
 const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[]): number[] => {
-  if (clipId == null) return [0, 1];
+  if (!clipId) return [0, 1];
   const selectedClip = clips.find((clip) => clip.id === clipId);
   if (!selectedClip) return [0, 1];
   return [selectedClip.startTime, selectedClip.endTime];
 };
 
 export default () => {
-  const { data: twitchData } = useUser();
+  const { data: twitchData, isError: isUserError } = useUser();
   const { id: twitchId } = twitchData || {};
   const { id: videoId } = useParams<{ id: string }>();
   // const { data: userData } = useUser();
   const { data, isLoading, isError } = useClips(videoId);
   const [clips, setClips] = useState<IndividualTimestamp[] | []>([]);
-  const { data: videoData } = useVideo(videoId);
-  const { thumbnail_url } = videoData || {};
   const videoRef = useRef<ReactPlayer>(null);
   const [playing, setPlaying] = useState<boolean>(false);
   const [selectedClipId, setSelectedClipId] = useState<string>('');
@@ -53,18 +52,15 @@ export default () => {
   const isPlaying = playing && isReady;
   const [startTime, endTime] = getStartEndTimeFromClipId(selectedClipId, clips);
   const [showExportController, setShowExportController] = useState<boolean>(false);
+  const [exportInvitationIsVisible, setExportInvitationIsVisible] = useState<boolean>(false);
+  const [exportInvitationWasToggled, setExportInvitationWasToggled] = useState<boolean>(false);
   const { setSecPlayed, playedSeconds, isClipOver, intervalInMs } = useTime(
     isPlaying,
     startTime,
     endTime,
   );
 
-  useEffect(() => {
-    if (isClipOver) {
-      setPlaying(false);
-    }
-  }, [setPlaying, isClipOver]);
-
+  const isUserLoggedOut = isUserError?.status === 401;
   const seek = useCallback(
     async (seekTime: number) => {
       if (videoRef.current?.seekTo) {
@@ -74,6 +70,52 @@ export default () => {
     },
     [videoRef],
   );
+
+  const setPlaytime = (playtime: number) => {
+    const newTime = startTime + playtime;
+    setSecPlayed(newTime);
+    seek(newTime);
+  };
+  const toggleExportInvitationVisiblity = useCallback(() => {
+    setExportInvitationIsVisible(!exportInvitationIsVisible);
+    setExportInvitationWasToggled(true);
+  }, [exportInvitationIsVisible, setExportInvitationIsVisible]);
+
+  useEffect(() => {
+    if (isClipOver) {
+      setPlaying(false);
+    }
+  }, [setPlaying, isClipOver]);
+
+  useEffect(() => {
+    if (data && !selectedClipId) {
+      console.log(data[0].id);
+      setSelectedClipId(data[0].id);
+      setPlaytime(data[0].startTime);
+    }
+  }, [data, selectedClipId]);
+
+  useEffect(() => {
+    if (localStorage.getItem('numShownInvitation') == null)
+      localStorage.setItem('numShownInvitation', '0');
+    if (
+      playedSeconds > 3 &&
+      !exportInvitationIsVisible &&
+      !exportInvitationWasToggled &&
+      parseInt(localStorage.getItem('numShownInvitation')) < 3
+    ) {
+      toggleExportInvitationVisiblity();
+      const numShownInvitation = localStorage.getItem('numShownInvitation');
+      if (numShownInvitation)
+        localStorage.setItem('numShownInvitation', String(Number(numShownInvitation) + 1));
+      else localStorage.setItem('numShownInvitation', '1');
+    }
+  }, [
+    exportInvitationIsVisible,
+    playedSeconds,
+    toggleExportInvitationVisiblity,
+    exportInvitationWasToggled,
+  ]);
 
   const play = useCallback(
     (seekTime: number, clipId: string) => {
@@ -85,31 +127,42 @@ export default () => {
   );
 
   useEffect(() => {
-    if (data?.brain?.length) {
-      const clipsDefaultChecked = data.brain.map((timestamp) => ({ ...timestamp, selected: true, sourceAttribution: 'Clipped By Pillar AI' }));
-      setClips((prev) => [...prev, ...clipsDefaultChecked]);
-      play(clipsDefaultChecked[0].startTime, clipsDefaultChecked[0].id);
+    if (data) {
+      const formattedData = data.map((clip) => {
+        if (clip.type === 'ai') {
+          return {
+            ...clip,
+            banner: { sourceAttribution: 'Clipped by Pillar AI (beta)', color: '#b37feb' },
+            selected: true,
+          };
+        }
+        if (clip.type === 'manual') {
+          return {
+            ...clip,
+            banner: { sourceAttribution: 'Clipped by !clip', color: '#ffadd2' },
+            selected: true,
+          };
+        }
+        if (clip.type === 'ccc') {
+          return {
+            ...clip,
+            banner: { sourceAttribution: `Clipped by ${clip.creator_name}`, color: '#40a9ff' },
+          };
+        }
+        return clip;
+      });
+      setClips(formattedData);
+      console.log(formattedData);
     }
-    if (data?.ccc?.length) {
-      const append = data.ccc.map((d) => ({
-        ...d,
-        sourceAttribution: 'Clipped By Chat',
-      }));
-      setClips((prev) => [...prev, ...append]);
-    }
-    if (data?.manual?.length) {
-      const append = data.manual.map((d) => ({
-        ...d,
-        sourceAttribution: 'From !clip',
-      }));
-      setClips((prev) => [...prev, ...append]);
-    }
-  }, [data, play]);
+  }, [data]);
 
   if (isLoading) return formatMessage({ id: 'pages.editor.loading' });
   if (isError) return formatMessage({ id: 'pages.editor.error' });
   if (!data) return formatMessage({ id: 'pages.editor.noData' });
 
+  const selectedThumbnail = clips.find(
+    (clip: IndividualTimestamp) => clip.id === selectedClipId,
+  )?.thumbnail_url;
   const handleShowOnClick = () => {
     setShowExportController(true);
     setPlaying(false);
@@ -124,18 +177,7 @@ export default () => {
     });
   };
 
-  const setPlaytime = (playtime: number) => {
-    const newTime = startTime + playtime;
-    setSecPlayed(newTime);
-    seek(newTime);
-  };
-
   const clipLength = Math.round(endTime - startTime);
-  const { thumbnails } = data || {};
-
-  const thumbnail = thumbnail_url
-    ? thumbnail_url.replace('%{width}', '195').replace('%{height}', '108')
-    : '';
 
   const seekToStartTime = () => {
     setPlaytime(trimClipUpdateValues[0]);
@@ -156,7 +198,7 @@ export default () => {
     return true;
   };
   const triggerLoadingEndAnimation = () => {
-    const successMessage = 'Changes saved! ';
+    const successMessage = 'Changes saved!';
     showSuccessNotification(successMessage);
     setShowClipHandles(false);
     return true;
@@ -250,6 +292,31 @@ export default () => {
       Trim Clip
     </Button>
   );
+  const handleAcceptInvitation = () => {
+    toggleExportInvitationVisiblity();
+    handleShowOnClick();
+  };
+  const exportInvitationContent = (
+    <div>
+      <p>
+        Click here to easily format this clip to format this clip and make it look amazing for
+        social media!
+      </p>
+      {isUserLoggedOut ? (
+        LoginWithTwitch()
+      ) : (
+        <>
+          <Button type="primary" onClick={() => handleAcceptInvitation()}>
+            Let's export!
+          </Button>
+        </>
+      )}
+      <Button type="text" onClick={toggleExportInvitationVisiblity} style={{ paddingLeft: '1rem' }}>
+        Close
+      </Button>
+    </div>
+  );
+
   return (
     <PageContainer
       content={
@@ -261,10 +328,23 @@ export default () => {
       }
       extra={
         <>
-          <ExportButton videoId={videoId} clips={clips?.filter((clip) => clip.selected)} />
-          <Button type="primary" onClick={() => handleShowOnClick()}>
-            Export To Mobile
-          </Button>
+          <ExportButton
+            disabled={isUserLoggedOut}
+            videoId={videoId}
+            clips={clips?.filter((clip) => clip.selected)}
+          />
+          <Popover
+            content={exportInvitationContent}
+            title="Want to export to TikTok? "
+            trigger="focus"
+            visible={exportInvitationIsVisible}
+            onVisibleChange={toggleExportInvitationVisiblity}
+            placement="bottomLeft"
+          >
+            <Button disabled={isUserLoggedOut} type="primary" onClick={handleShowOnClick}>
+              {`Export To Mobile ${isUserLoggedOut ? '(login to export)' : ''}`}
+            </Button>
+          </Popover>
         </>
       }
     >
@@ -282,6 +362,7 @@ export default () => {
             videoUrl={`https://twitch.tv/videos/${videoId}`}
             onConfirm={handleSubmitExport}
             onCancel={() => setShowExportController(false)}
+            thumbnailUrl={selectedThumbnail}
           />
         </ClipContext.Provider>
       </Drawer>
@@ -323,9 +404,7 @@ export default () => {
             clipInfo={{ clips, setClips }}
             clipIdInfo={{ selectedClipId, setSelectedClipId }}
             play={play}
-            thumbnail={thumbnail}
             videoId={videoId}
-            thumbnails={thumbnails}
           />
         </Col>
       </Row>

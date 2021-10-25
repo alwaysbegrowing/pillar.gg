@@ -30,7 +30,6 @@ export default async (twitchUserData: TwitchUserData) => {
         twitch_broadcaster_type: twitchUserData.broadcaster_type,
         twitch_description: twitchUserData.description,
         twitch_profile_image_url: twitchUserData.profile_image_url,
-        twitch_offline_image_url: twitchUserData.offline_image_url,
         twitch_view_count: String(twitchUserData.view_count),
         email: twitchUserData.email,
         hs_lead_status: 'NEW',

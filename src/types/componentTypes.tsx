@@ -2,6 +2,7 @@ import type { IndividualTimestamp } from '@/services/hooks/api';
 import type { LegacyRef } from 'react';
 import type TwitchPlayer from 'react-player/twitch';
 import type Stages from '@/components/MobileExporter/Stages';
+import type { Banner } from '@/services/hooks/api';
 
 export interface VideoPlayerProps {
   url: string;
@@ -16,15 +17,13 @@ export interface VideoPlayerProps {
 export interface ClipListProps {
   clipIdInfo: { selectedClipId: string; setSelectedClipId: any };
   play: (timestamp: number, clipId: string) => any;
-  thumbnail: string;
   clipInfo: { clips: IndividualTimestamp[]; setClips: any };
   videoId: string;
-  thumbnails?: any[];
 }
 
 export interface SortableClipCardProps {
   play: () => any;
-  sourceAttribution?: string;
+  banner?: Banner;
   selectedClipId: string;
   id: string;
   setClips: any;

@@ -84,7 +84,7 @@
     "react-sublime-video": "^0.2.5",
     "stripe": "^8.181.0",
     "styled-components": "^5.3.1",
-    "swr": "^0.5.6",
+    "swr": "1.0.1",
     "twitch": "^4.6.7",
     "twitch-webhooks": "^4.6.7",
     "umi": "^3.5.20",

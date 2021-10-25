@@ -4,7 +4,7 @@ const connectToDatabase = require('../_connectToDatabase');
 
 export default async (req: VercelRequest, res: VercelResponse) => {
   const {
-    query: { videoId, limit = 10 },
+    query: { videoId, limit = 100 },
   } = req;
 
   const lim = parseInt(limit as string, 10);
@@ -15,46 +15,15 @@ export default async (req: VercelRequest, res: VercelResponse) => {
   const options = {
     projection: {
       clips: {
-        algo1: {
-          $slice: lim,
-        },
-        algo2: {
-          $slice: lim,
-        },
-        algo3: {
-          $slice: lim,
-        },
-        algo4: {
-          $slice: lim,
-        },
-        ccc: {
-          $slice: lim,
-        },
-        manual: {
-          $slice: lim,
-        },
+        $slice: lim,
       },
     },
   };
-  const result = await db.collection('timestamps').findOne({ videoId }, options);
+  const result = await db.collection('clip_metadata').findOne({ videoId }, options);
   if (!result) {
     res.status(404).end();
     return;
   }
-  result.clips = result.clips || {};
-
-  if (result.clips?.brain?.length > 1) {
-    result.clips.brain = result.clips.brain.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
-  }
-
-  if (result?.ccc?.length > 0) {
-    result.ccc = result.ccc.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
-  }
-  if (result?.manual?.length > 0) {
-    result.manual = result.manual.sort((a, b) => (a.startTime > b.startTime ? 1 : -1));
-  }
-
-  // TODO scrub for muted portions of clips and dont return them
 
   res.json(result);
 };

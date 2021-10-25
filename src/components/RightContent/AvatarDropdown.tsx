@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 // import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { LogoutOutlined } from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
+import LoginWithTwitch from '@/components/Login/LoginWithTwitch';
 import { history } from 'umi';
 import { useUser } from '../../services/hooks/api';
 // import { outLogin } from '@/services/login';
@@ -34,26 +35,18 @@ export interface GlobalHeaderRightProps {
 // };
 
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
-  const { data: userData, isLoading } = useUser();
+  const { data: userData, isLoading, mutate } = useUser();
 
-  const onMenuClick = useCallback(
-    (event: {
-      key: React.Key;
-      keyPath: React.Key[];
-      item: React.ReactInstance;
-      domEvent: React.MouseEvent<HTMLElement>;
-    }) => {
-      const { key } = event;
-      if (key === 'logout') {
-        localStorage.removeItem('access_token');
-        history.push(`/`);
-        // loginOut();
-        return;
-      }
-      history.push(`/account/${key}`);
-    },
-    [],
-  );
+  const onMenuClick = useCallback((event: { key: React.Key }) => {
+    const { key } = event;
+    if (key === 'logout') {
+      localStorage.removeItem('access_token');
+      // sets user to null
+      mutate(null);
+      return;
+    }
+    history.push(`/account/${key}`);
+  }, []);
 
   const loading = (
     <span className={`${styles.action} ${styles.account}`}>
@@ -72,7 +65,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
   }
 
   if (!userData || !userData.display_name) {
-    return loading;
+    return <LoginWithTwitch />;
   }
 
   const menuHeaderDropdown = (
