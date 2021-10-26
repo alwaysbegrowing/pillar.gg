@@ -336,7 +336,7 @@ export default () => {
           <Popover
             content={exportInvitationContent}
             title="Want to export to TikTok? "
-            trigger="focus"
+            trigger="none"
             visible={exportInvitationIsVisible}
             onVisibleChange={toggleExportInvitationVisiblity}
             placement="bottomLeft"
