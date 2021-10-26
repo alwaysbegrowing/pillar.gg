@@ -157,7 +157,7 @@ export default () => {
             ...clip,
             banner: {
               sourceAttribution,
-              color: '#b37feb',
+              color: '#2f54eb',
             },
           };
         }
