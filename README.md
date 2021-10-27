@@ -28,7 +28,7 @@ This project is initialized with [Ant Design Pro](https://pro.ant.design) and [V
    > .env
 
    # if you are part of the main vercel project
-   yarn dlx vercel env pull
+   vercel env pull
    ```
 
 5. Swap comments in `api/twitch/_getUserTwitchCredentials.js` - lines 9 and 10
