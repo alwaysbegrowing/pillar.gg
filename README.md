@@ -4,31 +4,31 @@ This project is initialized with [Ant Design Pro](https://pro.ant.design) and [V
 
 ## Environment Setup
 
-1. Install `yarn`
+1. Install `yarn` and `vercel
 
    ```sh
-   npm i -g yarn
+   npm i -g yarn vercel
    ```
 
-2. Link vercel project (must have vercel project connected to repo)
+2. Install dependencies
 
    ```sh
-   yarn dlx vercel link
+   yarn install
    ```
 
-3. Add a file `.env` for env vars
+3. Link vercel project (must have vercel project connected to repo)
+
+   ```sh
+   vercel link
+   ```
+
+4. Add a file `.env` for env vars.
 
    ```sh
    > .env
 
-   # or, if you are part of the main vercel project
+   # if you are part of the main vercel project
    yarn dlx vercel env pull
-   ```
-
-4. Install dependencies
-
-   ```sh
-   yarn install
    ```
 
 5. Swap comments in `api/twitch/_getUserTwitchCredentials.js` - lines 9 and 10
@@ -43,5 +43,5 @@ This project is initialized with [Ant Design Pro](https://pro.ant.design) and [V
 ## Start project
 
 ```sh
-yarn start
+vercel dev -l 8000
 ```
