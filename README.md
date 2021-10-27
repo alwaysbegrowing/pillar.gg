@@ -4,6 +4,8 @@ This project is initialized with [Ant Design Pro](https://pro.ant.design) and [V
 
 ## Environment Setup
 
+You should have `node` 16 installed: `brew install node@16` or use a node version manager.
+
 1. Install `yarn` and `vercel
 
    ```sh
