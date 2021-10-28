@@ -246,24 +246,6 @@ export default () => {
   const handleSubmitExport = async (cropConfigs: CropConfigs) => {
     setShowExportController(false);
 
-    // const body = {
-    //   ClipData: {
-    //     videoId,
-    //     upscale: true,
-    //     clip: {
-    //       startTime,
-    //       endTime,
-    //     },
-    //   },
-    //   Outputs: cropConfigs,
-    // };
-
-    // const resp = await fetch(MOBILE_EXPORT_URL, {
-    //   method: 'POST',
-    //   headers: getHeaders() || undefined,
-    //   body: JSON.stringify(body),
-    // });
-
     const resp = await sendMobileClip(videoId, { startTime, endTime }, cropConfigs);
 
     if (resp.status === 200) {
