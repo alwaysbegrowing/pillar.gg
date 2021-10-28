@@ -16,9 +16,7 @@ import { useTime } from '@/services/hooks/playtime';
 import 'cropperjs/dist/cropper.css';
 import ExportButton from '@/components/ExportButton';
 import { ClipContext } from '@/services/contexts/ClipContext';
-import { sendHubspotEvent } from '@/services/send';
-import { MOBILE_EXPORT_URL } from '@/constants/apiUrls';
-import { getHeaders } from '@/services/fetcher';
+import { CropConfigs, sendHubspotEvent, sendMobileClip } from '@/services/send';
 import styled from 'styled-components';
 import LoginWithTwitch from '@/components/Login/LoginWithTwitch';
 
@@ -245,26 +243,28 @@ export default () => {
     return true;
   };
 
-  const handleSubmitExport = async (cropConfigs: any) => {
+  const handleSubmitExport = async (cropConfigs: CropConfigs) => {
     setShowExportController(false);
 
-    const body = {
-      ClipData: {
-        videoId,
-        upscale: true,
-        clip: {
-          startTime,
-          endTime,
-        },
-      },
-      Outputs: cropConfigs,
-    };
+    // const body = {
+    //   ClipData: {
+    //     videoId,
+    //     upscale: true,
+    //     clip: {
+    //       startTime,
+    //       endTime,
+    //     },
+    //   },
+    //   Outputs: cropConfigs,
+    // };
 
-    const resp = await fetch(MOBILE_EXPORT_URL, {
-      method: 'POST',
-      headers: getHeaders() || undefined,
-      body: JSON.stringify(body),
-    });
+    // const resp = await fetch(MOBILE_EXPORT_URL, {
+    //   method: 'POST',
+    //   headers: getHeaders() || undefined,
+    //   body: JSON.stringify(body),
+    // });
+
+    const resp = await sendMobileClip(videoId, { startTime, endTime }, cropConfigs);
 
     if (resp.status === 200) {
       setAlert(
