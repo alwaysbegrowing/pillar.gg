@@ -2,8 +2,8 @@
 
 export const ExportTypes = Object.freeze({
   mobile: 'mobile',
-  standard: 'standard',
   youtube: 'youtube',
+  clip: 'clip',
 });
 
 export interface Export {
