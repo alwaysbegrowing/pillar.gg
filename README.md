@@ -15,7 +15,7 @@ You should have `node` 16 installed: `brew install node@16` or use a node versio
 2. Install dependencies
 
    ```sh
-   yarn install
+   yarn install --immutable
    ```
 
 3. Link vercel project (must have vercel project connected to repo)
