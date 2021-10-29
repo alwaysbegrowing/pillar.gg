@@ -2787,6 +2787,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fullstory/browser@npm:^1.4.9":
+  version: 1.4.9
+  resolution: "@fullstory/browser@npm:1.4.9"
+  checksum: e7aafab188057fec94fb4851f343f4b2869ecbb5a7f14370b921fcd6b47d479cc4057dadd52d3b7d899c1c46103e656ed34982e28bcf70a3061d466888b64e4e
+  languageName: node
+  linkType: hard
+
 "@gar/promisify@npm:^1.0.1":
   version: 1.1.2
   resolution: "@gar/promisify@npm:1.1.2"
@@ -13930,6 +13937,7 @@ __metadata:
     "@aws-sdk/client-sns": ^3.36.0
     "@babel/runtime": ^7.15.4
     "@dnd-kit/sortable": ^2.0.1
+    "@fullstory/browser": ^1.4.9
     "@hubspot/api-client": ^3.4.1
     "@stripe/react-stripe-js": ^1.6.0
     "@stripe/stripe-js": ^1.19.1
