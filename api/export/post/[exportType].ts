@@ -2,6 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import fetch, { Headers } from 'node-fetch';
 
 import { CLIP_EXPORT_URL, MOBILE_EXPORT_URL } from '../../_apiUrls';
+import getTwitchUserData from '../../twitch/_getTwitchUserData';
 import type { Export } from '../../_types';
 import { ExportTypes } from '../../_types';
 
@@ -13,6 +14,11 @@ const clips = async (req: VercelRequest, res: VercelResponse) => {
   const { headers: userHeaders, body } = req;
 
   const exportType = typeof exportTypeReq === 'string' ? exportTypeReq : exportTypeReq[0];
+
+  // get their twitch user data
+  const accessToken = (userHeaders.authorization as string).split(' ')[1];
+  const userData = await getTwitchUserData(accessToken);
+  const { id: twitchId } = userData;
 
   if (!exportType) {
     return res.status(400).send({
@@ -45,6 +51,7 @@ const clips = async (req: VercelRequest, res: VercelResponse) => {
       ...data,
       videoId: body.videoId,
       uploadType,
+      twitchId,
     };
     const { _id } = await db.collection('exports').insertOne(exportObject);
     return res.status(200).json({ ...data, id: _id });
