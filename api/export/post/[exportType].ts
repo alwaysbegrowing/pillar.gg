@@ -16,8 +16,7 @@ const clips = async (req: VercelRequest, res: VercelResponse) => {
   const exportType = typeof exportTypeReq === 'string' ? exportTypeReq : exportTypeReq[0];
 
   // get their twitch user data
-  const accessToken = (userHeaders.authorization as string).split(' ')[1];
-  const userData = await getTwitchUserData(accessToken);
+  const userData = await getTwitchUserData(userHeaders.authorization);
   const { id: twitchId } = userData;
 
   if (!exportType) {
