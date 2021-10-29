@@ -31,6 +31,7 @@ interface CropConfig {
   res_y: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 export interface CropConfigs {
   [key: string]: CropConfig;
 }

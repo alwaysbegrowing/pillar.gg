@@ -10,14 +10,8 @@ const connectToDatabase = require('../../_connectToDatabase');
 
 const clips = async (req: VercelRequest, res: VercelResponse) => {
   const db = await connectToDatabase();
-  const { exportTypeReq } = req.query;
+  const exportType = req.query.exportType as string;
   const { headers: userHeaders, body } = req;
-
-  const exportType = typeof exportTypeReq === 'string' ? exportTypeReq : exportTypeReq[0];
-
-  // get their twitch user data
-  const userData = await getTwitchUserData(userHeaders.authorization);
-  const { id: twitchId } = userData;
 
   if (!exportType) {
     return res.status(400).send({
@@ -28,6 +22,18 @@ const clips = async (req: VercelRequest, res: VercelResponse) => {
   if (!Object.keys(ExportTypes).includes(exportType)) {
     return res.status(400).send({
       error: `exportType must be one of ${Object.keys(ExportTypes).join(', ')}`,
+    });
+  }
+
+  // get their twitch user data
+  const userData = await getTwitchUserData(userHeaders.authorization);
+  const { id: twitchId } = userData;
+  // accounts for both the clip and mobile export types
+  const videoId = body?.videoId ? body.videoId : body?.ClipData?.videoId;
+
+  if (!videoId) {
+    return res.status(400).send({
+      error: 'Missing videoId',
     });
   }
 
@@ -48,12 +54,12 @@ const clips = async (req: VercelRequest, res: VercelResponse) => {
     const data = await resp.json();
     const exportObject: Export = {
       ...data,
-      videoId: body.videoId,
+      videoId,
       uploadType,
       twitchId,
     };
-    const { _id } = await db.collection('exports').insertOne(exportObject);
-    return res.status(200).json({ ...data, id: _id });
+    const { insertedId } = await db.collection('exports').insertOne(exportObject);
+    return res.status(200).json({ ...data, insertedId });
   }
 
   return res.status(resp.status).json(await resp.json());
