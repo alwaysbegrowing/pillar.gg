@@ -50,6 +50,7 @@
     "@ant-design/pro-form": "^1.43.1",
     "@ant-design/pro-layout": "^6.26.2",
     "@ant-design/pro-table": "^2.55.0",
+    "@aws-sdk/client-sfn": "^3.39.0",
     "@aws-sdk/client-sns": "^3.36.0",
     "@babel/runtime": "^7.15.4",
     "@dnd-kit/sortable": "^2.0.1",

@@ -323,6 +323,45 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-sdk/client-sfn@npm:^3.39.0":
+  version: 3.39.0
+  resolution: "@aws-sdk/client-sfn@npm:3.39.0"
+  dependencies:
+    "@aws-crypto/sha256-browser": 2.0.0
+    "@aws-crypto/sha256-js": 2.0.0
+    "@aws-sdk/client-sts": 3.39.0
+    "@aws-sdk/config-resolver": 3.39.0
+    "@aws-sdk/credential-provider-node": 3.39.0
+    "@aws-sdk/fetch-http-handler": 3.38.0
+    "@aws-sdk/hash-node": 3.38.0
+    "@aws-sdk/invalid-dependency": 3.38.0
+    "@aws-sdk/middleware-content-length": 3.38.0
+    "@aws-sdk/middleware-host-header": 3.38.0
+    "@aws-sdk/middleware-logger": 3.38.0
+    "@aws-sdk/middleware-retry": 3.39.0
+    "@aws-sdk/middleware-serde": 3.38.0
+    "@aws-sdk/middleware-signing": 3.39.0
+    "@aws-sdk/middleware-stack": 3.38.0
+    "@aws-sdk/middleware-user-agent": 3.38.0
+    "@aws-sdk/node-config-provider": 3.39.0
+    "@aws-sdk/node-http-handler": 3.38.0
+    "@aws-sdk/protocol-http": 3.38.0
+    "@aws-sdk/smithy-client": 3.38.0
+    "@aws-sdk/types": 3.38.0
+    "@aws-sdk/url-parser": 3.38.0
+    "@aws-sdk/util-base64-browser": 3.37.0
+    "@aws-sdk/util-base64-node": 3.37.0
+    "@aws-sdk/util-body-length-browser": 3.37.0
+    "@aws-sdk/util-body-length-node": 3.37.0
+    "@aws-sdk/util-user-agent-browser": 3.38.0
+    "@aws-sdk/util-user-agent-node": 3.39.0
+    "@aws-sdk/util-utf8-browser": 3.37.0
+    "@aws-sdk/util-utf8-node": 3.37.0
+    tslib: ^2.3.0
+  checksum: 09c3313d0663d137992710fdef61a5d7cc39da083a2705f817b1624456e25d8c8a5846ab22dfcb629bd6449dba3f64a08794717364fa3525e0fd7ab8e7aa9f56
+  languageName: node
+  linkType: hard
+
 "@aws-sdk/client-sns@npm:^3.36.0":
   version: 3.39.0
   resolution: "@aws-sdk/client-sns@npm:3.39.0"
@@ -13971,6 +14010,7 @@ __metadata:
     "@ant-design/pro-form": ^1.43.1
     "@ant-design/pro-layout": ^6.26.2
     "@ant-design/pro-table": ^2.55.0
+    "@aws-sdk/client-sfn": ^3.39.0
     "@aws-sdk/client-sns": ^3.36.0
     "@babel/runtime": ^7.15.4
     "@dnd-kit/sortable": ^2.0.1

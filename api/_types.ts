@@ -3,7 +3,7 @@
 export const ExportTypes = Object.freeze({
   mobile: 'mobile',
   youtube: 'youtube',
-  clip: 'clip',
+  clips: 'clips',
 });
 
 export interface Export {
