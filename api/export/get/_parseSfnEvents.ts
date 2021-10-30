@@ -122,6 +122,7 @@ const parseSfnEvents = (events: HistoryEvent[], eventType: string) => {
         name,
         url: Payload.url,
         progress: UserProgressNames.done,
+        isDone: true,
       };
     }
   }
@@ -132,6 +133,7 @@ const parseSfnEvents = (events: HistoryEvent[], eventType: string) => {
       name,
       url: null,
       progress: StepProgress[eventType][name],
+      isDone: StepProgress[eventType][name] === UserProgressNames.done,
     };
   }
 
