@@ -37,7 +37,6 @@ export default () => {
   const { data: twitchData, isError: isUserError } = useUser();
   const { id: twitchId } = twitchData || {};
   const { id: videoId } = useParams<{ id: string }>();
-  // const { data: userData } = useUser();
   const { data, isLoading, isError } = useClips(videoId);
   const [clips, setClips] = useState<IndividualTimestamp[] | []>([]);
   const videoRef = useRef<ReactPlayer>(null);
@@ -59,6 +58,7 @@ export default () => {
     startTime,
     endTime,
   );
+  const [drawerWidth, setDrawerWidth] = useState(736);
 
   const isUserLoggedOut = isUserError?.status === 401;
   const seek = useCallback(
@@ -363,7 +363,7 @@ export default () => {
       <Drawer
         destroyOnClose
         title="Select a Template"
-        size="large"
+        width={drawerWidth}
         visible={showExportController}
         onClose={() => setShowExportController(false)}
       >
@@ -373,8 +373,8 @@ export default () => {
           <ExportController
             videoUrl={`https://twitch.tv/videos/${videoId}`}
             onConfirm={handleSubmitExport}
-            onCancel={() => setShowExportController(false)}
             thumbnailUrl={selectedThumbnail}
+            setDrawerWidth={setDrawerWidth}
           />
         </ClipContext.Provider>
       </Drawer>

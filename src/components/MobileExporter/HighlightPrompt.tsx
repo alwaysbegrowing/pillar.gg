@@ -10,8 +10,8 @@ function HighlightPrompt({ stage, template, cropper, onNext, onCancel }) {
 
   return stage !== Stages.SELECT_HIGHLIGHT ? null : (
     <Row gutter={24}>
-      <Col span={16}>{cropper.element}</Col>
-      <Col span={8}>
+      <Col span={20}>{cropper.element}</Col>
+      <Col span={4}>
         <Prompt
           title="Select Your Highlight"
           text="Position and resize the window over your desired highlight region."

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TemplateSelector from './TemplateSelector';
 import FaceCamPrompt from './FaceCamPrompt';
 import HighlightPrompt from './HighlightPrompt';
@@ -7,7 +7,7 @@ import Stages from './Stages';
 import templates from './Templates';
 import useVideoCropper from '@/services/hooks/useVideoCropper';
 
-function ExportController({ videoUrl, onConfirm, onCancel, thumbnailUrl }) {
+function ExportController({ videoUrl, onConfirm, onCancel, thumbnailUrl, setDrawerWidth }) {
   const [template, setTemplate] = useState(templates[0]);
   const [stage, setStage] = useState(Stages.SELECT_TEMPLATE);
   const [faceCropDimensions, setFaceCropDimensions] = useState(null);
@@ -17,6 +17,13 @@ function ExportController({ videoUrl, onConfirm, onCancel, thumbnailUrl }) {
 
   const roundEven = (x: number): number => 2 * Math.round(x / 2);
 
+  useEffect(() => {
+    if (stage === Stages.SELECT_FACE || stage === Stages.SELECT_HIGHLIGHT) {
+      setDrawerWidth('80vw');
+    } else {
+      setDrawerWidth(736);
+    }
+  }, [stage, setDrawerWidth]);
   const makeFullscreenCrops = () => {
     return {
       background: {

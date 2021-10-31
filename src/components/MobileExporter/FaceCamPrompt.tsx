@@ -10,8 +10,8 @@ function FaceCamPrompt({ stage, template, cropper, onNext, onCancel }) {
 
   return stage !== Stages.SELECT_FACE ? null : (
     <Row gutter={24}>
-      <Col span={16}>{cropper.element}</Col>
-      <Col span={8}>
+      <Col span={20}>{cropper.element}</Col>
+      <Col span={4}>
         <Prompt
           title="Select Your Face"
           text="Position and resize the window over your face camera."
