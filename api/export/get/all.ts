@@ -3,7 +3,7 @@ import { SFNClient, GetExecutionHistoryCommand } from '@aws-sdk/client-sfn';
 
 import parseSfnEvents from './_parseSfnEvents';
 import type { Export } from '../../_types';
-import getTwitchUserData from 'api/twitch/_getTwitchUserData';
+import getTwitchUserData from '../../twitch/_getTwitchUserData';
 
 const connectToDatabase = require('../../_connectToDatabase');
 
@@ -60,7 +60,7 @@ const getByTwitchId = async (req: VercelRequest, res: VercelResponse) => {
 
     const parsedEvents = parseSfnEvents(events, video.uploadType);
 
-    return { ...parsedEvents, startDate: new Date(video.startDate * 1000) };
+    return { ...parsedEvents, startDate: new Date(video.startDate * 1000), videoId: video.videoId };
   });
 
   const exportData = await Promise.all(exportDataPromises);
