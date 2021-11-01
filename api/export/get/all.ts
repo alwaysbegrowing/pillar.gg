@@ -3,17 +3,23 @@ import { SFNClient, GetExecutionHistoryCommand } from '@aws-sdk/client-sfn';
 
 import parseSfnEvents from './_parseSfnEvents';
 import type { Export } from '../../_types';
+import getTwitchUserData from 'api/twitch/_getTwitchUserData';
 
 const connectToDatabase = require('../../_connectToDatabase');
 
 const { AWS_REGION } = process.env;
 
 const getByTwitchId = async (req: VercelRequest, res: VercelResponse) => {
-  const { twitchId, page, perPage } = req.query;
+  const { page, perPage } = req.query;
+  const { headers: userHeaders } = req;
+
+  const userData = await getTwitchUserData(userHeaders.authorization);
+  const { id: twitchId } = userData;
 
   if (!twitchId) {
-    res.status(400).send('Missing twitchId');
-    return;
+    return res.status(401).send({
+      error: 'Unauthorized',
+    });
   }
 
   const db = await connectToDatabase();

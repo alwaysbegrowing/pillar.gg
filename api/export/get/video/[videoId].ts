@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { SFNClient, GetExecutionHistoryCommand } from '@aws-sdk/client-sfn';
 import parseSfnEvents from '../_parseSfnEvents';
+import getTwitchUserData from '../../../twitch/_getTwitchUserData';
 
 const connectToDatabase = require('../../../_connectToDatabase');
 
@@ -8,7 +9,11 @@ const { AWS_REGION } = process.env;
 
 const getByVideoId = async (req: VercelRequest, res: VercelResponse) => {
   const { videoId, index } = req.query;
+  const { headers: userHeaders } = req;
   const db = await connectToDatabase();
+
+  const userData = await getTwitchUserData(userHeaders.authorization);
+  const { id: twitchId } = userData;
 
   // this allows us to get other videos if there are duplicates
   const n = index ? parseInt(index as string) : 0;
@@ -23,6 +28,10 @@ const getByVideoId = async (req: VercelRequest, res: VercelResponse) => {
 
   if (!video) {
     return res.status(404).json({ error: 'Video not found' });
+  }
+
+  if (video?.twitchId !== twitchId) {
+    return res.status(403).json({ error: 'Not authorized' });
   }
 
   const sfn = new SFNClient({
