@@ -33,6 +33,8 @@ const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[])
   return [selectedClip.startTime, selectedClip.endTime];
 };
 
+const isMobile = window.innerWidth < 576;
+
 export default () => {
   const { data: twitchData, isError: isUserError } = useUser();
   const { id: twitchId } = twitchData || {};
@@ -363,7 +365,7 @@ export default () => {
       <Drawer
         destroyOnClose
         title="Select a Template"
-        width={drawerWidth}
+        width={isMobile ? 'auto' : drawerWidth}
         visible={showExportController}
         onClose={() => setShowExportController(false)}
       >
@@ -381,7 +383,7 @@ export default () => {
 
       <Row gutter={[24, 24]} key="a">
         {alert && <Col span={24}>{alert}</Col>}
-        <Col span={16} xs={24}>
+        <Col xs={24} sm={24} md={12} lg={14} xl={16} xxl={18}>
           <Space direction="vertical" style={{ width: '100%' }}>
             <VideoPlayer
               videoRef={videoRef}
@@ -411,7 +413,7 @@ export default () => {
           </Space>
         </Col>
 
-        <Col span={8} xs={24}>
+        <Col xs={24} sm={24} md={12} lg={10} xl={8} xxl={6}>
           <ClipList
             clipInfo={{ clips, setClips }}
             clipIdInfo={{ selectedClipId, setSelectedClipId }}
