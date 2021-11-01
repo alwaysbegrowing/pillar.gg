@@ -3603,6 +3603,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/luxon@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "@types/luxon@npm:2.0.5"
+  checksum: 2d0229ade7e5af3f8633ee491f7417ca5497885b531f2d86db2e1f65686bb43c7e884505ee003af0ebef48c4db30247e2859ba0c830863d36827f3b8ec7299ac
+  languageName: node
+  linkType: hard
+
 "@types/mdast@npm:^3.0.0":
   version: 3.0.10
   resolution: "@types/mdast@npm:3.0.10"
@@ -12353,6 +12360,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"luxon@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "luxon@npm:2.0.2"
+  checksum: eb2e366cf41a129704ae3213e0aea3e1504390af2a84322a5bbb6a22c92d96c7cb70e58b941a109c5e1bfbed51784d08130278feeee6cdf169940af90a68ded5
+  languageName: node
+  linkType: hard
+
 "make-dir@npm:^3.0.0, make-dir@npm:^3.0.2":
   version: 3.1.0
   resolution: "make-dir@npm:3.1.0"
@@ -14022,6 +14036,7 @@ __metadata:
     "@types/history": ^4.7.9
     "@types/jest": ^26.0.0
     "@types/lodash": ^4.14.175
+    "@types/luxon": ^2.0.5
     "@types/qs": ^6.9.7
     "@types/react": ^16.9.17
     "@types/react-dom": ^16.8.4
@@ -14052,6 +14067,7 @@ __metadata:
     jsdom-global: ^3.0.2
     lint-staged: ^10.0.0
     lodash: ^4.17.11
+    luxon: ^2.0.2
     mockjs: ^1.0.1-beta3
     moment: ^2.25.3
     mongodb: ^3.6.2

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Table, Spin } from 'antd';
 import { CheckCircleTwoTone } from '@ant-design/icons';
+import { DateTime } from 'luxon';
 
 import { useExports } from '@/services/hooks/export';
 import { useVideos } from '@/services/hooks/api';
@@ -56,16 +57,18 @@ const ExportsTable = ({ page, perPage }: ExportsTableProps) => {
       title: 'Render Start',
       dataIndex: 'startDate',
       key: 'startDate',
-      render: (text: string) => {
-        return text;
+      render: (start: Date) => {
+        const fancyDate = DateTime.fromISO(start.toLocaleString());
+        return fancyDate.toLocaleString(DateTime.DATETIME_SHORT);
       },
     },
     {
       title: 'Render End',
       dataIndex: 'endDate',
       key: 'endDate',
-      render: (text: string) => {
-        return text;
+      render: (end: Date) => {
+        const fancyDate = DateTime.fromISO(end.toLocaleString());
+        return fancyDate.toLocaleString(DateTime.DATETIME_SHORT);
       },
     },
     {
