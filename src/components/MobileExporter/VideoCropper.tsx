@@ -18,7 +18,7 @@ const VideoCropper = React.forwardRef(({ aspectRatio, thumbnailUrl }, ref) => {
   return (
     <>
       <div style={playerStyles}>
-        <Image src={thumbnailUrl} />
+        <Image width="100%" src={thumbnailUrl} />
       </div>
       <Cropper
         src={picture}

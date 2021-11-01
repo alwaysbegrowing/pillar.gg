@@ -4,14 +4,7 @@ import Prompt from './ExportStepPrompt';
 import Stages from './Stages';
 import CropPreview from './CropPreview';
 
-function PreviewPrompt({
-  stage,
-  template,
-  faceCropDimensions,
-  highlightCropDimensions,
-  onNext,
-  onCancel,
-}) {
+function PreviewPrompt({ stage, template, faceCropDimensions, highlightCropDimensions, onNext }) {
   return stage !== Stages.PREVIEW ? null : (
     <Row gutter={24}>
       <Col span={16}>
@@ -26,7 +19,6 @@ function PreviewPrompt({
           title="Preview Results"
           text="Verify the footage looks correct."
           onNext={onNext}
-          onCancel={onCancel}
           buttonText="Accept and Export"
         />
       </Col>
