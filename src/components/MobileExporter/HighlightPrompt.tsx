@@ -5,18 +5,19 @@ import Stages from './Stages';
 
 const { Title } = Typography;
 
-function HighlightPrompt({ stage, template, cropper, onNext, onCancel }) {
+function HighlightPrompt({ stage, template, cropper, onNext }: any) {
   const [aspectRatio, setAspectRatio] = useState(template.highlight.aspect);
 
   return stage !== Stages.SELECT_HIGHLIGHT ? null : (
     <Row gutter={24}>
-      <Col span={20}>{cropper.element}</Col>
-      <Col span={4}>
+      <Col xs={24} sm={20} lg={16}>
+        {cropper.element}
+      </Col>
+      <Col xs={24} sm={4} lg={8}>
         <Prompt
           title="Select Your Highlight"
           text="Position and resize the window over your desired highlight region."
           onNext={onNext}
-          onCancel={onCancel}
           buttonText="Next"
         />
         {!template.lockAspectRatio && (

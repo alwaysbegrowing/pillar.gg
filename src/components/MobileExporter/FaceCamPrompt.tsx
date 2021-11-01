@@ -5,7 +5,7 @@ import Stages from './Stages';
 
 const { Title } = Typography;
 
-function FaceCamPrompt({ stage, template, cropper, onNext, onCancel }) {
+function FaceCamPrompt({ stage, template, cropper, onNext }) {
   const [aspectRatio, setAspectRatio] = useState(template.face?.aspect);
 
   return stage !== Stages.SELECT_FACE ? null : (
@@ -16,7 +16,6 @@ function FaceCamPrompt({ stage, template, cropper, onNext, onCancel }) {
           title="Select Your Face"
           text="Position and resize the window over your face camera."
           onNext={onNext}
-          onCancel={onCancel}
           buttonText="Next"
         />
         {!template.lockAspectRatio && (

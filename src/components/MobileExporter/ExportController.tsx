@@ -7,7 +7,7 @@ import Stages from './Stages';
 import templates from './Templates';
 import useVideoCropper from '@/services/hooks/useVideoCropper';
 
-function ExportController({ videoUrl, onConfirm, onCancel, thumbnailUrl, setDrawerWidth }) {
+function ExportController({ videoUrl, onConfirm, thumbnailUrl, setDrawerWidth }) {
   const [template, setTemplate] = useState(templates[0]);
   const [stage, setStage] = useState(Stages.SELECT_TEMPLATE);
   const [faceCropDimensions, setFaceCropDimensions] = useState(null);
@@ -128,14 +128,13 @@ function ExportController({ videoUrl, onConfirm, onCancel, thumbnailUrl, setDraw
 
   return (
     <>
-      <TemplateSelector stage={stage} onSelect={handleTemplateSelected} onCancel={onCancel} />
+      <TemplateSelector stage={stage} onSelect={handleTemplateSelected} />
       {template.face && (
         <FaceCamPrompt
           stage={stage}
           template={template}
           cropper={faceCamCropper}
           onNext={handleFaceCamSelected}
-          onCancel={onCancel}
         />
       )}
       <HighlightPrompt
@@ -143,7 +142,6 @@ function ExportController({ videoUrl, onConfirm, onCancel, thumbnailUrl, setDraw
         template={template}
         cropper={highlightCropper}
         onNext={handleGameplaySelected}
-        onCancel={onCancel}
       />
       <PreviewPrompt
         stage={stage}
@@ -151,7 +149,6 @@ function ExportController({ videoUrl, onConfirm, onCancel, thumbnailUrl, setDraw
         faceCropDimensions={faceCropDimensions}
         highlightCropDimensions={highlightCropDimensions}
         onNext={handlePreviewAccepted}
-        onCancel={onCancel}
       />
     </>
   );

@@ -33,9 +33,9 @@ const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[])
   return [selectedClip.startTime, selectedClip.endTime];
 };
 
-const isMobile = window.innerWidth < 576;
-
 export default () => {
+  const isSmall = window.innerWidth < 768;
+
   const { data: twitchData, isError: isUserError } = useUser();
   const { id: twitchId } = twitchData || {};
   const { id: videoId } = useParams<{ id: string }>();
@@ -62,6 +62,14 @@ export default () => {
   );
   const [drawerWidth, setDrawerWidth] = useState(736);
 
+  const localStorageInvitation = localStorage.getItem('numShownInvitation');
+  const startingInvitation = localStorageInvitation ? parseInt(localStorageInvitation) : 0;
+  const [numInvitation, setNumInvitation] = useState(startingInvitation);
+
+  useEffect(() => {
+    localStorage.setItem('numShownInvitation', numInvitation.toString());
+  }, [numInvitation]);
+
   const isUserLoggedOut = isUserError?.status === 401;
   const seek = useCallback(
     async (seekTime: number) => {
@@ -73,11 +81,15 @@ export default () => {
     [videoRef],
   );
 
-  const setPlaytime = (playtime: number) => {
-    const newTime = startTime + playtime;
-    setSecPlayed(newTime);
-    seek(newTime);
-  };
+  const setPlaytime = useCallback(
+    (playtime: number) => {
+      const newTime = startTime + playtime;
+      setSecPlayed(newTime);
+      seek(newTime);
+    },
+    [seek, setSecPlayed, startTime],
+  );
+
   const toggleExportInvitationVisiblity = useCallback(() => {
     setExportInvitationIsVisible(!exportInvitationIsVisible);
     setExportInvitationWasToggled(true);
@@ -95,28 +107,24 @@ export default () => {
       setSelectedClipId(data[0].id);
       setPlaytime(data[0].startTime);
     }
-  }, [data, selectedClipId]);
+  }, [data, selectedClipId, setPlaytime]);
 
   useEffect(() => {
-    if (localStorage.getItem('numShownInvitation') == null)
-      localStorage.setItem('numShownInvitation', '0');
     if (
-      playedSeconds > 3 &&
+      playedSeconds > 5 &&
       !exportInvitationIsVisible &&
       !exportInvitationWasToggled &&
-      parseInt(localStorage.getItem('numShownInvitation')) < 3
+      numInvitation < 3
     ) {
       toggleExportInvitationVisiblity();
-      const numShownInvitation = localStorage.getItem('numShownInvitation');
-      if (numShownInvitation)
-        localStorage.setItem('numShownInvitation', String(Number(numShownInvitation) + 1));
-      else localStorage.setItem('numShownInvitation', '1');
+      setNumInvitation((i) => i + 1);
     }
   }, [
     exportInvitationIsVisible,
     playedSeconds,
     toggleExportInvitationVisiblity,
     exportInvitationWasToggled,
+    numInvitation,
   ]);
 
   const play = useCallback(
@@ -365,7 +373,7 @@ export default () => {
       <Drawer
         destroyOnClose
         title="Select a Template"
-        width={isMobile ? 'auto' : drawerWidth}
+        width={isSmall ? 'auto' : drawerWidth}
         visible={showExportController}
         onClose={() => setShowExportController(false)}
       >
