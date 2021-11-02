@@ -23,9 +23,9 @@ function useUser() {
 
   const url = twitchId ? otherUrl : selfUrl;
   const { data, error, mutate } = useSWR(url, fetcher);
-  const userData = data?.data?.[0];
 
-  if (userData) {
+  if (!error && data) {
+    const userData = data?.data?.[0];
     FullStory.identify(userData.id, {
       display_name: userData.display_name,
       email: userData.email,
@@ -35,7 +35,7 @@ function useUser() {
   }
 
   return {
-    data: userData,
+    data: data?.data?.[0],
     isLoading: !error && !data,
     isError: error,
     mutate: mutate,
