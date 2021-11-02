@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import useSWR from 'swr';
 import { fetcher } from '../fetcher';
 import { GlobalContext } from '../../ContextWrapper';
+import * as FullStory from '@fullstory/browser';
 
 interface DbUser {
   display_name: string;
@@ -22,9 +23,19 @@ function useUser() {
 
   const url = twitchId ? otherUrl : selfUrl;
   const { data, error, mutate } = useSWR(url, fetcher);
+  const userData = data?.data?.[0];
+
+  if (userData) {
+    FullStory.identify(userData.id, {
+      display_name: userData.display_name,
+      email: userData.email,
+    });
+  } else {
+    FullStory.anonymize();
+  }
 
   return {
-    data: data?.data?.[0],
+    data: userData,
     isLoading: !error && !data,
     isError: error,
     mutate: mutate,
