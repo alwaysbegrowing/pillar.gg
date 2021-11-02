@@ -34,10 +34,11 @@ const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[])
 };
 
 export default () => {
+  const isSmall = window.innerWidth < 768;
+
   const { data: twitchData, isError: isUserError } = useUser();
   const { id: twitchId } = twitchData || {};
   const { id: videoId } = useParams<{ id: string }>();
-  // const { data: userData } = useUser();
   const { data, isLoading, isError } = useClips(videoId);
   const [clips, setClips] = useState<IndividualTimestamp[] | []>([]);
   const videoRef = useRef<ReactPlayer>(null);
@@ -59,6 +60,15 @@ export default () => {
     startTime,
     endTime,
   );
+  const [drawerWidth, setDrawerWidth] = useState(736);
+
+  const localStorageInvitation = localStorage.getItem('numShownInvitation');
+  const startingInvitation = localStorageInvitation ? parseInt(localStorageInvitation) : 0;
+  const [numInvitation, setNumInvitation] = useState(startingInvitation);
+
+  useEffect(() => {
+    localStorage.setItem('numShownInvitation', numInvitation.toString());
+  }, [numInvitation]);
 
   const isUserLoggedOut = isUserError?.status === 401;
   const seek = useCallback(
@@ -71,11 +81,15 @@ export default () => {
     [videoRef],
   );
 
-  const setPlaytime = (playtime: number) => {
-    const newTime = startTime + playtime;
-    setSecPlayed(newTime);
-    seek(newTime);
-  };
+  const setPlaytime = useCallback(
+    (playtime: number) => {
+      const newTime = startTime + playtime;
+      setSecPlayed(newTime);
+      seek(newTime);
+    },
+    [seek, setSecPlayed, startTime],
+  );
+
   const toggleExportInvitationVisiblity = useCallback(() => {
     setExportInvitationIsVisible(!exportInvitationIsVisible);
     setExportInvitationWasToggled(true);
@@ -93,28 +107,24 @@ export default () => {
       setSelectedClipId(data[0].id);
       setPlaytime(data[0].startTime);
     }
-  }, [data, selectedClipId]);
+  }, [data, selectedClipId, setPlaytime]);
 
   useEffect(() => {
-    if (localStorage.getItem('numShownInvitation') == null)
-      localStorage.setItem('numShownInvitation', '0');
     if (
-      playedSeconds > 3 &&
+      playedSeconds > 5 &&
       !exportInvitationIsVisible &&
       !exportInvitationWasToggled &&
-      parseInt(localStorage.getItem('numShownInvitation')) < 3
+      numInvitation < 3
     ) {
       toggleExportInvitationVisiblity();
-      const numShownInvitation = localStorage.getItem('numShownInvitation');
-      if (numShownInvitation)
-        localStorage.setItem('numShownInvitation', String(Number(numShownInvitation) + 1));
-      else localStorage.setItem('numShownInvitation', '1');
+      setNumInvitation((i) => i + 1);
     }
   }, [
     exportInvitationIsVisible,
     playedSeconds,
     toggleExportInvitationVisiblity,
     exportInvitationWasToggled,
+    numInvitation,
   ]);
 
   const play = useCallback(
@@ -363,7 +373,7 @@ export default () => {
       <Drawer
         destroyOnClose
         title="Select a Template"
-        size="large"
+        width={isSmall ? 'auto' : drawerWidth}
         visible={showExportController}
         onClose={() => setShowExportController(false)}
       >
@@ -373,15 +383,15 @@ export default () => {
           <ExportController
             videoUrl={`https://twitch.tv/videos/${videoId}`}
             onConfirm={handleSubmitExport}
-            onCancel={() => setShowExportController(false)}
             thumbnailUrl={selectedThumbnail}
+            setDrawerWidth={setDrawerWidth}
           />
         </ClipContext.Provider>
       </Drawer>
 
       <Row gutter={[24, 24]} key="a">
         {alert && <Col span={24}>{alert}</Col>}
-        <Col span={16}>
+        <Col xs={24} sm={24} md={12} lg={14} xl={16} xxl={18}>
           <Space direction="vertical" style={{ width: '100%' }}>
             <VideoPlayer
               videoRef={videoRef}
@@ -411,7 +421,7 @@ export default () => {
           </Space>
         </Col>
 
-        <Col span={8}>
+        <Col xs={24} sm={24} md={12} lg={10} xl={8} xxl={6}>
           <ClipList
             clipInfo={{ clips, setClips }}
             clipIdInfo={{ selectedClipId, setSelectedClipId }}
