@@ -24,7 +24,7 @@ You should have `node` 16 installed: `brew install node@16` or use a node versio
    vercel link
    ```
 
-4. Add a file `.env` for env vars.
+4. Add a file `.env` for env vars
 
    ```sh
    > .env
@@ -38,3 +38,24 @@ You should have `node` 16 installed: `brew install node@16` or use a node versio
 ```sh
 vercel dev -l 8000
 ```
+
+## Troubleshooting
+
+- Clean `yarn` local or global cache
+
+  ```sh
+  yarn cache clean
+  yarn cache clean --mirror
+  ```
+
+- Clean `umi` build artifacts
+
+  ```sh
+  rm -r src/.umi*
+  ```
+
+- Rebuild dependencies
+
+  ```sh
+  yarn rebuild
+  ```
