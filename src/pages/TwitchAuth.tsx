@@ -11,8 +11,7 @@ export default () => {
       // get access token
       const loginResponse = await fetch(`/api/user/login?code=${code}`);
       const loginResult = await loginResponse.json();
-      const accessToken = loginResult?.access_token;
-      localStorage.setItem('access_token', accessToken ?? '');
+      localStorage.setItem('access_token', loginResult?.access_token ?? '');
 
       window.close();
     };

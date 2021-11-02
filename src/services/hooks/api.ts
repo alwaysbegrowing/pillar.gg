@@ -25,7 +25,7 @@ function useUser() {
   const { data, error, mutate } = useSWR(url, fetcher);
 
   if (!error && data) {
-    const userData = data?.data?.[0];
+    const userData = data.data?.[0];
     FullStory.identify(userData.id, {
       display_name: userData.display_name,
       email: userData.email,
