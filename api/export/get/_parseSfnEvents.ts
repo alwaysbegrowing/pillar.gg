@@ -1,29 +1,29 @@
 import type { HistoryEvent } from '@aws-sdk/client-sfn';
 
-const ClipsStepNames = Object.freeze({
-  processClips: 'Process Clips',
-  downloadIndividualClips: 'Download Individual Clips',
-  callMediaconvert: 'Call Mediaconvert',
-  uploadToYoutube: 'Upload to Youtube?',
-  sendEmail: 'Send Email',
-  sendExportFailureEmail: 'Send Export Failure Email',
-});
+enum ClipsStepNames {
+  processClips = 'Process Clips',
+  downloadIndividualClips = 'Download Individual Clips',
+  callMediaconvert = 'Call Mediaconvert',
+  uploadToYoutube = 'Upload to Youtube?',
+  sendEmail = 'Send Email',
+  sendExportFailureEmail = 'Send Export Failure Email',
+}
 
-const MobileStepNames = Object.freeze({
-  downloadClips: 'Download Clips',
-  cropVideo: 'Crop Video',
-  CombineVideo: 'Combine Video',
-  sendMobileNotificationEmail: 'Send Mobile Notification Email',
-  sendFailureEmail: 'Send Failure Email',
-});
+enum MobileStepNames {
+  downloadClips = 'Download Clips',
+  cropVideo = 'Crop Video',
+  CombineVideo = 'Combine Video',
+  sendMobileNotificationEmail = 'Send Mobile Notification Email',
+  sendFailureEmail = 'Send Failure Email',
+}
 
-const UserProgressNames = Object.freeze({
-  done: 'Done.',
-  rendering: 'Rendering...',
-  gettingClips: 'Getting Clip(s)...',
-  failed: 'Failed.',
-  uploading: 'Uploading...',
-});
+enum UserProgressNames {
+  done = 'Done.',
+  rendering = 'Rendering...',
+  gettingClips = 'Getting Clip(s)...',
+  failed = 'Failed.',
+  uploading = 'Uploading...',
+}
 
 const ClipsStepProgress = Object.freeze({
   'Process Clips': UserProgressNames.gettingClips,
@@ -56,13 +56,10 @@ const getEventDetails = (event: HistoryEvent) => {
   const eventKeys = Object.keys(event);
 
   const detailsKey = eventKeys.find((key) => {
-    if (!key.includes('Details')) {
-      return false;
-    }
     if (event[key] === undefined) {
       return false;
     }
-    return true;
+    return key.includes('Details');
   });
 
   const details = detailsKey ? event[detailsKey] : undefined;
