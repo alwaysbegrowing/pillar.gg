@@ -13,24 +13,26 @@ export default () => {
       // get access token
       const loginResponse = await fetch(`/api/user/login?code=${code}`);
       const loginResult = await loginResponse.json();
-      const accessToken = loginResult.access_token;
-      localStorage.setItem('access_token', accessToken);
+      const accessToken = loginResult?.access_token;
+      localStorage.setItem('access_token', accessToken ?? '');
 
-      // get user info
-      const userResponse = await fetch('https://api.twitch.tv/helix/users', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Client-ID': twitchClientId,
-        },
-      });
-      const { data } = await userResponse.json();
-      const userData = data?.[0];
-
-      if (userData) {
-        FullStory.identify(userData.id, {
-          display_name: userData.display_name,
-          email: userData.email,
+      if (accessToken) {
+        // get user info
+        const userResponse = await fetch('https://api.twitch.tv/helix/users', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Client-ID': twitchClientId,
+          },
         });
+        const { data } = await userResponse.json();
+        const userData = data?.[0];
+
+        if (userData) {
+          FullStory.identify(userData.id, {
+            display_name: userData.display_name,
+            email: userData.email,
+          });
+        }
       }
 
       window.close();
