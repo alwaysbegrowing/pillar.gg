@@ -3521,6 +3521,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/humanize-duration@npm:^3":
+  version: 3.27.0
+  resolution: "@types/humanize-duration@npm:3.27.0"
+  checksum: 2c3dc11efec4ff6ae352d9738955ae952a1336c4123c41736dfe30dc58a5bd42ead3f8ee1827e0da8feb7b70e4e3c2f9367925f9bb236ffcfc05799014058683
+  languageName: node
+  linkType: hard
+
 "@types/invariant@npm:^2.2.31":
   version: 2.2.35
   resolution: "@types/invariant@npm:2.2.35"
@@ -10074,6 +10081,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"humanize-duration@npm:^3.27.0":
+  version: 3.27.0
+  resolution: "humanize-duration@npm:3.27.0"
+  checksum: db34111b391056bd0da8d6a3cc965ee52c2de497892c85f16d5559529232924dfabd8f3c4210135fbd12d0cea7da34dade05accc14ef69f2cba758ff4b4bbd3d
+  languageName: node
+  linkType: hard
+
 "humanize-ms@npm:^1.2.1":
   version: 1.2.1
   resolution: "humanize-ms@npm:1.2.1"
@@ -14034,6 +14048,7 @@ __metadata:
     "@types/classnames": ^2.3.1
     "@types/express": ^4.17.13
     "@types/history": ^4.7.9
+    "@types/humanize-duration": ^3
     "@types/jest": ^26.0.0
     "@types/lodash": ^4.14.175
     "@types/luxon": ^2.0.5
@@ -14064,6 +14079,7 @@ __metadata:
     express: ^4.17.1
     gh-pages: ^3.2.3
     googleapis: ^84.0.0
+    humanize-duration: ^3.27.0
     jsdom-global: ^3.0.2
     lint-staged: ^10.0.0
     lodash: ^4.17.11

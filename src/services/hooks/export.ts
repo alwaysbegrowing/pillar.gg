@@ -2,7 +2,7 @@ import useSWR from 'swr';
 import { fetcher } from '../fetcher';
 
 const useExport = (id: string) => {
-  const { data, error } = useSWR(`/api/export/get/video/${id}`, fetcher);
+  const { data, error } = useSWR(`/api/export/get/video/${id}`, fetcher, { refreshInterval: 1000 });
   return { data, isLoading: !error && !data, isError: error };
 };
 
@@ -11,6 +11,7 @@ const useExports = (page: number, perPage: number = 10, userId: string | number 
   const { data, error } = useSWR(
     `/api/export/get/all?page=${page}&perPage=${perPage}${userIdString}`,
     fetcher,
+    { refreshInterval: 1000 },
   );
   return { data, isLoading: !error && !data, isError: error };
 };

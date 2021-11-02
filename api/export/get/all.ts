@@ -7,7 +7,15 @@ import getTwitchUserData from '../../twitch/_getTwitchUserData';
 
 const connectToDatabase = require('../../_connectToDatabase');
 
-const { AWS_REGION } = process.env;
+const { AWS_SFN_REGION, AWS_SFN_ACCESS_KEY, AWS_SFN_SECRET_KEY } = process.env;
+
+const credentials =
+  AWS_SFN_ACCESS_KEY && AWS_SFN_SECRET_KEY
+    ? {
+        accessKeyId: AWS_SFN_ACCESS_KEY as string,
+        secretAccessKey: AWS_SFN_SECRET_KEY as string,
+      }
+    : undefined;
 
 const getByTwitchId = async (req: VercelRequest, res: VercelResponse) => {
   const { userId: reqTwitchId, page, perPage } = req.query;
@@ -27,7 +35,8 @@ const getByTwitchId = async (req: VercelRequest, res: VercelResponse) => {
   const db = await connectToDatabase();
 
   const sfn = new SFNClient({
-    region: AWS_REGION as string,
+    region: AWS_SFN_REGION,
+    credentials,
   });
 
   const pageNumber = parseInt(page as string, 10) || 1;
@@ -70,7 +79,7 @@ const getByTwitchId = async (req: VercelRequest, res: VercelResponse) => {
 
     const parsedEvents = parseSfnEvents(events, video.uploadType);
 
-    return { ...parsedEvents, startDate: new Date(video.startDate * 1000), videoId: video.videoId };
+    return { ...video, ...parsedEvents, startDate: new Date(video.startDate * 1000) };
   });
 
   const exportData = await Promise.all(exportDataPromises);

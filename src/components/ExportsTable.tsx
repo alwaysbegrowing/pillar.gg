@@ -1,9 +1,10 @@
 import React, { useContext, useState } from 'react';
-import { Button, Image, Table, Spin, Pagination } from 'antd';
+import { Button, Image, Table, Spin, Pagination, Popover, Typography } from 'antd';
 import { history } from 'umi';
-import { DownloadOutlined } from '@ant-design/icons';
+import { DownloadOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { CheckCircleTwoTone } from '@ant-design/icons';
-import { DateTime } from 'luxon';
+import { DateTime, Duration } from 'luxon';
+import humanizeDuration from 'humanize-duration';
 
 import { useExports } from '@/services/hooks/export';
 import { useVideos } from '@/services/hooks/api';
@@ -61,10 +62,16 @@ const ExportsTable = ({ page }: ExportsTableProps) => {
     },
     {
       title: 'Stream Title',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'title',
+      key: 'title',
+    },
+    {
+      title: 'Export Type',
+      dataIndex: 'type',
+      key: 'type',
       render: (text: string) => {
-        return text;
+        // capitalize the first letter
+        return text.charAt(0).toUpperCase() + text.slice(1);
       },
     },
     {
@@ -74,36 +81,60 @@ const ExportsTable = ({ page }: ExportsTableProps) => {
       render: (text: string) => {
         if (text === 'Done.') {
           return (
-            <React.Fragment>
-              <CheckCircleTwoTone twoToneColor="#52c41a" />
-              Done
-            </React.Fragment>
+            <Typography.Text>
+              <CheckCircleTwoTone twoToneColor="#52c41a" /> Done
+            </Typography.Text>
+          );
+        }
+        if (text === 'Failure') {
+          return (
+            <Typography.Text>
+              <InfoCircleOutlined twoToneColor="#eb2f96" /> Failure
+            </Typography.Text>
           );
         }
         return (
-          <React.Fragment>
-            <Spin />
-            {text}
-          </React.Fragment>
+          <Typography.Text>
+            <Spin /> {text}
+          </Typography.Text>
         );
       },
     },
     {
-      title: 'Render Start',
-      dataIndex: 'startDate',
-      key: 'startDate',
-      render: (start: Date) => {
-        const fancyDate = DateTime.fromISO(start.toLocaleString());
-        return fancyDate.toLocaleString(DateTime.DATETIME_SHORT);
+      title: 'Render Time',
+      dataIndex: 'renderTime',
+      key: 'renderTime',
+      render: (millis: number) => {
+        const humanizedText = humanizeDuration(millis, { round: true, largest: 2 });
+        const fullDuration = Duration.fromMillis(millis).toFormat('hh:mm:ss.SS');
+        return (
+          <Typography.Text>
+            {humanizedText}{' '}
+            <Popover content={fullDuration}>
+              {' '}
+              <InfoCircleOutlined />{' '}
+            </Popover>
+          </Typography.Text>
+        );
       },
     },
     {
-      title: 'Render End',
+      title: 'Start Time',
+      dataIndex: 'startDate',
+      key: 'startDate',
+      render: (start: Date) => {
+        return DateTime.fromISO(start.toLocaleString()).toLocaleString(DateTime.DATETIME_SHORT);
+      },
+    },
+    {
+      title: 'Finish Time',
       dataIndex: 'endDate',
       key: 'endDate',
-      render: (end: Date) => {
-        const fancyDate = DateTime.fromISO(end.toLocaleString());
-        return fancyDate.toLocaleString(DateTime.DATETIME_SHORT);
+      render: (end: any) => {
+        if (end === null) {
+          return '-';
+        }
+        return DateTime.fromISO(end.toLocaleString()).toLocaleString(DateTime.DATETIME_SHORT);
       },
     },
     {
@@ -112,17 +143,12 @@ const ExportsTable = ({ page }: ExportsTableProps) => {
       key: 'url',
       render: (url: any) => {
         if (url === null) {
-          return (
-            <Button disabled loading>
-              Download
-            </Button>
-          );
+          return null;
         }
 
         return (
           <Button href={url}>
             <DownloadOutlined />
-            Download
           </Button>
         );
       },
@@ -134,13 +160,28 @@ const ExportsTable = ({ page }: ExportsTableProps) => {
     // format the twitch thumbnail url
     let thumbnail_url = 'https://apppillargg-misc-assets.s3.amazonaws.com/logomark.svg';
     if (video?.thumbnail_url) {
-      thumbnail_url = video.thumbnail_url.replace('%{width}', '150').replace('%{height}', '84');
+      thumbnail_url = video.thumbnail_url.replace('%{width}', '1280').replace('%{height}', '720');
     }
+
+    // get the render time.
+    const start = DateTime.fromISO(exportItem.startDate);
+    const end = DateTime.fromISO(exportItem?.endDate || DateTime.local().toISO());
+
+    const renderTime = end.diff(start, ['milliseconds']).toObject();
+
+    const title = video?.title && video?.url ? <a href={video.url}>{video.title}</a> : 'Video';
+
+    const url = exportItem.url;
+
     return {
       ...exportItem,
+      url,
+      endDate: exportItem.isDone ? exportItem.endDate : null,
       thumbnail_url,
-      name: video?.title || 'Video',
+      title,
       progress: exportItem.progress,
+      renderTime: renderTime.milliseconds || 0,
+      type: exportItem.uploadType,
     };
   });
 

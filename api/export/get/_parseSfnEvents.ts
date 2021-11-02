@@ -27,7 +27,7 @@ enum UserProgressNames {
 
 const ClipsStepProgress = Object.freeze({
   'Process Clips': UserProgressNames.gettingClips,
-  'Download Individual Clips': UserProgressNames.gettingClips,
+  'Download Individual Clips': UserProgressNames.rendering,
   'Call Mediaconvert': UserProgressNames.rendering,
   'Upload to Youtube?': UserProgressNames.uploading,
   'Send Email': UserProgressNames.done,
@@ -82,6 +82,12 @@ const parseSfnEvents = (events: HistoryEvent[], eventType: string) => {
         return false;
       }
 
+      if (details?.type) {
+        if (details?.type.includes('Failed')) {
+          return true;
+        }
+      }
+
       const acceptableNames = Object.values(StepNames[eventType]);
 
       if (details?.name) {
@@ -108,7 +114,19 @@ const parseSfnEvents = (events: HistoryEvent[], eventType: string) => {
   const details = getEventDetails(lastEvent);
 
   const { timestamp } = lastEvent;
-  const { name, output } = details;
+  const { name, output, type } = details;
+
+  if (type) {
+    if (type.includes('Failed')) {
+      return {
+        endDate: timestamp,
+        name: 'Failure',
+        progress: UserProgressNames.failed,
+        isDone: false,
+        url: null,
+      };
+    }
+  }
 
   if (output) {
     const outputObj = JSON.parse(output);
@@ -125,12 +143,14 @@ const parseSfnEvents = (events: HistoryEvent[], eventType: string) => {
   }
 
   if (Object.values(StepNames[eventType]).includes(name)) {
+    const isDone = StepProgress[eventType][name] === UserProgressNames.done;
+    const endDate = isDone ? timestamp : new Date();
     return {
-      endDate: timestamp,
+      endDate,
       name,
       url: null,
       progress: StepProgress[eventType][name],
-      isDone: StepProgress[eventType][name] === UserProgressNames.done,
+      isDone,
     };
   }
 
