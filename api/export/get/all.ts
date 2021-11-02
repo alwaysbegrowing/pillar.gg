@@ -48,10 +48,18 @@ const getByTwitchId = async (req: VercelRequest, res: VercelResponse) => {
     .limit(perPageNumber)
     .toArray();
 
+  // get the total number of exports
+  const totalExports = await db
+    .collection('exports')
+    .find({
+      twitchId,
+    })
+    .count();
+
   const exportDataPromises = videoExports.map(async (video: Export) => {
     const command = new GetExecutionHistoryCommand({
       executionArn: video.executionArn,
-      maxResults: 1000,
+      maxResults: 100,
     });
 
     const { events } = await sfn.send(command);
@@ -67,7 +75,10 @@ const getByTwitchId = async (req: VercelRequest, res: VercelResponse) => {
 
   const exportData = await Promise.all(exportDataPromises);
 
-  return res.status(200).json(exportData);
+  return res.status(200).json({
+    totalCount: totalExports,
+    exports: exportData,
+  });
 };
 
 export default getByTwitchId;

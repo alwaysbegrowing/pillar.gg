@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
-import { Button, Col, Table, Row, Spin } from 'antd';
+import { Button, Col, Image, Table, Row, Spin } from 'antd';
+import { history } from 'umi';
 import {
   // DoubleRightOutlined,
   DownloadOutlined,
@@ -22,17 +23,17 @@ interface ExportsPaginatorProps {
 
 const ExportsPaginator = ({ page, perPage, items }: ExportsPaginatorProps) => {
   const toStart = () => {
-    window.location.href = `/exports?page=1&perPage=${perPage}`;
+    history.push(`/exports?page=1&perPage=${perPage}`);
   };
 
   const incrementPage = () => {
     const newPage = page + 1;
-    window.location.href = `/exports?page=${newPage}&perPage=${perPage}`;
+    history.push(`/exports?page=${newPage}&perPage=${perPage}`);
   };
 
   const decrementPage = () => {
     const newPage = page - 1;
-    window.location.href = `/exports?page=${newPage}&perPage=${perPage}`;
+    history.push(`/exports?page=${newPage}&perPage=${perPage}`);
   };
 
   const leftDisabled = page === 1;
@@ -75,7 +76,7 @@ interface ExportsTableProps {
 const ExportsTable = ({ page, perPage }: ExportsTableProps) => {
   const { twitchId } = useContext(GlobalContext);
 
-  const { data: exports, isLoading, isError } = useExports(page, perPage, twitchId);
+  const { data, isLoading, isError } = useExports(page, perPage, twitchId);
   const { data: videos, isLoading: isLoadingVideos, isError: isErrorVideos } = useVideos();
 
   if (isLoading || isLoadingVideos) {
@@ -86,13 +87,17 @@ const ExportsTable = ({ page, perPage }: ExportsTableProps) => {
     return <div>Error</div>;
   }
 
+  const { exports /*, totalCount*/ } = data;
+
+  // const numPages = Math.ceil(totalCount / perPage);
+
   const columns = [
     {
       title: 'Thumbnail',
       dataIndex: 'thumbnail_url',
       key: 'thumbnail_url',
       render: (thumbnail_url: string) => (
-        <img src={thumbnail_url} alt="thumbnail" style={{ height: '84px' }} />
+        <Image src={thumbnail_url} alt="thumbnail" height="84px" />
       ),
     },
     {
@@ -110,17 +115,17 @@ const ExportsTable = ({ page, perPage }: ExportsTableProps) => {
       render: (text: string) => {
         if (text === 'Done.') {
           return (
-            <div>
+            <React.Fragment>
               <CheckCircleTwoTone twoToneColor="#52c41a" />
               Done
-            </div>
+            </React.Fragment>
           );
         }
         return (
-          <div>
+          <React.Fragment>
             <Spin />
             {text}
-          </div>
+          </React.Fragment>
         );
       },
     },
@@ -165,7 +170,7 @@ const ExportsTable = ({ page, perPage }: ExportsTableProps) => {
     },
   ];
 
-  const data = exports.map((exportItem: any) => {
+  const dataSource = exports.map((exportItem: any) => {
     const video = videos.find((videoItem: any) => videoItem.id === exportItem.videoId);
     // format the twitch thumbnail url
     let thumbnail_url = 'https://apppillargg-misc-assets.s3.amazonaws.com/logomark.svg';
@@ -184,7 +189,7 @@ const ExportsTable = ({ page, perPage }: ExportsTableProps) => {
     <React.Fragment>
       <Row>
         <Col span={24}>
-          <Table columns={columns} dataSource={data} pagination={{ position: [] }} />
+          <Table columns={columns} dataSource={dataSource} pagination={{ position: [] }} />
         </Col>
       </Row>
       <Row style={{ marginTop: '1rem' }} justify="end">
