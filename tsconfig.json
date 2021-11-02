@@ -17,6 +17,7 @@
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "strict": true,
+    "esModuleInterop": true,
     "paths": {
       "@/*": ["./src/*"],
       "@@/*": ["./src/.umi/*"]
