@@ -1,13 +1,7 @@
-import React, { useContext } from 'react';
-import { Button, Col, Image, Table, Row, Spin } from 'antd';
+import React, { useContext, useState } from 'react';
+import { Button, Image, Table, Spin, Pagination } from 'antd';
 import { history } from 'umi';
-import {
-  // DoubleRightOutlined,
-  DownloadOutlined,
-  DoubleLeftOutlined,
-  RightOutlined,
-  LeftOutlined,
-} from '@ant-design/icons';
+import { DownloadOutlined } from '@ant-design/icons';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 import { DateTime } from 'luxon';
 
@@ -15,65 +9,13 @@ import { useExports } from '@/services/hooks/export';
 import { useVideos } from '@/services/hooks/api';
 import { GlobalContext } from '@/ContextWrapper';
 
-interface ExportsPaginatorProps {
-  page: number;
-  perPage: number;
-  items: number;
-}
-
-const ExportsPaginator = ({ page, perPage, items }: ExportsPaginatorProps) => {
-  const toStart = () => {
-    history.push(`/exports?page=1&perPage=${perPage}`);
-  };
-
-  const incrementPage = () => {
-    const newPage = page + 1;
-    history.push(`/exports?page=${newPage}&perPage=${perPage}`);
-  };
-
-  const decrementPage = () => {
-    const newPage = page - 1;
-    history.push(`/exports?page=${newPage}&perPage=${perPage}`);
-  };
-
-  const leftDisabled = page === 1;
-  const rightDisabled = items < perPage;
-
-  return (
-    <React.Fragment>
-      <Row>
-        <Col>
-          <Button disabled={leftDisabled} onClick={toStart}>
-            <DoubleLeftOutlined />
-          </Button>
-        </Col>
-        <Col>
-          <Button disabled={leftDisabled} onClick={decrementPage}>
-            <LeftOutlined />
-          </Button>
-        </Col>
-        <Col>
-          <Button disabled={rightDisabled} onClick={incrementPage}>
-            <RightOutlined />
-          </Button>
-        </Col>
-        {/* Need to find a way to make a to end button work */}
-        {/* <Col>
-          <Button disabled={rightDisabled} onClick={incrementPage}>
-            <DoubleRightOutlined />
-          </Button>
-        </Col> */}
-      </Row>
-    </React.Fragment>
-  );
-};
-
 interface ExportsTableProps {
   page: number;
   perPage: number;
 }
 
-const ExportsTable = ({ page, perPage }: ExportsTableProps) => {
+const ExportsTable = ({ page }: ExportsTableProps) => {
+  const [perPage, setPerPage] = useState(10);
   const { twitchId } = useContext(GlobalContext);
 
   const { data, isLoading, isError } = useExports(page, perPage, twitchId);
@@ -87,9 +29,26 @@ const ExportsTable = ({ page, perPage }: ExportsTableProps) => {
     return <div>Error</div>;
   }
 
-  const { exports /*, totalCount*/ } = data;
+  const onShowSizeChange = (current: number, n: number) => {
+    setPerPage(n);
+  };
 
-  // const numPages = Math.ceil(totalCount / perPage);
+  const onPageChange = (pageNumber: number) => {
+    history.push(`/exports?page=${pageNumber}&perPage=${perPage}`);
+  };
+
+  const { exports, totalCount } = data;
+
+  const paginator = (
+    <Pagination
+      showSizeChanger
+      onChange={onPageChange}
+      onShowSizeChange={onShowSizeChange}
+      pageSize={perPage}
+      total={totalCount}
+      current={page}
+    />
+  );
 
   const columns = [
     {
@@ -185,20 +144,8 @@ const ExportsTable = ({ page, perPage }: ExportsTableProps) => {
     };
   });
 
-  return (
-    <React.Fragment>
-      <Row>
-        <Col span={24}>
-          <Table columns={columns} dataSource={dataSource} pagination={{ position: [] }} />
-        </Col>
-      </Row>
-      <Row style={{ marginTop: '1rem' }} justify="end">
-        <Col>
-          <ExportsPaginator items={exports.length} page={page} perPage={perPage} />
-        </Col>
-      </Row>
-    </React.Fragment>
-  );
+  // @ts-ignore This is acceptable, ant design hasn't updated their types yet
+  return <Table columns={columns} dataSource={dataSource} pagination={paginator} />;
 };
 
 export default ExportsTable;
