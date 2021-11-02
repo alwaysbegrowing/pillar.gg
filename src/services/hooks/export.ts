@@ -6,8 +6,12 @@ const useExport = (id: string) => {
   return { data, isLoading: !error && !data, isError: error };
 };
 
-const useExports = (page: number, perPage: number = 10) => {
-  const { data, error } = useSWR(`/api/export/get/all?page=${page}&perPage=${perPage}`, fetcher);
+const useExports = (page: number, perPage: number = 10, userId: string | number | null = null) => {
+  const userIdString = userId ? `&userId=${userId}` : '';
+  const { data, error } = useSWR(
+    `/api/export/get/all?page=${page}&perPage=${perPage}${userIdString}`,
+    fetcher,
+  );
   return { data, isLoading: !error && !data, isError: error };
 };
 

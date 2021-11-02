@@ -10,17 +10,19 @@ const connectToDatabase = require('../../_connectToDatabase');
 const { AWS_REGION } = process.env;
 
 const getByTwitchId = async (req: VercelRequest, res: VercelResponse) => {
-  const { page, perPage } = req.query;
+  const { userId: reqTwitchId, page, perPage } = req.query;
   const { headers: userHeaders } = req;
 
   const userData = await getTwitchUserData(userHeaders.authorization);
-  const { id: twitchId } = userData;
+  const { id: twitchIdAuth } = userData;
 
-  if (!twitchId) {
+  if (!twitchIdAuth) {
     return res.status(401).send({
       error: 'Unauthorized',
     });
   }
+
+  const twitchId = reqTwitchId || twitchIdAuth;
 
   const db = await connectToDatabase();
 

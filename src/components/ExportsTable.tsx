@@ -1,10 +1,71 @@
-import React from 'react';
-import { Table, Spin } from 'antd';
+import React, { useContext } from 'react';
+import { Button, Col, Table, Row, Spin } from 'antd';
+import {
+  // DoubleRightOutlined,
+  DownloadOutlined,
+  DoubleLeftOutlined,
+  RightOutlined,
+  LeftOutlined,
+} from '@ant-design/icons';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 import { DateTime } from 'luxon';
 
 import { useExports } from '@/services/hooks/export';
 import { useVideos } from '@/services/hooks/api';
+import { GlobalContext } from '@/ContextWrapper';
+
+interface ExportsPaginatorProps {
+  page: number;
+  perPage: number;
+  items: number;
+}
+
+const ExportsPaginator = ({ page, perPage, items }: ExportsPaginatorProps) => {
+  const toStart = () => {
+    window.location.href = `/exports?page=1&perPage=${perPage}`;
+  };
+
+  const incrementPage = () => {
+    const newPage = page + 1;
+    window.location.href = `/exports?page=${newPage}&perPage=${perPage}`;
+  };
+
+  const decrementPage = () => {
+    const newPage = page - 1;
+    window.location.href = `/exports?page=${newPage}&perPage=${perPage}`;
+  };
+
+  const leftDisabled = page === 1;
+  const rightDisabled = items < perPage;
+
+  return (
+    <React.Fragment>
+      <Row>
+        <Col>
+          <Button disabled={leftDisabled} onClick={toStart}>
+            <DoubleLeftOutlined />
+          </Button>
+        </Col>
+        <Col>
+          <Button disabled={leftDisabled} onClick={decrementPage}>
+            <LeftOutlined />
+          </Button>
+        </Col>
+        <Col>
+          <Button disabled={rightDisabled} onClick={incrementPage}>
+            <RightOutlined />
+          </Button>
+        </Col>
+        {/* Need to find a way to make a to end button work */}
+        {/* <Col>
+          <Button disabled={rightDisabled} onClick={incrementPage}>
+            <DoubleRightOutlined />
+          </Button>
+        </Col> */}
+      </Row>
+    </React.Fragment>
+  );
+};
 
 interface ExportsTableProps {
   page: number;
@@ -12,7 +73,9 @@ interface ExportsTableProps {
 }
 
 const ExportsTable = ({ page, perPage }: ExportsTableProps) => {
-  const { data: exports, isLoading, isError } = useExports(page, perPage);
+  const { twitchId } = useContext(GlobalContext);
+
+  const { data: exports, isLoading, isError } = useExports(page, perPage, twitchId);
   const { data: videos, isLoading: isLoadingVideos, isError: isErrorVideos } = useVideos();
 
   if (isLoading || isLoadingVideos) {
@@ -24,6 +87,14 @@ const ExportsTable = ({ page, perPage }: ExportsTableProps) => {
   }
 
   const columns = [
+    {
+      title: 'Thumbnail',
+      dataIndex: 'thumbnail_url',
+      key: 'thumbnail_url',
+      render: (thumbnail_url: string) => (
+        <img src={thumbnail_url} alt="thumbnail" style={{ height: '84px' }} />
+      ),
+    },
     {
       title: 'Stream Title',
       dataIndex: 'name',
@@ -75,29 +146,53 @@ const ExportsTable = ({ page, perPage }: ExportsTableProps) => {
       title: 'Download',
       dataIndex: 'url',
       key: 'url',
-      render: (text: string) => <a href={text}>Download</a>,
+      render: (url: any) => {
+        if (url === null) {
+          return (
+            <Button disabled loading>
+              Download
+            </Button>
+          );
+        }
+
+        return (
+          <Button href={url}>
+            <DownloadOutlined />
+            Download
+          </Button>
+        );
+      },
     },
   ];
 
   const data = exports.map((exportItem: any) => {
     const video = videos.find((videoItem: any) => videoItem.id === exportItem.videoId);
+    // format the twitch thumbnail url
+    let thumbnail_url = 'https://apppillargg-misc-assets.s3.amazonaws.com/logomark.svg';
+    if (video?.thumbnail_url) {
+      thumbnail_url = video.thumbnail_url.replace('%{width}', '150').replace('%{height}', '84');
+    }
     return {
       ...exportItem,
+      thumbnail_url,
       name: video?.title || 'Video',
       progress: exportItem.progress,
     };
   });
 
   return (
-    <Table
-      columns={columns}
-      dataSource={data}
-      pagination={{
-        pageSize: perPage,
-        current: page,
-        total: exports.length,
-      }}
-    />
+    <React.Fragment>
+      <Row>
+        <Col span={24}>
+          <Table columns={columns} dataSource={data} pagination={{ position: [] }} />
+        </Col>
+      </Row>
+      <Row style={{ marginTop: '1rem' }} justify="end">
+        <Col>
+          <ExportsPaginator items={exports.length} page={page} perPage={perPage} />
+        </Col>
+      </Row>
+    </React.Fragment>
   );
 };
 
