@@ -9,7 +9,6 @@ import { useUser } from '../../services/hooks/api';
 // import { stringify } from 'querystring';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
-import * as FullStory from '@fullstory/browser';
 
 export interface GlobalHeaderRightProps {
   menu?: boolean;
@@ -44,10 +43,6 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
       localStorage.removeItem('access_token');
       // sets user to null
       mutate(null);
-
-      // release FullStory analytics user identity
-      FullStory.anonymize();
-
       return;
     }
     history.push(`/account/${key}`);

@@ -30,8 +30,6 @@ function useUser() {
       display_name: userData.display_name,
       email: userData.email,
     });
-  } else {
-    FullStory.anonymize();
   }
 
   return {
