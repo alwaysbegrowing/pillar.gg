@@ -1,9 +1,8 @@
 /* eslint-disable no-nested-ternary */
-import type { ReactNode } from 'react';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
 import { useClips, useUser } from '../services/hooks/api';
-import { Button, Row, Col, notification, Alert, Drawer, Space, Popover } from 'antd';
+import { Button, Row, Col, notification, Drawer, Space, Popover } from 'antd';
 import ClipList from '@/components/ClipList/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
@@ -16,7 +15,8 @@ import { useTime } from '@/services/hooks/playtime';
 import 'cropperjs/dist/cropper.css';
 import ExportButton from '@/components/ExportButton';
 import { ClipContext } from '@/services/contexts/ClipContext';
-import { CropConfigs, sendHubspotEvent, sendMobileClip } from '@/services/send';
+import type { CropConfigs } from '@/services/send';
+import { sendHubspotEvent, sendMobileClip } from '@/services/send';
 import styled from 'styled-components';
 import LoginWithTwitch from '@/components/Login/LoginWithTwitch';
 
@@ -42,7 +42,6 @@ export default () => {
   const [playing, setPlaying] = useState<boolean>(false);
   const [selectedClipId, setSelectedClipId] = useState<string>('');
   const [confirmChangeClip, setConfirmChangeClip] = React.useState(false);
-  const [alert, setAlert] = useState<ReactNode>(null);
   const { formatMessage } = useIntl();
   const [showClipHandles, setShowClipHandles] = useState<boolean>(false);
   const [isReady, setIsReady] = useState(false);
@@ -100,7 +99,7 @@ export default () => {
       playedSeconds > 3 &&
       !exportInvitationIsVisible &&
       !exportInvitationWasToggled &&
-      parseInt(localStorage.getItem('numShownInvitation')) < 3
+      parseInt(localStorage.getItem('numShownInvitation') as string) < 3
     ) {
       toggleExportInvitationVisiblity();
       const numShownInvitation = localStorage.getItem('numShownInvitation');
@@ -249,23 +248,18 @@ export default () => {
     const resp = await sendMobileClip(videoId, { startTime, endTime }, cropConfigs);
 
     if (resp.status === 200) {
-      setAlert(
-        <Alert
-          message="Success! Your exported clip will be emailed to you shortly."
-          type="success"
-          closable
-          onClose={() => setAlert(null)}
-        />,
-      );
+      notification.success({
+        message: 'Success',
+        description: 'Mobile Export has started! Click here to view progress.',
+        onClick: () => {
+          window.open(`/exports`, '_blank');
+        },
+      });
     } else {
-      setAlert(
-        <Alert
-          message="Oops! Something went wrong. Please try again."
-          type="error"
-          closable
-          onClose={() => setAlert(null)}
-        />,
-      );
+      notification.error({
+        message: 'Error',
+        description: 'Oops! Something went wrong. Please try again.',
+      });
     }
   };
   const getClipHandles = () => (
@@ -362,7 +356,6 @@ export default () => {
       </Drawer>
 
       <Row gutter={[24, 24]} key="a">
-        {alert && <Col span={24}>{alert}</Col>}
         <Col span={16}>
           <Space direction="vertical" style={{ width: '100%' }}>
             <VideoPlayer

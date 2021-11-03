@@ -17,40 +17,20 @@ enum MobileStepNames {
   sendFailureEmail = 'Send Failure Email',
 }
 
-enum UserProgressNames {
-  done = 'Done.',
-  rendering = 'Rendering...',
-  gettingClips = 'Getting Clip(s)...',
-  failed = 'Failed.',
-  uploading = 'Uploading...',
-}
-
-const ClipsStepProgress = Object.freeze({
-  'Process Clips': UserProgressNames.gettingClips,
-  'Download Individual Clips': UserProgressNames.rendering,
-  'Call Mediaconvert': UserProgressNames.rendering,
-  'Upload to Youtube?': UserProgressNames.uploading,
-  'Send Email': UserProgressNames.done,
-  'Send Export Failure Email': UserProgressNames.failed,
-});
-
-const MobileStepProgress = Object.freeze({
-  'Download Clips': UserProgressNames.gettingClips,
-  'Crop Video': UserProgressNames.rendering,
-  'Combine Video': UserProgressNames.rendering,
-  'Send Mobile Notification Email': UserProgressNames.done,
-  'Send Failure Email': UserProgressNames.failed,
-});
-
 const StepNames = Object.freeze({
   clips: ClipsStepNames,
   mobile: MobileStepNames,
 });
 
-const StepProgress = Object.freeze({
-  clips: ClipsStepProgress,
-  mobile: MobileStepProgress,
+const NumSteps = Object.freeze({
+  clips: 96,
+  mobile: 23,
 });
+
+const calcProgress = (eventId: number, uploadType: string) => {
+  const steps = NumSteps[uploadType];
+  return Math.floor((eventId / steps) * 100);
+};
 
 const getEventDetails = (event: HistoryEvent) => {
   const eventKeys = Object.keys(event);
@@ -121,9 +101,10 @@ const parseSfnEvents = (events: HistoryEvent[], eventType: string) => {
       return {
         endDate: timestamp,
         name: 'Failure',
-        progress: UserProgressNames.failed,
+        progress: -1,
         isDone: false,
         url: null,
+        id: lastEvent?.id,
       };
     }
   }
@@ -136,20 +117,23 @@ const parseSfnEvents = (events: HistoryEvent[], eventType: string) => {
         endDate: timestamp,
         name,
         url: Payload.url,
-        progress: UserProgressNames.done,
+        progress: 100,
+        id: lastEvent?.id,
         isDone: true,
       };
     }
   }
 
   if (Object.values(StepNames[eventType]).includes(name)) {
-    const isDone = StepProgress[eventType][name] === UserProgressNames.done;
+    const progress = calcProgress(lastEvent?.id || 0, eventType);
+    const isDone = progress === 100;
     const endDate = isDone ? timestamp : new Date();
     return {
       endDate,
       name,
       url: null,
-      progress: StepProgress[eventType][name],
+      progress,
+      id: lastEvent?.id,
       isDone,
     };
   }

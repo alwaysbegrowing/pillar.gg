@@ -1,4 +1,5 @@
 import { notification } from 'antd';
+import { history } from 'umi';
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
 const reg =
@@ -27,6 +28,8 @@ export const showSuccessNotification = (successMessage: string) => {
     message: 'Success',
     description: successMessage,
   });
+  // redirect to the exports page
+  history.push('/exports');
 };
 
 export const isDebugMode = () => {

@@ -1,10 +1,9 @@
 import React, { useContext, useState } from 'react';
-import { Button, Image, Table, Spin, Pagination, Popover, Typography } from 'antd';
+import { Button, Image, Table, Spin, Pagination, /*Popover, Typography,*/ Progress } from 'antd';
 import { history } from 'umi';
-import { DownloadOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { CheckCircleTwoTone } from '@ant-design/icons';
-import { DateTime, Duration } from 'luxon';
-import humanizeDuration from 'humanize-duration';
+import { DownloadOutlined /*InfoCircleOutlined*/ } from '@ant-design/icons';
+import { DateTime /*Duration*/ } from 'luxon';
+// import humanizeDuration from 'humanize-duration';
 
 import { useExports } from '@/services/hooks/export';
 import { useVideos } from '@/services/hooks/api';
@@ -16,7 +15,7 @@ interface ExportsTableProps {
 }
 
 const ExportsTable = ({ page }: ExportsTableProps) => {
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, setPerPage] = useState(5);
   const { twitchId } = useContext(GlobalContext);
 
   const { data, isLoading, isError } = useExports(page, perPage, twitchId);
@@ -65,69 +64,65 @@ const ExportsTable = ({ page }: ExportsTableProps) => {
       dataIndex: 'title',
       key: 'title',
     },
+    // {
+    //   title: 'Export Type',
+    //   dataIndex: 'type',
+    //   key: 'type',
+    //   render: (text: string) => {
+    //     // capitalize the first letter
+    //     return text.charAt(0).toUpperCase() + text.slice(1);
+    //   },
+    // },
     {
-      title: 'Export Type',
-      dataIndex: 'type',
-      key: 'type',
-      render: (text: string) => {
-        // capitalize the first letter
-        return text.charAt(0).toUpperCase() + text.slice(1);
+      title: 'Stream Date',
+      dataIndex: 'streamedAt',
+      key: 'streamedAt',
+      render: (streamedAt: string) => {
+        return streamedAt
+          ? DateTime.fromISO(streamedAt).toLocaleString(DateTime.DATETIME_SHORT)
+          : '-';
       },
     },
     {
       title: 'Progress',
       dataIndex: 'progress',
       key: 'progress',
-      render: (text: string) => {
-        if (text === 'Done.') {
-          return (
-            <Typography.Text>
-              <CheckCircleTwoTone twoToneColor="#52c41a" /> Done
-            </Typography.Text>
-          );
+      render: (progress: number) => {
+        if (progress === -1) {
+          return <Progress width={50} type="circle" percent={0} status="exception" />;
         }
-        if (text === 'Failure') {
-          return (
-            <Typography.Text>
-              <InfoCircleOutlined twoToneColor="#eb2f96" /> Failure
-            </Typography.Text>
-          );
-        }
-        return (
-          <Typography.Text>
-            <Spin /> {text}
-          </Typography.Text>
-        );
+        return <Progress width={50} type="circle" percent={progress} />;
       },
     },
+    // {
+    //   title: 'Render Time',
+    //   dataIndex: 'renderTime',
+    //   key: 'renderTime',
+    //   render: (millis: number) => {
+    //     const humanizedText = humanizeDuration(millis, { round: true, largest: 2 });
+    //     const fullDuration = Duration.fromMillis(millis).toFormat('hh:mm:ss.SS');
+    //     return (
+    //       <Typography.Text>
+    //         {humanizedText}{' '}
+    //         <Popover content={fullDuration}>
+    //           {' '}
+    //           <InfoCircleOutlined />{' '}
+    //         </Popover>
+    //       </Typography.Text>
+    //     );
+    //   },
+    // },
+    // {
+    //   title: 'Start Time',
+    //   dataIndex: 'startDate',
+    //   key: 'startDate',
+    //   render: (start: Date) => {
+    //     return DateTime.fromISO(start.toLocaleString()).toLocaleString(DateTime.DATETIME_SHORT);
+    //   },
+    // },
     {
-      title: 'Render Time',
-      dataIndex: 'renderTime',
-      key: 'renderTime',
-      render: (millis: number) => {
-        const humanizedText = humanizeDuration(millis, { round: true, largest: 2 });
-        const fullDuration = Duration.fromMillis(millis).toFormat('hh:mm:ss.SS');
-        return (
-          <Typography.Text>
-            {humanizedText}{' '}
-            <Popover content={fullDuration}>
-              {' '}
-              <InfoCircleOutlined />{' '}
-            </Popover>
-          </Typography.Text>
-        );
-      },
-    },
-    {
-      title: 'Start Time',
-      dataIndex: 'startDate',
-      key: 'startDate',
-      render: (start: Date) => {
-        return DateTime.fromISO(start.toLocaleString()).toLocaleString(DateTime.DATETIME_SHORT);
-      },
-    },
-    {
-      title: 'Finish Time',
+      // title: 'Finish Time',
+      title: 'Exported At',
       dataIndex: 'endDate',
       key: 'endDate',
       render: (end: any) => {
@@ -158,14 +153,13 @@ const ExportsTable = ({ page }: ExportsTableProps) => {
   const dataSource = exports.map((exportItem: any) => {
     const video = videos.find((videoItem: any) => videoItem.id === exportItem.videoId);
     // format the twitch thumbnail url
-    let thumbnail_url = 'https://apppillargg-misc-assets.s3.amazonaws.com/logomark.svg';
-    if (video?.thumbnail_url) {
-      thumbnail_url = video.thumbnail_url.replace('%{width}', '1280').replace('%{height}', '720');
-    }
+    const vod_thumbnail_url = video?.thumbnail_url
+      ? video.thumbnail_url.replace('%{width}', '1280').replace('%{height}', '720')
+      : 'https://apppillargg-misc-assets.s3.amazonaws.com/logomark.svg';
 
     // get the render time.
     const start = DateTime.fromISO(exportItem.startDate);
-    const end = DateTime.fromISO(exportItem?.endDate || DateTime.local().toISO());
+    const end = DateTime.fromISO(exportItem.endDate);
 
     const renderTime = end.diff(start, ['milliseconds']).toObject();
 
@@ -177,8 +171,9 @@ const ExportsTable = ({ page }: ExportsTableProps) => {
       ...exportItem,
       url,
       endDate: exportItem.isDone ? exportItem.endDate : null,
-      thumbnail_url,
+      thumbnail_url: exportItem.thumbnail_url || vod_thumbnail_url,
       title,
+      streamedAt: video?.created_at,
       progress: exportItem.progress,
       renderTime: renderTime.milliseconds || 0,
       type: exportItem.uploadType,

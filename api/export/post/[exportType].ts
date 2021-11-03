@@ -48,15 +48,27 @@ const clips = async (req: VercelRequest, res: VercelResponse) => {
     body: JSON.stringify(body),
   });
 
-  const uploadType = body?.uploadToYoutube ? 'youtube' : ExportTypes[exportType];
-
   if (resp.ok) {
+    // get the start and end times of the export
+    const startTime = body?.clips ? body.clips[0].startTime : body?.ClipData?.clip?.startTime;
+    const endTime = body?.clips ? body.clips[0].endTime : body?.ClipData?.clip?.endTime;
+
+    // get the metadata from the clip_metadata table
+    const metadata = await db.collection('clip_metadata').findOne({
+      videoId,
+    });
+
+    const clipData = metadata.clips.find(
+      (clip: any) => clip.startTime === startTime && clip.endTime === endTime,
+    );
+
     const data = await resp.json();
     const exportObject: Export = {
       ...data,
       videoId,
-      uploadType,
+      uploadType: exportType,
       twitchId,
+      thumbnail_url: clipData?.thumbnail_url,
     };
     const { insertedId } = await db.collection('exports').insertOne(exportObject);
     return res.status(200).json({ ...data, insertedId });
