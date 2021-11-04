@@ -9,6 +9,10 @@ const connectToDatabase = require('../../_connectToDatabase');
 
 const { AWS_SFN_REGION, AWS_SFN_ACCESS_KEY, AWS_SFN_SECRET_KEY } = process.env;
 
+if (!AWS_SFN_ACCESS_KEY || !AWS_SFN_SECRET_KEY) {
+  throw new Error('AWS_SFN_ACCESS_KEY and AWS_SFN_SECRET_KEY must be set');
+}
+
 const credentials =
   AWS_SFN_ACCESS_KEY && AWS_SFN_SECRET_KEY
     ? {
