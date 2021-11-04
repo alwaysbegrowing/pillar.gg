@@ -54,6 +54,7 @@
     "@aws-sdk/client-sns": "^3.36.0",
     "@babel/runtime": "^7.15.4",
     "@dnd-kit/sortable": "^2.0.1",
+    "@fullstory/browser": "^1.4.9",
     "@hubspot/api-client": "^3.4.1",
     "@stripe/react-stripe-js": "^1.6.0",
     "@stripe/stripe-js": "^1.19.1",

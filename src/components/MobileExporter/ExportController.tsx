@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TemplateSelector from './TemplateSelector';
 import FaceCamPrompt from './FaceCamPrompt';
 import HighlightPrompt from './HighlightPrompt';
@@ -7,7 +7,7 @@ import Stages from './Stages';
 import templates from './Templates';
 import useVideoCropper from '@/services/hooks/useVideoCropper';
 
-function ExportController({ videoUrl, onConfirm, onCancel, thumbnailUrl }) {
+function ExportController({ videoUrl, onConfirm, thumbnailUrl, setDrawerWidth }) {
   const [template, setTemplate] = useState(templates[0]);
   const [stage, setStage] = useState(Stages.SELECT_TEMPLATE);
   const [faceCropDimensions, setFaceCropDimensions] = useState(null);
@@ -17,6 +17,13 @@ function ExportController({ videoUrl, onConfirm, onCancel, thumbnailUrl }) {
 
   const roundEven = (x: number): number => 2 * Math.round(x / 2);
 
+  useEffect(() => {
+    if (stage === Stages.SELECT_FACE || stage === Stages.SELECT_HIGHLIGHT) {
+      setDrawerWidth('80vw');
+    } else {
+      setDrawerWidth(736);
+    }
+  }, [stage, setDrawerWidth]);
   const makeFullscreenCrops = () => {
     return {
       background: {
@@ -121,14 +128,13 @@ function ExportController({ videoUrl, onConfirm, onCancel, thumbnailUrl }) {
 
   return (
     <>
-      <TemplateSelector stage={stage} onSelect={handleTemplateSelected} onCancel={onCancel} />
+      <TemplateSelector stage={stage} onSelect={handleTemplateSelected} />
       {template.face && (
         <FaceCamPrompt
           stage={stage}
           template={template}
           cropper={faceCamCropper}
           onNext={handleFaceCamSelected}
-          onCancel={onCancel}
         />
       )}
       <HighlightPrompt
@@ -136,7 +142,6 @@ function ExportController({ videoUrl, onConfirm, onCancel, thumbnailUrl }) {
         template={template}
         cropper={highlightCropper}
         onNext={handleGameplaySelected}
-        onCancel={onCancel}
       />
       <PreviewPrompt
         stage={stage}
@@ -144,7 +149,6 @@ function ExportController({ videoUrl, onConfirm, onCancel, thumbnailUrl }) {
         faceCropDimensions={faceCropDimensions}
         highlightCropDimensions={highlightCropDimensions}
         onNext={handlePreviewAccepted}
-        onCancel={onCancel}
       />
     </>
   );
