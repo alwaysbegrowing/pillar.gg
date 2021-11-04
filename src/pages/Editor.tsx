@@ -10,7 +10,7 @@ import VideoPlayer from '@/components/VideoPlayer/VideoPlayer';
 import TimeSlider from '@/components/TimeSlider/TimeSlider';
 import ExportController from '@/components/MobileExporter/ExportController';
 import type { IndividualTimestamp } from '@/services/hooks/api';
-import { useIntl } from 'umi';
+import { useIntl, history } from 'umi';
 import { useTime } from '@/services/hooks/playtime';
 import 'cropperjs/dist/cropper.css';
 import ExportButton from '@/components/ExportButton';
@@ -33,6 +33,8 @@ const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[])
 
 export default () => {
   const isSmall = window.innerWidth < 768;
+
+  const [isLoadingMobile, setIsLoadingMobile] = useState(false);
 
   const { data: twitchData, isError: isUserError } = useUser();
   const { id: twitchId } = twitchData || {};
@@ -253,6 +255,7 @@ export default () => {
   };
 
   const handleSubmitExport = async (cropConfigs: CropConfigs) => {
+    setIsLoadingMobile(true);
     setShowExportController(false);
 
     const resp = await sendMobileClip(videoId, { startTime, endTime }, cropConfigs);
@@ -262,7 +265,7 @@ export default () => {
         message: 'Success',
         description: 'Mobile Export has started! Click here to view progress.',
         onClick: () => {
-          window.open(`/exports`, '_blank');
+          history.push('/exports');
         },
       });
     } else {
@@ -271,6 +274,7 @@ export default () => {
         description: 'Oops! Something went wrong. Please try again.',
       });
     }
+    setIsLoadingMobile(false);
   };
   const getClipHandles = () => (
     <Space style={{ marginTop: '6rem' }}>
@@ -339,7 +343,12 @@ export default () => {
             onVisibleChange={toggleExportInvitationVisiblity}
             placement="bottomLeft"
           >
-            <Button disabled={isUserLoggedOut} type="primary" onClick={handleShowOnClick}>
+            <Button
+              loading={isLoadingMobile}
+              disabled={isUserLoggedOut}
+              type="primary"
+              onClick={handleShowOnClick}
+            >
               {`Export To Mobile ${isUserLoggedOut ? '(login to export)' : ''}`}
             </Button>
           </Popover>
