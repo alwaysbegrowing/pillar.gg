@@ -63,6 +63,7 @@ const startYoutubeExport = async (
 };
 
 const ExportButton = ({ clips, videoId, disabled }: any) => {
+  const [isLoading, setIsLoading] = useState(false);
   const { formatMessage } = useIntl();
   const { data } = useUser();
 
@@ -94,17 +95,21 @@ const ExportButton = ({ clips, videoId, disabled }: any) => {
   });
 
   const handleConfirmYouTube = async () => {
+    setIsLoading(true);
     if (data?.id) {
       sendHubspotEvent(data?.id, 'EXPORT_CLIP_EVENT', videoId);
     }
     await startYoutubeExport(data.id, videoId, clips, formatMessage);
+    setIsLoading(false);
   };
 
   const handleConfirmExport = async () => {
+    setIsLoading(true);
     if (data?.id) {
       sendHubspotEvent(data?.id, 'EXPORT_CLIP_EVENT', videoId);
     }
     await startExport(videoId, clips, formatMessage);
+    setIsLoading(false);
   };
 
   const menu = (
@@ -135,7 +140,7 @@ const ExportButton = ({ clips, videoId, disabled }: any) => {
   );
   return (
     <Dropdown disabled={disabled} overlay={menu}>
-      <Button type="default" icon={<ExportOutlined />}>
+      <Button loading={isLoading} type="default" icon={<ExportOutlined />}>
         Export Compilation <DownOutlined />
       </Button>
     </Dropdown>

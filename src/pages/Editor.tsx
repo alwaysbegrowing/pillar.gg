@@ -1,9 +1,8 @@
 /* eslint-disable no-nested-ternary */
-import type { ReactNode } from 'react';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
 import { useClips, useUser } from '../services/hooks/api';
-import { Button, Row, Col, notification, Alert, Drawer, Space, Popover } from 'antd';
+import { Button, Row, Col, notification, Drawer, Space, Popover } from 'antd';
 import ClipList from '@/components/ClipList/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
@@ -11,14 +10,13 @@ import VideoPlayer from '@/components/VideoPlayer/VideoPlayer';
 import TimeSlider from '@/components/TimeSlider/TimeSlider';
 import ExportController from '@/components/MobileExporter/ExportController';
 import type { IndividualTimestamp } from '@/services/hooks/api';
-import { useIntl } from 'umi';
+import { useIntl, history } from 'umi';
 import { useTime } from '@/services/hooks/playtime';
 import 'cropperjs/dist/cropper.css';
 import ExportButton from '@/components/ExportButton';
 import { ClipContext } from '@/services/contexts/ClipContext';
-import { sendHubspotEvent } from '@/services/send';
-import { MOBILE_EXPORT_URL } from '@/constants/apiUrls';
-import { getHeaders } from '@/services/fetcher';
+import type { CropConfigs } from '@/services/send';
+import { sendHubspotEvent, sendMobileClip } from '@/services/send';
 import styled from 'styled-components';
 import LoginWithTwitch from '@/components/Login/LoginWithTwitch';
 
@@ -36,6 +34,8 @@ const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[])
 export default () => {
   const isSmall = window.innerWidth < 768;
 
+  const [isLoadingMobile, setIsLoadingMobile] = useState(false);
+
   const { data: twitchData, isError: isUserError } = useUser();
   const { id: twitchId } = twitchData || {};
   const { id: videoId } = useParams<{ id: string }>();
@@ -45,7 +45,6 @@ export default () => {
   const [playing, setPlaying] = useState<boolean>(false);
   const [selectedClipId, setSelectedClipId] = useState<string>('');
   const [confirmChangeClip, setConfirmChangeClip] = React.useState(false);
-  const [alert, setAlert] = useState<ReactNode>(null);
   const { formatMessage } = useIntl();
   const [showClipHandles, setShowClipHandles] = useState<boolean>(false);
   const [isReady, setIsReady] = useState(false);
@@ -255,46 +254,27 @@ export default () => {
     return true;
   };
 
-  const handleSubmitExport = async (cropConfigs: any) => {
+  const handleSubmitExport = async (cropConfigs: CropConfigs) => {
+    setIsLoadingMobile(true);
     setShowExportController(false);
 
-    const body = {
-      ClipData: {
-        videoId,
-        upscale: true,
-        clip: {
-          startTime,
-          endTime,
-        },
-      },
-      Outputs: cropConfigs,
-    };
-
-    const resp = await fetch(MOBILE_EXPORT_URL, {
-      method: 'POST',
-      headers: getHeaders() || undefined,
-      body: JSON.stringify(body),
-    });
+    const resp = await sendMobileClip(videoId, { startTime, endTime }, cropConfigs);
 
     if (resp.status === 200) {
-      setAlert(
-        <Alert
-          message="Success! Your exported clip will be emailed to you shortly."
-          type="success"
-          closable
-          onClose={() => setAlert(null)}
-        />,
-      );
+      notification.success({
+        message: 'Success',
+        description: 'Mobile Export has started! Click here to view progress.',
+        onClick: () => {
+          history.push('/exports');
+        },
+      });
     } else {
-      setAlert(
-        <Alert
-          message="Oops! Something went wrong. Please try again."
-          type="error"
-          closable
-          onClose={() => setAlert(null)}
-        />,
-      );
+      notification.error({
+        message: 'Error',
+        description: 'Oops! Something went wrong. Please try again.',
+      });
     }
+    setIsLoadingMobile(false);
   };
   const getClipHandles = () => (
     <Space style={{ marginTop: '6rem' }}>
@@ -363,7 +343,12 @@ export default () => {
             onVisibleChange={toggleExportInvitationVisiblity}
             placement="bottomLeft"
           >
-            <Button disabled={isUserLoggedOut} type="primary" onClick={handleShowOnClick}>
+            <Button
+              loading={isLoadingMobile}
+              disabled={isUserLoggedOut}
+              type="primary"
+              onClick={handleShowOnClick}
+            >
               {`Export To Mobile ${isUserLoggedOut ? '(login to export)' : ''}`}
             </Button>
           </Popover>
@@ -390,8 +375,7 @@ export default () => {
       </Drawer>
 
       <Row gutter={[24, 24]} key="a">
-        {alert && <Col span={24}>{alert}</Col>}
-        <Col xs={24} sm={24} md={12} lg={14} xl={16} xxl={18}>
+        <Col span={16}>
           <Space direction="vertical" style={{ width: '100%' }}>
             <VideoPlayer
               videoRef={videoRef}
