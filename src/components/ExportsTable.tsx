@@ -5,6 +5,8 @@ import { DateTime } from 'luxon';
 import { useExports } from '@/services/hooks/export';
 import { useVideos } from '@/services/hooks/api';
 import { GlobalContext } from '@/ContextWrapper';
+import LoginInvitation from '@/components/Login/LoginInvitation';
+import ExportInvitation from '@/components/Exports/ExportInvitation';
 
 const columns = [
   {
@@ -102,11 +104,19 @@ const ExportsTable = () => {
     return <Table loading={true} columns={columns} dataSource={[]} pagination={pagination} />;
   }
 
+  if (isErrorVideos?.status === 401 || isErrorVideos?.status === 404) {
+    return <LoginInvitation />;
+  }
+
   if (isError || isErrorVideos) {
     return <div>Error</div>;
   }
 
   const { exports, totalCount } = data;
+
+  if (totalCount === 0 || exports.length === 0) {
+    return <ExportInvitation />;
+  }
 
   const paginator = {
     ...pagination,
