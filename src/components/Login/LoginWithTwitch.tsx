@@ -9,7 +9,7 @@ const redirectURI = `${window.location.origin}/TwitchAuth`;
 
 const openTwitchInNewTab = () =>
   window.open(
-    `https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${redirectURI}&response_type=code&scope=user_read`,
+    `https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${redirectURI}&response_type=code&scope=user_read%20moderation:read`,
     '_blank',
   );
 const LoginWithTwitch = () => (
