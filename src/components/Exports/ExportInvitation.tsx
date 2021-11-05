@@ -2,10 +2,19 @@ import React from 'react';
 import { Button, Result } from 'antd';
 import { MehOutlined } from '@ant-design/icons';
 import { history } from 'umi';
+import { useVideos } from '@/services/hooks/api';
 
 const VodButton = () => {
+  const { data, isLoading, isError } = useVideos();
+
   const handleClick = () => {
-    history.push('/vods');
+    if (isLoading || isError || data.length === 0) {
+      history.push('/vods');
+    }
+
+    const { id: videoId } = data[0];
+
+    history.push(`/vods/${videoId}`);
   };
 
   return (
