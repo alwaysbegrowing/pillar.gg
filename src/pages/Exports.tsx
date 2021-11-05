@@ -1,6 +1,6 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import ExportsTable from '@/components/ExportsTable';
+import ExportsTable from '@/components/Exports/ExportsTable';
 import { isDebugMode } from '@/utils/utils';
 import SelectUser from '@/components/SelectUser';
 

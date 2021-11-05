@@ -13,7 +13,7 @@ import type { IndividualTimestamp } from '@/services/hooks/api';
 import { useIntl, history } from 'umi';
 import { useTime } from '@/services/hooks/playtime';
 import 'cropperjs/dist/cropper.css';
-import ExportButton from '@/components/ExportButton';
+import ExportButton from '@/components/Exports/ExportButton';
 import { ClipContext } from '@/services/contexts/ClipContext';
 import type { CropConfigs } from '@/services/send';
 import { sendHubspotEvent, sendMobileClip } from '@/services/send';
