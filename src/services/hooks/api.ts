@@ -27,19 +27,6 @@ interface UseModeratorProps {
   error?: boolean;
 }
 
-const twitchClientId = 'jmyfr3xqjeyjkvzmnbyiexsf5864c1';
-const redirectURI = `${window.location.origin}/TwitchAuth`;
-
-const onErrorRetry = (error: any) => {
-  if (error.data.status === 401 || error.data.status === 403) {
-    return window.open(
-      `https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${redirectURI}&response_type=code&scope=user_read%20moderation:read`,
-      '_self',
-    );
-  }
-  return null;
-};
-
 function useUser() {
   const { twitchId } = useContext(GlobalContext);
 
