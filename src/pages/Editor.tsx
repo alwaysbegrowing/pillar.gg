@@ -1,9 +1,8 @@
 /* eslint-disable no-nested-ternary */
-import type { ReactNode } from 'react';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type ReactPlayer from 'react-player/twitch';
 import { useClips, useUser } from '../services/hooks/api';
-import { Button, Row, Col, notification, Alert, Drawer, Space, Popover } from 'antd';
+import { Button, Row, Col, notification, Drawer, Space, Popover } from 'antd';
 import ClipList from '@/components/ClipList/ClipList';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useParams } from 'umi';
@@ -11,14 +10,13 @@ import VideoPlayer from '@/components/VideoPlayer/VideoPlayer';
 import TimeSlider from '@/components/TimeSlider/TimeSlider';
 import ExportController from '@/components/MobileExporter/ExportController';
 import type { IndividualTimestamp } from '@/services/hooks/api';
-import { useIntl } from 'umi';
+import { useIntl, history } from 'umi';
 import { useTime } from '@/services/hooks/playtime';
 import 'cropperjs/dist/cropper.css';
 import ExportButton from '@/components/ExportButton';
 import { ClipContext } from '@/services/contexts/ClipContext';
-import { sendHubspotEvent } from '@/services/send';
-import { MOBILE_EXPORT_URL } from '@/constants/apiUrls';
-import { getHeaders } from '@/services/fetcher';
+import type { CropConfigs } from '@/services/send';
+import { sendHubspotEvent, sendMobileClip } from '@/services/send';
 import styled from 'styled-components';
 import LoginWithTwitch from '@/components/Login/LoginWithTwitch';
 
@@ -34,17 +32,19 @@ const getStartEndTimeFromClipId = (clipId: string, clips: IndividualTimestamp[])
 };
 
 export default () => {
+  const isSmall = window.innerWidth < 768;
+
+  const [isLoadingMobile, setIsLoadingMobile] = useState(false);
+
   const { data: twitchData, isError: isUserError } = useUser();
   const { id: twitchId } = twitchData || {};
   const { id: videoId } = useParams<{ id: string }>();
-  // const { data: userData } = useUser();
   const { data, isLoading, isError } = useClips(videoId);
   const [clips, setClips] = useState<IndividualTimestamp[] | []>([]);
   const videoRef = useRef<ReactPlayer>(null);
   const [playing, setPlaying] = useState<boolean>(false);
   const [selectedClipId, setSelectedClipId] = useState<string>('');
   const [confirmChangeClip, setConfirmChangeClip] = React.useState(false);
-  const [alert, setAlert] = useState<ReactNode>(null);
   const { formatMessage } = useIntl();
   const [showClipHandles, setShowClipHandles] = useState<boolean>(false);
   const [isReady, setIsReady] = useState(false);
@@ -59,6 +59,15 @@ export default () => {
     startTime,
     endTime,
   );
+  const [drawerWidth, setDrawerWidth] = useState(736);
+
+  const localStorageInvitation = localStorage.getItem('numShownInvitation');
+  const startingInvitation = localStorageInvitation ? parseInt(localStorageInvitation) : 0;
+  const [numInvitation, setNumInvitation] = useState(startingInvitation);
+
+  useEffect(() => {
+    localStorage.setItem('numShownInvitation', numInvitation.toString());
+  }, [numInvitation]);
 
   const isUserLoggedOut = isUserError?.status === 401;
   const seek = useCallback(
@@ -71,11 +80,15 @@ export default () => {
     [videoRef],
   );
 
-  const setPlaytime = (playtime: number) => {
-    const newTime = startTime + playtime;
-    setSecPlayed(newTime);
-    seek(newTime);
-  };
+  const setPlaytime = useCallback(
+    (playtime: number) => {
+      const newTime = startTime + playtime;
+      setSecPlayed(newTime);
+      seek(newTime);
+    },
+    [seek, setSecPlayed, startTime],
+  );
+
   const toggleExportInvitationVisiblity = useCallback(() => {
     setExportInvitationIsVisible(!exportInvitationIsVisible);
     setExportInvitationWasToggled(true);
@@ -93,28 +106,24 @@ export default () => {
       setSelectedClipId(data[0].id);
       setPlaytime(data[0].startTime);
     }
-  }, [data, selectedClipId]);
+  }, [data, selectedClipId, setPlaytime]);
 
   useEffect(() => {
-    if (localStorage.getItem('numShownInvitation') == null)
-      localStorage.setItem('numShownInvitation', '0');
     if (
-      playedSeconds > 3 &&
+      playedSeconds > 5 &&
       !exportInvitationIsVisible &&
       !exportInvitationWasToggled &&
-      parseInt(localStorage.getItem('numShownInvitation')) < 3
+      numInvitation < 3
     ) {
       toggleExportInvitationVisiblity();
-      const numShownInvitation = localStorage.getItem('numShownInvitation');
-      if (numShownInvitation)
-        localStorage.setItem('numShownInvitation', String(Number(numShownInvitation) + 1));
-      else localStorage.setItem('numShownInvitation', '1');
+      setNumInvitation((i) => i + 1);
     }
   }, [
     exportInvitationIsVisible,
     playedSeconds,
     toggleExportInvitationVisiblity,
     exportInvitationWasToggled,
+    numInvitation,
   ]);
 
   const play = useCallback(
@@ -147,6 +156,18 @@ export default () => {
           return {
             ...clip,
             banner: { sourceAttribution: `Clipped by ${clip.creator_name}`, color: '#40a9ff' },
+          };
+        }
+        if (clip.type === 'superclip') {
+          const sourceAttribution = clip?.creator_name
+            ? `Clipped by Pillar AI (beta) & ${clip.creator_name}`
+            : 'Clipped by Pillar AI (beta) SuperClip';
+          return {
+            ...clip,
+            banner: {
+              sourceAttribution,
+              color: '#2f54eb',
+            },
           };
         }
         return clip;
@@ -233,46 +254,27 @@ export default () => {
     return true;
   };
 
-  const handleSubmitExport = async (cropConfigs: any) => {
+  const handleSubmitExport = async (cropConfigs: CropConfigs) => {
+    setIsLoadingMobile(true);
     setShowExportController(false);
 
-    const body = {
-      ClipData: {
-        videoId,
-        upscale: true,
-        clip: {
-          startTime,
-          endTime,
-        },
-      },
-      Outputs: cropConfigs,
-    };
-
-    const resp = await fetch(MOBILE_EXPORT_URL, {
-      method: 'POST',
-      headers: getHeaders() || undefined,
-      body: JSON.stringify(body),
-    });
+    const resp = await sendMobileClip(videoId, { startTime, endTime }, cropConfigs);
 
     if (resp.status === 200) {
-      setAlert(
-        <Alert
-          message="Success! Your exported clip will be emailed to you shortly."
-          type="success"
-          closable
-          onClose={() => setAlert(null)}
-        />,
-      );
+      notification.success({
+        message: 'Success',
+        description: 'Mobile Export has started! Click here to view progress.',
+        onClick: () => {
+          history.push('/exports');
+        },
+      });
     } else {
-      setAlert(
-        <Alert
-          message="Oops! Something went wrong. Please try again."
-          type="error"
-          closable
-          onClose={() => setAlert(null)}
-        />,
-      );
+      notification.error({
+        message: 'Error',
+        description: 'Oops! Something went wrong. Please try again.',
+      });
     }
+    setIsLoadingMobile(false);
   };
   const getClipHandles = () => (
     <Space style={{ marginTop: '6rem' }}>
@@ -336,12 +338,17 @@ export default () => {
           <Popover
             content={exportInvitationContent}
             title="Want to export to TikTok? "
-            trigger="focus"
+            trigger="none"
             visible={exportInvitationIsVisible}
             onVisibleChange={toggleExportInvitationVisiblity}
             placement="bottomLeft"
           >
-            <Button disabled={isUserLoggedOut} type="primary" onClick={handleShowOnClick}>
+            <Button
+              loading={isLoadingMobile}
+              disabled={isUserLoggedOut}
+              type="primary"
+              onClick={handleShowOnClick}
+            >
               {`Export To Mobile ${isUserLoggedOut ? '(login to export)' : ''}`}
             </Button>
           </Popover>
@@ -351,7 +358,7 @@ export default () => {
       <Drawer
         destroyOnClose
         title="Select a Template"
-        size="large"
+        width={isSmall ? 'auto' : drawerWidth}
         visible={showExportController}
         onClose={() => setShowExportController(false)}
       >
@@ -361,14 +368,13 @@ export default () => {
           <ExportController
             videoUrl={`https://twitch.tv/videos/${videoId}`}
             onConfirm={handleSubmitExport}
-            onCancel={() => setShowExportController(false)}
             thumbnailUrl={selectedThumbnail}
+            setDrawerWidth={setDrawerWidth}
           />
         </ClipContext.Provider>
       </Drawer>
 
       <Row gutter={[24, 24]} key="a">
-        {alert && <Col span={24}>{alert}</Col>}
         <Col span={16}>
           <Space direction="vertical" style={{ width: '100%' }}>
             <VideoPlayer
@@ -399,7 +405,7 @@ export default () => {
           </Space>
         </Col>
 
-        <Col span={8}>
+        <Col xs={24} sm={24} md={12} lg={10} xl={8} xxl={6}>
           <ClipList
             clipInfo={{ clips, setClips }}
             clipIdInfo={{ selectedClipId, setSelectedClipId }}

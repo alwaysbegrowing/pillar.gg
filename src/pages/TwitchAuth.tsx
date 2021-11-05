@@ -5,10 +5,14 @@ import { Spin } from 'antd';
 export default () => {
   useEffect(() => {
     const login = async () => {
+      // get auth code
       const code = new URLSearchParams(window.location.search).get('code') || '';
-      const resp = await fetch(`/api/user/login?code=${code}`);
-      const result = await resp.json();
-      localStorage.setItem('access_token', result.access_token);
+
+      // get access token
+      const loginResponse = await fetch(`/api/user/login?code=${code}`);
+      const loginResult = await loginResponse.json();
+      localStorage.setItem('access_token', loginResult?.access_token ?? '');
+
       window.close();
     };
     login();

@@ -1,8 +1,8 @@
 {
-  "name": "ant-design-pro",
-  "version": "5.0.0-beta.0",
+  "name": "pillar.gg",
+  "version": "1.0.0",
   "private": true,
-  "description": "An out-of-box UI solution for enterprise applications",
+  "description": "The pillar.gg website.",
   "scripts": {
     "analyze": "cross-env ANALYZE=1 umi build",
     "build": "umi build",
@@ -45,27 +45,31 @@
     "not ie <= 10"
   ],
   "dependencies": {
-    "@ant-design/compatible": "^1.0.8",
     "@ant-design/icons": "^4.7.0",
     "@ant-design/pro-descriptions": "^1.9.21",
     "@ant-design/pro-form": "^1.43.1",
     "@ant-design/pro-layout": "^6.26.2",
     "@ant-design/pro-table": "^2.55.0",
+    "@aws-sdk/client-sfn": "^3.39.0",
     "@aws-sdk/client-sns": "^3.36.0",
     "@babel/runtime": "^7.15.4",
     "@dnd-kit/sortable": "^2.0.1",
+    "@fullstory/browser": "^1.4.9",
     "@hubspot/api-client": "^3.4.1",
     "@stripe/react-stripe-js": "^1.6.0",
     "@stripe/stripe-js": "^1.19.1",
+    "@types/luxon": "^2.0.5",
     "@umijs/route-utils": "^1.0.37",
     "@vercel/node": "^1.12.1",
-    "antd": "4.17.0-alpha.6",
+    "antd": "4.17.0-alpha.7",
     "classnames": "^2.3.1",
     "d3-array": "^2.8.0",
     "date-fns": "^2.25.0",
     "enquire-js": "^0.2.1",
     "googleapis": "^84.0.0",
+    "humanize-duration": "^3.27.0",
     "lodash": "^4.17.11",
+    "luxon": "^2.0.2",
     "moment": "^2.25.3",
     "mongodb": "^3.6.2",
     "node-fetch": "^2.6.1",
@@ -91,7 +95,7 @@
     "umi-request": "^1.4.0",
     "use-merge-value": "^1.0.1",
     "uuid": "^8.3.2",
-    "vercel": "^20.1.2",
+    "vercel": "^23.1.2",
     "warning": "^4.0.3"
   },
   "devDependencies": {
@@ -99,6 +103,7 @@
     "@types/classnames": "^2.3.1",
     "@types/express": "^4.17.13",
     "@types/history": "^4.7.9",
+    "@types/humanize-duration": "^3",
     "@types/jest": "^26.0.0",
     "@types/lodash": "^4.14.175",
     "@types/qs": "^6.9.7",
@@ -131,5 +136,6 @@
   },
   "engines": {
     "node": ">=10.0.0"
-  }
+  },
+  "packageManager": "yarn@3.1.0"
 }

@@ -54,6 +54,12 @@ export default defineConfig({
         },
       ],
     },
+    {
+      path: '/exports',
+      name: 'Exports',
+      icon: 'ExportOutlined',
+      component: './Exports',
+    },
 
     // {
     //   path: '/analysis',

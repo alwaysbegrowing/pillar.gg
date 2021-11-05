@@ -1,5 +1,6 @@
 import type { IndividualTimestamp } from '../services/hooks/api';
 import { getHeaders } from '@/services/fetcher';
+import { MOBILE_EXPORT_URL, CLIP_EXPORT_URL } from '@/constants/apiUrls';
 
 export const sendClips = async (
   videoId: string,
@@ -7,15 +8,56 @@ export const sendClips = async (
   uploadToYoutube = false,
 ) => {
   const data = { videoId, clips, uploadToYoutube };
-  const prodUrl = 'https://lfh9xm104e.execute-api.us-east-1.amazonaws.com/prod/clips';
-  // const qaUrl = "https://jbme5m4076.execute-api.us-east-1.amazonaws.com/prod/clips"
-  const resp = await fetch(prodUrl, {
+  const resp = await fetch(CLIP_EXPORT_URL, {
     method: 'POST',
     headers: getHeaders() || undefined,
     body: JSON.stringify(data),
   });
 
   return resp.ok;
+};
+
+interface ClipTimes {
+  startTime: number;
+  endTime: number;
+}
+
+interface CropConfig {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  res_x: number;
+  res_y: number;
+}
+
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+export interface CropConfigs {
+  [key: string]: CropConfig;
+}
+
+export const sendMobileClip = async (
+  videoId: string,
+  clip: ClipTimes,
+  cropConfigs: CropConfigs,
+  upscale: boolean = true,
+) => {
+  const body: any = {
+    ClipData: {
+      videoId,
+      upscale,
+      clip,
+    },
+    Outputs: cropConfigs,
+  };
+
+  const resp = await fetch(MOBILE_EXPORT_URL, {
+    method: 'POST',
+    headers: getHeaders() || undefined,
+    body: JSON.stringify(body),
+  });
+
+  return resp;
 };
 
 export const sendHubspotEvent = async (
