@@ -1,12 +1,14 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import getTwitchUserData from '../twitch/_getTwitchUserData';
 import addHubspotContact from '../hubspot/_addContact';
+import getTwitchModeratorData from '../twitch/_getTwitchModeratorData';
 import logHubspotEvent from '../hubspot/_logCustomEvent';
 import { SIGNUP_EVENT, LOGIN_EVENT } from '../hubspot/_customEvents';
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 
 const connectToDatabase = require('../_connectToDatabase');
 const getUserTwitchCredentials = require('../twitch/_getUserTwitchCredentials');
+
 const { SIGNUP_SNS_TOPIC_ARN, SIGNUPEVENT_AWS_ACCESS_KEY_ID, SIGNUPEVENT_AWS_SECRET_ACCESS_KEY } =
   process.env;
 
@@ -61,6 +63,27 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
     const isNewUser = resp.upsertedCount > 0;
     console.log('is the user new?', { isNewUser });
     if (isNewUser) {
+      const twitchModeratorData = await getTwitchModeratorData(
+        credentials.access_token,
+        twitchUserData.id,
+      );
+
+      const bulk = db.collection('moderators').initializeUnorderedBulkOp();
+      // eslint-disable-next-line no-restricted-syntax
+      for (const moderator_id of twitchModeratorData) {
+        bulk
+          .find({ twitch_id: moderator_id.user_id })
+          .upsert()
+          .update({
+            $setOnInsert: { twitch_id: moderator_id.user_id },
+            $set: { user_name: moderator_id.user_name },
+            $push: {
+              mod_for: { id: twitchUserData.id, display_name: twitchUserData.display_name },
+            },
+          });
+      }
+      bulk.execute();
+
       await logHubspotEvent(SIGNUP_EVENT, hubspotID.hubspot_contact_id, twitchUserData.email);
     } else {
       await logHubspotEvent(LOGIN_EVENT, hubspotID.hubspot_contact_id, twitchUserData.email);

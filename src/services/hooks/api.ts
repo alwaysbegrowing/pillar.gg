@@ -10,8 +10,20 @@ interface DbUser {
   _id: string;
 }
 
+interface DbModerator {
+  user_name: string;
+  twitch_id: number;
+  mod_for: [{ id: number; display_name: string }];
+  _id: string;
+}
+
 interface UseDBUserProps {
   data?: DbUser[];
+  error?: boolean;
+}
+
+interface UseModeratorProps {
+  data?: DbModerator;
   error?: boolean;
 }
 
@@ -47,6 +59,21 @@ function useDbUsers() {
     data,
     isLoading: !error && !data,
     isError: error,
+  };
+}
+
+function useModerators() {
+  const { data: userData, isError: userError } = useUser();
+
+  const { data, error }: UseModeratorProps = useSWR(
+    userData ? `/api/moderators/${userData.id}` : null,
+    fetcher,
+  );
+
+  return {
+    data,
+    isLoading: !error && !data && !userError,
+    isError: error || userError,
   };
 }
 
@@ -122,4 +149,4 @@ function useClips(clipId: number | string | undefined) {
   };
 }
 
-export { useUser, useVideos, useVideo, useClips, useDbUsers };
+export { useUser, useVideos, useVideo, useClips, useDbUsers, useModerators };
