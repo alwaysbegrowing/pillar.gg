@@ -1,31 +1,28 @@
 import React, { useContext } from 'react';
 
 import { Select } from 'antd';
-import { useModerators } from '../services/hooks/api';
+import { useDbUsers, useUser } from '../services/hooks/api';
 import { GlobalContext } from '../ContextWrapper';
 
 const { Option } = Select;
 
 const SelectUser = () => {
+  const { data: usersInDb, isLoading } = useDbUsers();
+  const { data: userData } = useUser();
   const { setTwitchId } = useContext(GlobalContext);
-  const { data: moderators, isLoading } = useModerators();
 
   function handleChange(value: number) {
     setTwitchId(value);
   }
 
-  if (isLoading || !moderators) return null;
+  if (isLoading || !userData) return null;
 
   return (
-    <Select style={{ width: 120 }} defaultValue={moderators.twitch_id} onChange={handleChange}>
-      {/* eslint-disable-next-line no-underscore-dangle */}
-      <Option key={moderators._id} value={moderators.twitch_id}>
-        {moderators.user_name}
-      </Option>
-      {moderators?.mod_for.map((mod) => (
+    <Select style={{ width: 120 }} defaultValue={userData.id} onChange={handleChange}>
+      {usersInDb?.map((user) => (
         // eslint-disable-next-line no-underscore-dangle
-        <Option key={mod.id} value={mod.id}>
-          {mod.display_name}
+        <Option key={user._id} value={user.twitch_id}>
+          {user.display_name}
         </Option>
       ))}
     </Select>

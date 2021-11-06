@@ -4,6 +4,7 @@ import React from 'react';
 import { useVideos } from '@/services/hooks/api';
 import VodCard from '@/components/VodCard/VodCard';
 import SelectUser from '@/components/SelectUser';
+import SelectMod from '@/components/SelectMod';
 import LoginInvitation from '@/components/Login/LoginInvitation';
 
 import { isDebugMode } from '@/utils/utils';
@@ -18,7 +19,7 @@ const Vods = () => {
     return 'error';
   }
   return (
-    <PageContainer extra={isDebugMode() ? <SelectUser /> : null}>
+    <PageContainer extra={isDebugMode() ? <SelectUser /> : <SelectMod />}>
       <List
         itemLayout="vertical"
         size="large"
