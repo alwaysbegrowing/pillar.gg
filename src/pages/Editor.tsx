@@ -13,12 +13,13 @@ import type { IndividualTimestamp } from '@/services/hooks/api';
 import { useIntl, history } from 'umi';
 import { useTime } from '@/services/hooks/playtime';
 import 'cropperjs/dist/cropper.css';
-import ExportButton from '@/components/ExportButton';
+import ExportButton from '@/components/Exports/ExportButton';
 import { ClipContext } from '@/services/contexts/ClipContext';
 import type { CropConfigs } from '@/services/send';
 import { sendHubspotEvent, sendMobileClip } from '@/services/send';
 import styled from 'styled-components';
 import LoginWithTwitch from '@/components/Login/LoginWithTwitch';
+import { ExportOutlined } from '@ant-design/icons';
 
 const HeaderText = styled.div`
   margin-bottom: 8px;
@@ -260,13 +261,20 @@ export default () => {
 
     const resp = await sendMobileClip(videoId, { startTime, endTime }, cropConfigs);
 
+    const successDescription = (
+      <React.Fragment>
+        Mobile Export has started! <br /> <br />
+        <Button onClick={() => history.push('/exports')} type="primary">
+          <ExportOutlined />
+          View Exports
+        </Button>
+      </React.Fragment>
+    );
+
     if (resp.status === 200) {
       notification.success({
         message: 'Success',
-        description: 'Mobile Export has started! Click here to view progress.',
-        onClick: () => {
-          history.push('/exports');
-        },
+        description: successDescription,
       });
     } else {
       notification.error({

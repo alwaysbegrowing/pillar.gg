@@ -1,10 +1,12 @@
 import React, { useContext, useState } from 'react';
-import { Button, Image, Table, Progress } from 'antd';
+import { Button, Image, Table, Progress, ConfigProvider } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { DateTime } from 'luxon';
 import { useExports } from '@/services/hooks/export';
 import { useVideos } from '@/services/hooks/api';
 import { GlobalContext } from '@/ContextWrapper';
+import LoginInvitation from '@/components/Login/LoginInvitation';
+import ExportInvitation from '@/components/Exports/ExportInvitation';
 
 const columns = [
   {
@@ -102,6 +104,10 @@ const ExportsTable = () => {
     return <Table loading={true} columns={columns} dataSource={[]} pagination={pagination} />;
   }
 
+  if (isErrorVideos?.status === 401 || isErrorVideos?.status === 404) {
+    return <LoginInvitation />;
+  }
+
   if (isError || isErrorVideos) {
     return <div>Error</div>;
   }
@@ -139,12 +145,14 @@ const ExportsTable = () => {
   });
 
   return (
-    <Table
-      columns={columns}
-      dataSource={dataSource}
-      // @ts-ignore
-      pagination={paginator}
-    />
+    <ConfigProvider renderEmpty={() => <ExportInvitation />}>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        // @ts-ignore
+        pagination={paginator}
+      />
+    </ConfigProvider>
   );
 };
 
