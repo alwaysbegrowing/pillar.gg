@@ -19,7 +19,7 @@ const VodButton = () => {
 
   return (
     <Button type="primary" onClick={handleClick}>
-      Let's Go!
+      Export a Video.
     </Button>
   );
 };

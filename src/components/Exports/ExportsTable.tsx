@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Button, Image, Table, Progress } from 'antd';
+import { Button, Image, Table, Progress, ConfigProvider } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { DateTime } from 'luxon';
 import { useExports } from '@/services/hooks/export';
@@ -114,10 +114,6 @@ const ExportsTable = () => {
 
   const { exports, totalCount } = data;
 
-  if (totalCount === 0 || exports.length === 0) {
-    return <ExportInvitation />;
-  }
-
   const paginator = {
     ...pagination,
     total: totalCount,
@@ -149,12 +145,14 @@ const ExportsTable = () => {
   });
 
   return (
-    <Table
-      columns={columns}
-      dataSource={dataSource}
-      // @ts-ignore
-      pagination={paginator}
-    />
+    <ConfigProvider renderEmpty={() => <ExportInvitation />}>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        // @ts-ignore
+        pagination={paginator}
+      />
+    </ConfigProvider>
   );
 };
 
