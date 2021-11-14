@@ -27,7 +27,7 @@ const NumSteps = Object.freeze({
   mobile: 23,
 });
 
-const calcProgress = (eventId: number, uploadType: string) => {
+const calcProgress = (eventId: number, uploadType: string): number => {
   const steps = NumSteps[uploadType];
   return Math.floor((eventId / steps) * 100);
 };
@@ -36,13 +36,10 @@ const getEventDetails = (event: HistoryEvent) => {
   const eventKeys = Object.keys(event);
 
   const detailsKey = eventKeys.find((key) => {
-    if (event[key] === undefined) {
-      return false;
-    }
-    return key.includes('Details');
+    return key.includes('Details') && event[key];
   });
 
-  const details = detailsKey ? event[detailsKey] : undefined;
+  const details = detailsKey ? event[detailsKey] : null;
 
   return details;
 };
@@ -55,25 +52,11 @@ const parseSfnEvents = (events: HistoryEvent[], eventType: string) => {
     .reverse()
     .find((event) => {
       const details = getEventDetails(event);
-      if (!details) {
-        return false;
-      }
-      if (!details?.output) {
-        return false;
-      }
-
-      if (details?.type) {
-        if (details?.type.includes('Failed')) {
-          return true;
-        }
-      }
 
       const acceptableNames = Object.values(StepNames[eventType]);
 
-      if (details?.name) {
-        if (acceptableNames.includes(details.name)) {
-          return true;
-        }
+      if (acceptableNames?.includes(details?.name) || details?.type?.includes('Failed')) {
+        return true;
       }
 
       if (details?.output) {
@@ -96,17 +79,15 @@ const parseSfnEvents = (events: HistoryEvent[], eventType: string) => {
   const { timestamp } = lastEvent;
   const { name, output, type } = details;
 
-  if (type) {
-    if (type.includes('Failed')) {
-      return {
-        endDate: timestamp,
-        name: 'Failure',
-        progress: -1,
-        isDone: false,
-        url: null,
-        id: lastEvent?.id,
-      };
-    }
+  if (type?.includes('Failed')) {
+    return {
+      endDate: timestamp,
+      name: 'Failure',
+      progress: -1,
+      isDone: false,
+      url: null,
+      id: lastEvent?.id,
+    };
   }
 
   if (output) {
