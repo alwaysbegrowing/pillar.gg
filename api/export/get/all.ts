@@ -13,13 +13,10 @@ if (!AWS_SFN_ACCESS_KEY || !AWS_SFN_SECRET_KEY) {
   throw new Error('AWS_SFN_ACCESS_KEY and AWS_SFN_SECRET_KEY must be set');
 }
 
-const credentials =
-  AWS_SFN_ACCESS_KEY && AWS_SFN_SECRET_KEY
-    ? {
-        accessKeyId: AWS_SFN_ACCESS_KEY as string,
-        secretAccessKey: AWS_SFN_SECRET_KEY as string,
-      }
-    : undefined;
+const credentials = {
+  accessKeyId: AWS_SFN_ACCESS_KEY,
+  secretAccessKey: AWS_SFN_SECRET_KEY,
+};
 
 const getByTwitchId = async (req: VercelRequest, res: VercelResponse) => {
   const { userId: reqTwitchId, page, perPage } = req.query;
