@@ -33,6 +33,12 @@ const renderButton = (data: any, id: any) => {
   if (data.length === 0) return <NoClipsFound />;
   return <ViewVideoButton id={id} />;
 };
+
+const renderVodLink = (title: string, data: any, id: number) => {
+  if (!data || !data?.length) return title;
+  return <a href={`/vods/${id}`}>{title}</a>;
+};
+
 const VodCard = ({
   thumbnail_url: thumbnailUrl,
   title,
@@ -70,7 +76,7 @@ const VodCard = ({
           ) : null
         }
       >
-        <List.Item.Meta title={<a href={`/vods/${id}`}>{title}</a>} description={description} />
+        <List.Item.Meta title={renderVodLink(title, data, id)} description={description} />
         {renderButton(data, id)}
       </List.Item>
     </Card>
