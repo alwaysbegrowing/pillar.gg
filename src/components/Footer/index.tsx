@@ -12,6 +12,12 @@ export default () => (
         href: 'https://app.pillar.gg/PrivacyPolicy',
         blankTarget: true,
       },
+      {
+        key: 'discord',
+        title: 'Discord',
+        href: 'https://discord.com/invite/35c5t46zU5',
+        blankTarget: true,
+      },
     ]}
   />
 );
