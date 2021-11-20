@@ -11,7 +11,10 @@ const Discord = () => {
   return (
     <PageContainer>
       <Card>
-        <Paragraph>Pillar has a warm and welcoming community! Want to ask questions? Find out more? Or just have a chat? Come join us on Discord.</Paragraph>
+        <Paragraph>
+          Pillar has a warm and welcoming community! Want to ask questions? Find out more? Or just
+          have a chat? Come join us on Discord.
+        </Paragraph>
 
         <Button
           icon={<DiscordIcon />}
