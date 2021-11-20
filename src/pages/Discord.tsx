@@ -4,7 +4,7 @@ import { Card, Button, Typography } from 'antd';
 import { ReactComponent as TwitchSvg } from '@/assets/Discord-Logo-White.svg';
 import Icon from '@ant-design/icons';
 
-export const TwitchIcon = (props: any) => <Icon component={TwitchSvg} {...props} />;
+export const DiscordIcon = (props: any) => <Icon component={TwitchSvg} {...props} />;
 const { Paragraph } = Typography;
 
 const Discord = () => {
@@ -14,7 +14,7 @@ const Discord = () => {
         <Paragraph>Have questions or feedback? Want to meet our team or other streamers?</Paragraph>
 
         <Button
-          icon={<TwitchSvg />}
+          icon={<DiscordIcon />}
           type="primary"
           href="https://discord.com/invite/35c5t46zU5?"
           target="_blank"
