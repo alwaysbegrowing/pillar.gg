@@ -11,6 +11,7 @@ const openTwitchInNewTab = () =>
   window.open(
     `https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${redirectURI}&response_type=code&scope=user_read%20moderation:read`,
     '_blank',
+    'popup, left=100,top=100,width=320,height=320',
   );
 const LoginWithTwitch = () => (
   <Button onClick={openTwitchInNewTab} icon={<TwitchIcon />} type="primary">
