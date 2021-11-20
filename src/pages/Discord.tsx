@@ -11,7 +11,7 @@ const Discord = () => {
   return (
     <PageContainer>
       <Card>
-        <Paragraph>Have questions or feedback? Want to meet our team or other streamers?</Paragraph>
+        <Paragraph>Pillar has a warm and welcoming community! Want to ask questions? Find out more? Or just have a chat? Come join us on Discord.</Paragraph>
 
         <Button
           icon={<DiscordIcon />}
@@ -19,7 +19,7 @@ const Discord = () => {
           href="https://discord.com/invite/35c5t46zU5?"
           target="_blank"
         >
-          Join us on Discord!
+          Join our Discord
         </Button>
       </Card>
     </PageContainer>
