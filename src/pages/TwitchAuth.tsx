@@ -12,7 +12,7 @@ export default () => {
       const loginResponse = await fetch(`/api/user/login?code=${code}`);
       const loginResult = await loginResponse.json();
       localStorage.setItem('access_token', loginResult?.access_token ?? '');
-
+      localStorage.setItem('refresh_token', loginResult?.refresh_token ?? '');
       window.close();
     };
     login();
