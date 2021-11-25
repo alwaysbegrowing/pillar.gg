@@ -44,7 +44,7 @@ const login = async (req: VercelRequest, res: VercelResponse) => {
     };
     const sns = new SNSClient({ region: 'us-east-1', credentials: snsCredentials });
 
-    // this topic should probbaly be renamed - we want to send this on every login to refresh the users CCCs
+    // this topic should probably be renamed - we want to send this on every login to refresh the users CCCs
     const command = new PublishCommand({
       Message: 'Pillar has a new user!',
       MessageAttributes: {
