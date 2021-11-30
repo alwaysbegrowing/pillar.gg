@@ -3,6 +3,7 @@ import useSWR from 'swr';
 import { fetcher } from '../fetcher';
 import { GlobalContext } from '../../ContextWrapper';
 import * as FullStory from '@fullstory/browser';
+import swrErrorRetry from './retry';
 
 interface DbUser {
   display_name: string;
@@ -34,7 +35,9 @@ function useUser() {
   const otherUrl = `https://api.twitch.tv/helix/users?id=${twitchId}`;
 
   const url = twitchId ? otherUrl : selfUrl;
-  const { data, error, mutate } = useSWR(url, fetcher);
+  const { data, error, mutate } = useSWR(url, fetcher, {
+    onErrorRetry: swrErrorRetry,
+  });
 
   if (!error && data) {
     const userData = data.data?.[0];
@@ -53,7 +56,9 @@ function useUser() {
 }
 
 function useDbUsers() {
-  const { data, error }: UseDBUserProps = useSWR('/api/users', fetcher);
+  const { data, error }: UseDBUserProps = useSWR('/api/users', fetcher, {
+    onErrorRetry: swrErrorRetry,
+  });
 
   return {
     data,
@@ -68,6 +73,9 @@ function useModerators() {
   const { data, error }: UseModeratorProps = useSWR(
     userData ? `/api/moderators/${userData.id}` : null,
     fetcher,
+    {
+      onErrorRetry: swrErrorRetry,
+    },
   );
 
   return {
@@ -82,6 +90,9 @@ function useVideos() {
   const { data, error } = useSWR(
     () => `https://api.twitch.tv/helix/videos?first=20&type=archive&user_id=${userData.id}`,
     fetcher,
+    {
+      onErrorRetry: swrErrorRetry,
+    },
   );
   console.log({ error });
 
@@ -96,6 +107,9 @@ function useVideo(id: string | number) {
   const { data, error } = useSWR(
     () => `https://api.twitch.tv/helix/videos?first=20&type=archive&id=${id}`,
     fetcher,
+    {
+      onErrorRetry: swrErrorRetry,
+    },
   );
 
   return {
@@ -140,6 +154,9 @@ function useClips(clipId: number | string | undefined) {
   const { data, error }: UseClipsDataProps = useSWR(
     clipId ? () => `/api/timestamps/${clipId}` : null,
     fetcher,
+    {
+      onErrorRetry: swrErrorRetry,
+    },
   );
 
   return {
