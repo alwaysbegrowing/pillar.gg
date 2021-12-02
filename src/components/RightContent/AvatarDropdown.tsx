@@ -41,6 +41,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
     const { key } = event;
     if (key === 'logout') {
       localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
       // sets user to null
       mutate(null);
       return;

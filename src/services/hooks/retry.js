@@ -10,15 +10,13 @@ const swrErrorRetry = (error, key, config, revalidate, { retryCount }) => {
   // Only retry once.
   if (retryCount >= 1) {
     login();
-    setTimeout(() => revalidate({ retryCount }), 5000);
     return;
   }
 
   // attempt to refresh the token
-  refreshToken();
-
-  // Retry after 5 seconds.
-  setTimeout(() => revalidate({ retryCount }), 5000);
+  refreshToken().finally(() => {
+    revalidate({ retryCount });
+  });
 };
 
 export default swrErrorRetry;

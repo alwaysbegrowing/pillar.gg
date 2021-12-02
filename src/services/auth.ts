@@ -19,7 +19,7 @@ export const refreshToken = async () => {
     return false;
   }
 
-  const resp = await fetch(`/api/user/refreshToken?token=${refresh_token}`);
+  const resp = await fetch(`/api/user/refresh?token=${refresh_token}`);
 
   if (!resp.ok) {
     return false;
