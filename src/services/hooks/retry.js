@@ -16,7 +16,7 @@ const swrErrorRetry = (error, key, config, revalidate, { retryCount }) => {
     // otherwise wait and try to revalidate the cache
     setTimeout(() => {
       revalidate({ retryCount });
-    }, 1000 * retryCount);
+    }, 500 * retryCount);
   }
 };
 
