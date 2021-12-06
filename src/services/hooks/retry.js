@@ -1,22 +1,24 @@
-import { login, refreshToken } from '../auth';
+import { refreshToken } from '../auth';
+
+const INTERVAL = 500;
 
 const swrErrorRetry = (error, key, config, revalidate, { retryCount }) => {
   // if the status code is 401, refresh the token and retry
   if (error.status === 401) {
-    // only open the login modal once
-    if (retryCount === 2) {
-      login();
-      return;
-    }
     // attempt to refresh the token
     refreshToken().finally(() => {
       revalidate({ retryCount });
     });
   } else {
+    // exponential backoff
+    // from https://git.io/JMpLA
+    const timeout =
+      ~~((Math.random() + 0.5) * (1 << (currentRetryCount < 8 ? currentRetryCount : 8))) * INTERVAL;
+
     // otherwise wait and try to revalidate the cache
     setTimeout(() => {
       revalidate({ retryCount });
-    }, 500 * retryCount);
+    }, timeout);
   }
 };
 
