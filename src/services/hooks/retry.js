@@ -4,7 +4,7 @@ const swrErrorRetry = (error, key, config, revalidate, { retryCount }) => {
   // if the status code is 401, refresh the token and retry
   if (error.status === 401) {
     // only open the login modal once
-    if (retryCount === 1) {
+    if (retryCount === 2) {
       login();
       return;
     }
