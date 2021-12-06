@@ -14,8 +14,7 @@ const swrErrorRetry = (error, key, config, revalidate, { retryCount }) => {
   } else {
     // exponential backoff
     // from https://git.io/JMpLA
-    const timeout =
-      ~~((Math.random() + 0.5) * (1 << (currentRetryCount < 8 ? currentRetryCount : 8))) * INTERVAL;
+    const timeout = ~~((Math.random() + 0.5) * (1 << (retryCount < 8 ? retryCount : 8))) * INTERVAL;
 
     // otherwise wait and try to revalidate the cache
     setTimeout(() => {
