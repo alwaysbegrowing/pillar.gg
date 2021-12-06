@@ -1,6 +1,8 @@
 import { refreshToken } from '../auth';
 
-const INTERVAL = 500;
+// smaller intervals so that
+// the app feels more responsive
+const INTERVAL = 100;
 
 const swrErrorRetry = (error, key, config, revalidate, { retryCount }) => {
   // if the status code is 401, refresh the token and retry
