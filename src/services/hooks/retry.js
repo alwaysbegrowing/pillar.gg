@@ -1,19 +1,23 @@
 import { login, refreshToken } from '../auth';
 
 const swrErrorRetry = (error, key, config, revalidate, { retryCount }) => {
-  // Only try to log them in via the window
-  // only once
-  if (retryCount === 1) {
-    login();
-    return;
-  }
-
-  // attempt to refresh the token
-  refreshToken().finally(() => {
+  // if the status code is 401, refresh the token and retry
+  if (error.status === 401) {
+    // only open the login modal once
+    if (retryCount === 1) {
+      login();
+      return;
+    }
+    // attempt to refresh the token
+    refreshToken().finally(() => {
+      revalidate({ retryCount });
+    });
+  } else {
+    // otherwise wait and try to revalidate the cache
     setTimeout(() => {
       revalidate({ retryCount });
     }, 1000 * retryCount);
-  });
+  }
 };
 
 export default swrErrorRetry;
