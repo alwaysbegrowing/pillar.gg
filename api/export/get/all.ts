@@ -28,6 +28,7 @@ const getByTwitchId = async (req: VercelRequest, res: VercelResponse) => {
       endDate,
       dateSort,
       platformSort,
+      platform,
     } = req.query;
     const { headers: userHeaders } = req;
 
@@ -62,6 +63,14 @@ const getByTwitchId = async (req: VercelRequest, res: VercelResponse) => {
           }
         : { $gte: 0 };
 
+    const uploadType = Array.isArray(platform) ? { $in: platform } : platform || { $exists: true };
+
+    const find = {
+      twitchId,
+      startDate: dateFilter,
+      uploadType,
+    };
+
     const sort = {
       startDate: parseInt(dateSort as string, 10) || -1,
     };
@@ -73,22 +82,14 @@ const getByTwitchId = async (req: VercelRequest, res: VercelResponse) => {
     // get the from the database with the newest startDate first
     const videoExports = await db
       .collection('exports')
-      .find({
-        twitchId,
-        startDate: dateFilter,
-      })
+      .find(find)
       .sort(sort)
       .skip(skip)
       .limit(perPageNumber)
       .toArray();
 
     // get the total number of exports
-    const totalExports = await db
-      .collection('exports')
-      .find({
-        twitchId,
-      })
-      .count();
+    const totalExports = await db.collection('exports').find(find).count();
 
     const exportDataPromises = videoExports.map(async (video: Export) => {
       const command = new GetExecutionHistoryCommand({
