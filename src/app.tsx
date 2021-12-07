@@ -1,11 +1,13 @@
 import React from 'react';
 import type { BasicLayoutProps } from '@ant-design/pro-layout';
 import * as FullStory from '@fullstory/browser';
+import { SWRConfig } from 'swr';
 
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import defaultSettings from '../config/defaultSettings';
 import { ContextWrapper } from './ContextWrapper';
+import swrErrorRetry from './services/hooks/retry';
 
 // do not include protocol - 'https://' - or trailing '/' in _fs_host
 // window._fs_host = 'relay.pillar.gg';
@@ -22,7 +24,15 @@ export const layout = (): BasicLayoutProps & {
   childrenRender?: (dom: JSX.Element) => React.ReactNode;
 } => {
   return {
-    childrenRender: (children) => <ContextWrapper>{children}</ContextWrapper>,
+    childrenRender: (children) => (
+      <SWRConfig
+        value={{
+          onErrorRetry: swrErrorRetry,
+        }}
+      >
+        <ContextWrapper>{children}</ContextWrapper>
+      </SWRConfig>
+    ),
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     footerRender: () => <Footer />,
