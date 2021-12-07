@@ -19,76 +19,106 @@ const credentials = {
 };
 
 const getByTwitchId = async (req: VercelRequest, res: VercelResponse) => {
-  const { userId: reqTwitchId, page, perPage } = req.query;
-  const { headers: userHeaders } = req;
+  try {
+    const {
+      userId: reqTwitchId,
+      page,
+      perPage,
+      startDate,
+      endDate,
+      dateSort,
+      platformSort,
+    } = req.query;
+    const { headers: userHeaders } = req;
 
-  const userData = await getTwitchUserData(userHeaders.authorization);
-  const { id: twitchIdAuth } = userData;
+    const userData = await getTwitchUserData(userHeaders.authorization);
+    const { id: twitchIdAuth } = userData;
 
-  if (!twitchIdAuth) {
-    return res.status(401).send({
-      error: 'Unauthorized',
-    });
-  }
-
-  const twitchId = reqTwitchId || twitchIdAuth;
-
-  const db = await connectToDatabase();
-
-  const sfn = new SFNClient({
-    region: AWS_SFN_REGION,
-    credentials,
-  });
-
-  const pageNumber = parseInt(page as string, 10) || 1;
-  const perPageNumber = parseInt(perPage as string, 10) || 10;
-
-  const skip = (pageNumber - 1) * perPageNumber;
-
-  // get the from the database with the newest startDate first
-  const videoExports = await db
-    .collection('exports')
-    .find({
-      twitchId,
-    })
-    .sort({
-      startDate: -1,
-    })
-    .skip(skip)
-    .limit(perPageNumber)
-    .toArray();
-
-  // get the total number of exports
-  const totalExports = await db
-    .collection('exports')
-    .find({
-      twitchId,
-    })
-    .count();
-
-  const exportDataPromises = videoExports.map(async (video: Export) => {
-    const command = new GetExecutionHistoryCommand({
-      executionArn: video.executionArn,
-      maxResults: 100,
-    });
-
-    const { events } = await sfn.send(command);
-
-    if (!events) {
-      return null;
+    if (!twitchIdAuth) {
+      return res.status(401).send({
+        error: 'Unauthorized',
+      });
     }
 
-    const parsedEvents = parseSfnEvents(events, video.uploadType);
+    const twitchId = reqTwitchId || twitchIdAuth;
 
-    return { ...video, ...parsedEvents, startDate: new Date(video.startDate * 1000) };
-  });
+    const db = await connectToDatabase();
 
-  const exportData = await Promise.all(exportDataPromises);
+    const sfn = new SFNClient({
+      region: AWS_SFN_REGION,
+      credentials,
+    });
 
-  return res.status(200).json({
-    totalCount: totalExports,
-    exports: exportData,
-  });
+    const pageNumber = parseInt(page as string, 10) || 1;
+    const perPageNumber = parseInt(perPage as string, 10) || 10;
+
+    const skip = (pageNumber - 1) * perPageNumber;
+
+    const dateFilter =
+      startDate && endDate
+        ? {
+            $gte: parseInt(startDate as string, 10),
+            $lte: parseInt(endDate as string, 10),
+          }
+        : { $gte: 0 };
+
+    const sort = {
+      startDate: parseInt(dateSort as string, 10) || -1,
+    };
+
+    if (platformSort) {
+      sort[platformSort as string] = parseInt(dateSort as string, 10) || -1;
+    }
+
+    // get the from the database with the newest startDate first
+    const videoExports = await db
+      .collection('exports')
+      .find({
+        twitchId,
+        startDate: dateFilter,
+      })
+      .sort(sort)
+      .skip(skip)
+      .limit(perPageNumber)
+      .toArray();
+
+    // get the total number of exports
+    const totalExports = await db
+      .collection('exports')
+      .find({
+        twitchId,
+      })
+      .count();
+
+    const exportDataPromises = videoExports.map(async (video: Export) => {
+      const command = new GetExecutionHistoryCommand({
+        executionArn: video.executionArn,
+        maxResults: 100,
+      });
+
+      const { events } = await sfn.send(command);
+
+      if (!events) {
+        return null;
+      }
+
+      const parsedEvents = parseSfnEvents(events, video.uploadType);
+
+      return { ...video, ...parsedEvents, startDate: new Date(video.startDate * 1000) };
+    });
+
+    const exportData = await Promise.all(exportDataPromises);
+
+    return res.status(200).json({
+      totalCount: totalExports,
+      exports: exportData,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({
+      error,
+    });
+  }
 };
 
 export default getByTwitchId;
