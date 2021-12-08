@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Button, Image, Table, Progress, ConfigProvider } from 'antd';
+import { Button, Image, Table, Progress, ConfigProvider, Select, DatePicker, Row, Col } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { DateTime } from 'luxon';
 import { useExports } from '@/services/hooks/export';
@@ -7,6 +7,9 @@ import { useVideos } from '@/services/hooks/api';
 import { GlobalContext } from '@/ContextWrapper';
 import LoginInvitation from '@/components/Login/LoginInvitation';
 import ExportInvitation from '@/components/Exports/ExportInvitation';
+import moment from 'moment';
+
+const { RangePicker } = DatePicker;
 
 const columns = [
   {
@@ -28,7 +31,6 @@ const columns = [
       if (text === 'clips') {
         return 'Desktop';
       }
-
       // capitalize first letter
       return text.charAt(0).toUpperCase() + text.slice(1);
     },
@@ -88,17 +90,39 @@ const ExportsTable = () => {
     pageSize: 5,
   });
 
+  const [exportFilter, setExportFilter] = useState({
+    // get the date today
+    // and a year ago
+    startDate: (Date.now() - 31557600000) / 1000,
+    endDate: Date.now() / 1000,
+    dateSort: 0,
+    platform: '',
+  });
+
+  console.log({ exportFilter });
+
+  // const [videoFilter, setVideoFilter] = useState({
+  //   sort: '',
+  //   type: '',
+  //   period: '',
+  //   first: 0,
+  //   language: '',
+  // });
+
   const { twitchId } = useContext(GlobalContext);
 
   const { data, isLoading, isError } = useExports(
     pagination.current,
     pagination.pageSize,
     twitchId,
+    exportFilter,
   );
+
   // this pre-caches the next page
-  useExports(pagination.current + 1, pagination.pageSize, twitchId);
+  useExports(pagination.current + 1, pagination.pageSize, twitchId, exportFilter);
 
   const { data: videos, isLoading: isLoadingVideos, isError: isErrorVideos } = useVideos();
+  // } = useVideos(videoFilter);
 
   if (isLoading || isLoadingVideos) {
     return <Table loading={true} columns={columns} dataSource={[]} pagination={pagination} />;
@@ -145,14 +169,52 @@ const ExportsTable = () => {
   });
 
   return (
-    <ConfigProvider renderEmpty={() => <ExportInvitation />}>
-      <Table
-        columns={columns}
-        dataSource={dataSource}
-        // @ts-ignore
-        pagination={paginator}
-      />
-    </ConfigProvider>
+    <React.Fragment>
+      <Row style={{ marginBottom: 12 }} gutter={16}>
+        <Col>
+          <Select
+            defaultValue={exportFilter.platform}
+            onChange={(value: string) => setExportFilter({ ...exportFilter, platform: value })}
+            style={{ width: 120 }}
+          >
+            <Select.Option value="">All</Select.Option>
+            <Select.Option value="clips">Desktop</Select.Option>
+            <Select.Option value="mobile">Mobile</Select.Option>
+          </Select>
+        </Col>
+        <Col>
+          <Select
+            defaultValue={exportFilter.dateSort}
+            onChange={(value: number) => setExportFilter({ ...exportFilter, dateSort: value })}
+            style={{ width: 120 }}
+          >
+            <Select.Option value={0}>Default</Select.Option>
+            <Select.Option value={1}>Ascending</Select.Option>
+            <Select.Option value={-1}>Descending</Select.Option>
+          </Select>
+        </Col>
+        <Col>
+          <RangePicker
+            onChange={(date: any) =>
+              setExportFilter({
+                ...exportFilter,
+                startDate: date[0].unix(),
+                endDate: date[1].unix(),
+              })
+            }
+            defaultValue={[moment.unix(exportFilter.startDate), moment.unix(exportFilter.endDate)]}
+          />
+        </Col>
+      </Row>
+      <ConfigProvider renderEmpty={() => <ExportInvitation />}>
+        <Table
+          columns={columns}
+          dataSource={dataSource}
+          // @ts-ignore
+          pagination={paginator}
+        />
+      </ConfigProvider>
+    </React.Fragment>
   );
 };
 

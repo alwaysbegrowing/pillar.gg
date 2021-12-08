@@ -27,7 +27,6 @@ const getByTwitchId = async (req: VercelRequest, res: VercelResponse) => {
       startDate,
       endDate,
       dateSort,
-      platformSort,
       platform,
     } = req.query;
     const { headers: userHeaders } = req;
@@ -74,10 +73,6 @@ const getByTwitchId = async (req: VercelRequest, res: VercelResponse) => {
     const sort = {
       startDate: parseInt(dateSort as string, 10) || -1,
     };
-
-    if (platformSort) {
-      sort[platformSort as string] = parseInt(dateSort as string, 10) || -1;
-    }
 
     // get the from the database with the newest startDate first
     const videoExports = await db

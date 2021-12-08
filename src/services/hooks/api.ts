@@ -78,8 +78,8 @@ function useModerators() {
 }
 
 export interface VideoOptions {
-  after?: Date;
-  before?: Date;
+  after?: string;
+  before?: string;
   first?: number;
   language?: string;
   period?: string;
@@ -89,17 +89,17 @@ export interface VideoOptions {
 
 function useVideos(options: VideoOptions = {}) {
   const { after, before, first, language, period, sort, type } = options;
-  const afterString = after ? `after=${after.toISOString()}` : '';
-  const beforeString = before ? `before=${before.toISOString()}` : '';
-  const firstString = first ? `first=${first}` : '';
-  const languageString = language ? `language=${language}` : '';
-  const periodString = period ? `period=${period}` : '';
-  const sortString = sort ? `sort=${sort}` : '';
-  const typeString = type ? `type=${type}` : '';
+  const afterString = after ? `&after=${after}` : '';
+  const beforeString = before ? `&before=${before}` : '';
+  const firstString = first ? `&first=${first}` : '&first=100';
+  const languageString = language ? `&language=${language}` : '';
+  const periodString = period ? `&period=${period}` : '';
+  const sortString = sort ? `&sort=${sort}` : '';
+  const typeString = type ? `&type=${type}` : '&type=archive';
   const { data: userData, isError: isUseUserError } = useUser();
   const { data, error } = useSWR(
     () =>
-      `https://api.twitch.tv/helix/videos?first=20&type=archive&user_id=${userData.id}${afterString}${beforeString}${firstString}${languageString}${periodString}${sortString}${typeString}`,
+      `https://api.twitch.tv/helix/videos?user_id=${userData.id}${afterString}${beforeString}${firstString}${languageString}${periodString}${sortString}${typeString}`,
     fetcher,
   );
   console.log({ error });
