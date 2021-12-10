@@ -11,103 +11,100 @@ import moment from 'moment';
 
 const { RangePicker } = DatePicker;
 
-const columns = [
-  {
-    title: 'Thumbnail',
-    dataIndex: 'thumbnail_url',
-    key: 'thumbnail_url',
-    render: (thumbnail_url: string) => <Image src={thumbnail_url} alt="thumbnail" height="84px" />,
-  },
-  {
-    title: 'Stream Title',
-    dataIndex: 'title',
-    key: 'title',
-  },
-  {
-    title: 'Platform',
-    dataIndex: 'uploadType',
-    key: 'uploadType',
-    render: (text: string) => {
-      if (text === 'clips') {
-        return 'Desktop';
-      }
-      // capitalize first letter
-      return text.charAt(0).toUpperCase() + text.slice(1);
-    },
-  },
-  {
-    title: 'Stream Date',
-    dataIndex: 'streamedAt',
-    key: 'streamedAt',
-    render: (streamedAt: string) => {
-      return streamedAt
-        ? DateTime.fromISO(streamedAt).toLocaleString(DateTime.DATETIME_SHORT)
-        : '-';
-    },
-  },
-  {
-    title: 'Progress',
-    dataIndex: 'progress',
-    key: 'progress',
-    render: (progress: number) => {
-      if (progress === -1) {
-        return <Progress width={50} type="circle" percent={0} status="exception" />;
-      }
-      return <Progress width={50} type="circle" percent={progress || 10} />;
-    },
-  },
-  {
-    title: 'Exported At',
-    dataIndex: 'endDate',
-    key: 'endDate',
-    render: (end: any) => {
-      if (end === null) {
-        return '-';
-      }
-      return DateTime.fromISO(end.toLocaleString()).toLocaleString(DateTime.DATETIME_SHORT);
-    },
-  },
-  {
-    title: 'Download',
-    dataIndex: 'url',
-    key: 'url',
-    render: (url: any) => {
-      if (!url) {
-        return <Button loading disabled />;
-      }
-      return (
-        <Button href={url}>
-          <DownloadOutlined />
-        </Button>
-      );
-    },
-  },
-];
-
 const ExportsTable = () => {
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 5,
   });
 
-  const [exportFilter, setExportFilter] = useState({
-    // get the date today
-    // and a year ago
-    startDate: (Date.now() - 31557600000) / 1000,
-    endDate: Date.now() / 1000,
-    dateSort: 0,
-    platform: '',
-  });
+  const [exportStartDate, setExportStartDate] = useState((Date.now() - 31557600000) / 1000);
+  const [exportEndDate, setExportEndDate] = useState(Date.now() / 1000);
+  const [exportDateSort, setExportDateSort] = useState(0);
+  const [exportPlatform, setExportPlatform] = useState('');
+
+  const columns = [
+    {
+      title: 'Thumbnail',
+      dataIndex: 'thumbnail_url',
+      key: 'thumbnail_url',
+      render: (thumbnail_url: string) => (
+        <Image src={thumbnail_url} alt="thumbnail" height="84px" />
+      ),
+    },
+    {
+      title: 'Stream Title',
+      dataIndex: 'title',
+      key: 'title',
+    },
+    {
+      title: 'Platform',
+      dataIndex: 'uploadType',
+      key: 'uploadType',
+      render: (text: string) => {
+        if (text === 'clips') {
+          return 'Desktop';
+        }
+        // capitalize first letter
+        return text.charAt(0).toUpperCase() + text.slice(1);
+      },
+    },
+    {
+      title: 'Stream Date',
+      dataIndex: 'streamedAt',
+      key: 'streamedAt',
+      render: (streamedAt: string) => {
+        return streamedAt
+          ? DateTime.fromISO(streamedAt).toLocaleString(DateTime.DATETIME_SHORT)
+          : '-';
+      },
+    },
+    {
+      title: 'Progress',
+      dataIndex: 'progress',
+      key: 'progress',
+      render: (progress: number) => {
+        if (progress === -1) {
+          return <Progress width={50} type="circle" percent={0} status="exception" />;
+        }
+        return <Progress width={50} type="circle" percent={progress || 10} />;
+      },
+    },
+    {
+      title: 'Exported At',
+      dataIndex: 'endDate',
+      key: 'endDate',
+      render: (end: any) => {
+        if (end === null) {
+          return '-';
+        }
+        return DateTime.fromISO(end.toLocaleString()).toLocaleString(DateTime.DATETIME_SHORT);
+      },
+    },
+    {
+      title: 'Download',
+      dataIndex: 'url',
+      key: 'url',
+      render: (url: any) => {
+        if (!url) {
+          return <Button loading disabled />;
+        }
+        return (
+          <Button href={url}>
+            <DownloadOutlined />
+          </Button>
+        );
+      },
+    },
+  ];
+
+  const exportFilter = {
+    startDate: exportStartDate,
+    endDate: exportEndDate,
+    dateSort: exportDateSort,
+    platform: exportPlatform,
+  };
 
   console.log({ exportFilter });
-
-  // const [videoFilter, setVideoFilter] = useState({
-  //   sort: '',
-  //   type: '',
-  //   period: '',
-  //   first: 0,
-  //   language: '',
-  // });
 
   const { twitchId } = useContext(GlobalContext);
 
@@ -122,7 +119,6 @@ const ExportsTable = () => {
   useExports(pagination.current + 1, pagination.pageSize, twitchId, exportFilter);
 
   const { data: videos, isLoading: isLoadingVideos, isError: isErrorVideos } = useVideos();
-  // } = useVideos(videoFilter);
 
   if (isLoading || isLoadingVideos) {
     return <Table loading={true} columns={columns} dataSource={[]} pagination={pagination} />;
@@ -174,7 +170,7 @@ const ExportsTable = () => {
         <Col>
           <Select
             defaultValue={exportFilter.platform}
-            onChange={(value: string) => setExportFilter({ ...exportFilter, platform: value })}
+            onChange={(value: string) => setExportPlatform(value)}
             style={{ width: 120 }}
           >
             <Select.Option value="">All</Select.Option>
@@ -185,7 +181,7 @@ const ExportsTable = () => {
         <Col>
           <Select
             defaultValue={exportFilter.dateSort}
-            onChange={(value: number) => setExportFilter({ ...exportFilter, dateSort: value })}
+            onChange={(value: number) => setExportDateSort(value)}
             style={{ width: 120 }}
           >
             <Select.Option value={0}>Default</Select.Option>
@@ -195,13 +191,10 @@ const ExportsTable = () => {
         </Col>
         <Col>
           <RangePicker
-            onChange={(date: any) =>
-              setExportFilter({
-                ...exportFilter,
-                startDate: date[0].unix(),
-                endDate: date[1].unix(),
-              })
-            }
+            onChange={(date: any) => {
+              setExportStartDate(date[0].unix());
+              setExportEndDate(date[1].unix());
+            }}
             defaultValue={[moment.unix(exportFilter.startDate), moment.unix(exportFilter.endDate)]}
           />
         </Col>
