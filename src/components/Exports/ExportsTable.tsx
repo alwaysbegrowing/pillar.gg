@@ -1,5 +1,17 @@
 import React, { useContext, useState } from 'react';
-import { Button, Image, Table, Progress, ConfigProvider, Select, DatePicker, Row, Col } from 'antd';
+import {
+  Button,
+  Image,
+  Table,
+  Progress,
+  ConfigProvider,
+  Select,
+  DatePicker,
+  Row,
+  Col,
+  Radio,
+  Space,
+} from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { DateTime } from 'luxon';
 import { useExports } from '@/services/hooks/export';
@@ -8,8 +20,60 @@ import { GlobalContext } from '@/ContextWrapper';
 import LoginInvitation from '@/components/Login/LoginInvitation';
 import ExportInvitation from '@/components/Exports/ExportInvitation';
 import moment from 'moment';
+import type { FilterDropdownProps } from 'antd/es/table/interface';
 
 const { RangePicker } = DatePicker;
+
+interface CustomRadioDropdownProps extends FilterDropdownProps {
+  value: any;
+  setValue: (value: any) => void;
+}
+
+const CustomRadioPopover = (props: CustomRadioDropdownProps) => {
+  const { value, setValue } = props;
+
+  const [selectedRadio, setSelectedRadio] = useState(value);
+
+  const handleRadioChange = (e: any) => {
+    setSelectedRadio(e.target.value);
+  };
+
+  const renderRadios = () => {
+    const { filters } = props;
+    if (!filters) {
+      return null;
+    }
+
+    const radios = filters.map((filter: any) => {
+      return (
+        <Radio.Button value={filter.value} key={filter.value}>
+          {filter.text}
+        </Radio.Button>
+      );
+    });
+
+    return (
+      <Radio.Group onChange={handleRadioChange} value={selectedRadio}>
+        <Space direction="vertical">{radios}</Space>
+      </Radio.Group>
+    );
+  };
+
+  const onSubmit = () => {
+    setValue(selectedRadio);
+  };
+
+  return (
+    <div>
+      <Space direction="vertical">
+        {renderRadios()}
+        <Button type="primary" onClick={onSubmit}>
+          Ok
+        </Button>
+      </Space>
+    </div>
+  );
+};
 
 const ExportsTable = () => {
   const [pagination, setPagination] = useState({
@@ -19,7 +83,7 @@ const ExportsTable = () => {
 
   const [exportStartDate, setExportStartDate] = useState((Date.now() - 31557600000) / 1000);
   const [exportEndDate, setExportEndDate] = useState(Date.now() / 1000);
-  const [exportDateSort, setExportDateSort] = useState(0);
+  const [exportDateSort, setExportDateSort] = useState(1);
   const [exportPlatform, setExportPlatform] = useState('');
 
   const columns = [
@@ -46,6 +110,25 @@ const ExportsTable = () => {
         }
         // capitalize first letter
         return text.charAt(0).toUpperCase() + text.slice(1);
+      },
+      filters: [
+        {
+          text: 'All',
+          value: '',
+        },
+        {
+          text: 'Desktop',
+          value: 'clips',
+        },
+        {
+          text: 'Mobile',
+          value: 'mobile',
+        },
+      ],
+      filterDropdown: (props: FilterDropdownProps) => {
+        return (
+          <CustomRadioPopover {...props} value={exportPlatform} setValue={setExportPlatform} />
+        );
       },
     },
     {
@@ -79,6 +162,15 @@ const ExportsTable = () => {
         }
         return DateTime.fromISO(end.toLocaleString()).toLocaleString(DateTime.DATETIME_SHORT);
       },
+      sorter: (a: any, b: any, sortOrder: any) => {
+        if (sortOrder === 'descend') {
+          setExportDateSort(-1);
+        } else {
+          setExportDateSort(1);
+        }
+      },
+      defaultSortOrder: exportDateSort === 1 ? 'ascend' : 'descend',
+      sortDirections: ['descend', 'ascend', 'descend'],
     },
     {
       title: 'Download',
@@ -176,17 +268,6 @@ const ExportsTable = () => {
             <Select.Option value="">All</Select.Option>
             <Select.Option value="clips">Desktop</Select.Option>
             <Select.Option value="mobile">Mobile</Select.Option>
-          </Select>
-        </Col>
-        <Col>
-          <Select
-            defaultValue={exportFilter.dateSort}
-            onChange={(value: number) => setExportDateSort(value)}
-            style={{ width: 120 }}
-          >
-            <Select.Option value={0}>Default</Select.Option>
-            <Select.Option value={1}>Ascending</Select.Option>
-            <Select.Option value={-1}>Descending</Select.Option>
           </Select>
         </Col>
         <Col>
