@@ -1,16 +1,5 @@
 import React, { useContext, useState } from 'react';
-import {
-  Button,
-  Image,
-  Table,
-  Progress,
-  ConfigProvider,
-  DatePicker,
-  Row,
-  Col,
-  Radio,
-  Space,
-} from 'antd';
+import { Button, Image, Table, Progress, ConfigProvider } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { DateTime } from 'luxon';
 import { useExports } from '@/services/hooks/export';
@@ -18,138 +7,12 @@ import { useVideos } from '@/services/hooks/api';
 import { GlobalContext } from '@/ContextWrapper';
 import LoginInvitation from '@/components/Login/LoginInvitation';
 import ExportInvitation from '@/components/Exports/ExportInvitation';
-import moment from 'moment';
+import {
+  DatePickerFilterButton,
+  DatePickerFilterDropdown,
+} from '@/components/Exports/ExportDatePickerDropdown';
+import RadioFilterPopover from '@/components/Exports/ExportRadioDropdown';
 import type { FilterDropdownProps } from 'antd/es/table/interface';
-
-interface CustomRadioDropdownProps extends FilterDropdownProps {
-  value: any;
-  setValue: (value: any) => void;
-}
-
-const CustomRadioPopover = (props: CustomRadioDropdownProps) => {
-  const { confirm, filters, value, setValue } = props;
-
-  const [selectedRadio, setSelectedRadio] = useState(value);
-
-  const handleRadioChange = (e: any) => {
-    setSelectedRadio(e.target.value);
-  };
-
-  const renderRadios = () => {
-    if (!filters) {
-      return null;
-    }
-
-    const radios = filters.map((filter: any) => {
-      return (
-        <Radio value={filter.value} key={filter.value}>
-          {filter.text}
-        </Radio>
-      );
-    });
-
-    return (
-      <Radio.Group onChange={handleRadioChange} value={selectedRadio}>
-        <Space direction="vertical">{radios}</Space>
-      </Radio.Group>
-    );
-  };
-
-  const onSubmit = () => {
-    setValue(selectedRadio);
-    confirm({ closeDropdown: true });
-  };
-
-  const onCancel = () => {
-    setValue(value);
-    confirm({ closeDropdown: true });
-  };
-
-  return (
-    <div style={{ padding: 8 }}>
-      <Space direction="vertical">
-        {renderRadios()}
-        <Row gutter={6}>
-          <Col>
-            <Button size="small" onClick={onCancel}>
-              Cancel
-            </Button>
-          </Col>
-          <Col>
-            <Button size="small" type="primary" onClick={onSubmit}>
-              Ok
-            </Button>{' '}
-          </Col>
-        </Row>
-      </Space>
-    </div>
-  );
-};
-
-const { RangePicker } = DatePicker;
-
-interface DatePickerDropdownProps extends FilterDropdownProps {
-  startDateValue: number;
-  endDateValue: number;
-  setStartDateValue: (value: number) => void;
-  setEndDateValue: (value: number) => void;
-  isOpen: boolean;
-  setIsOpen: (value: boolean) => void;
-}
-
-const DatePickerDropdown = (props: DatePickerDropdownProps) => {
-  const { startDateValue, endDateValue, setStartDateValue, setEndDateValue, confirm, setIsOpen } =
-    props;
-
-  // stores the start and end date values
-  // internally
-  const [startDate, setStartDate] = useState(startDateValue * 1000);
-  const [endDate, setEndDate] = useState(endDateValue * 1000);
-
-  const onDateChange = (date: any) => {
-    setStartDate(date[0].unix());
-    setEndDate(date[1].unix());
-    confirm({ closeDropdown: true });
-  };
-
-  const onCancel = () => {
-    setStartDate(startDateValue);
-    setEndDate(endDateValue);
-    confirm({ closeDropdown: true });
-    setIsOpen(false);
-  };
-
-  const onSubmit = () => {
-    setStartDateValue(startDate);
-    setEndDateValue(endDate);
-    confirm({ closeDropdown: true });
-    setIsOpen(false);
-  };
-
-  return (
-    <div style={{ padding: 8 }}>
-      <Space direction="vertical">
-        <RangePicker
-          allowClear={false}
-          defaultValue={[moment(startDate), moment(endDate)]}
-          onChange={onDateChange}
-        />
-        <Row gutter={6}>
-          <Col>
-            <Button size="small" onClick={onCancel}>
-              Cancel
-            </Button>
-          </Col>
-          <Col>
-            <Button size="small" type="primary" onClick={onSubmit}>
-              Ok
-            </Button>{' '}
-          </Col>
-        </Row>
-      </Space>
-    </div>
-  );
-};
 
 const ExportsTable = () => {
   const [pagination, setPagination] = useState({
@@ -204,7 +67,7 @@ const ExportsTable = () => {
       ],
       filterDropdown: (props: FilterDropdownProps) => {
         return (
-          <CustomRadioPopover {...props} value={exportPlatform} setValue={setExportPlatform} />
+          <RadioFilterPopover {...props} value={exportPlatform} setValue={setExportPlatform} />
         );
       },
     },
@@ -248,19 +111,27 @@ const ExportsTable = () => {
       },
       defaultSortOrder: exportDateSort === 1 ? 'ascend' : 'descend',
       sortDirections: ['descend', 'ascend', 'descend'],
-      filterDropdown: (props: FilterDropdownProps) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      filterIcon: (filtered: boolean) => {
         return (
-          <DatePickerDropdown
-            {...props}
-            startDateValue={exportStartDate}
-            endDateValue={exportEndDate}
-            setStartDateValue={setExportStartDate}
-            setEndDateValue={setExportEndDate}
+          <DatePickerFilterButton
             isOpen={exportDatePickerIsOpen}
             setIsOpen={setExportDatePickerIsOpen}
+            content={
+              <DatePickerFilterDropdown
+                startDateValue={exportStartDate}
+                setStartDateValue={setExportStartDate}
+                endDateValue={exportEndDate}
+                setEndDateValue={setExportEndDate}
+                isOpen={exportDatePickerIsOpen}
+                setIsOpen={setExportDatePickerIsOpen}
+              />
+            }
           />
         );
       },
+      // this is so that the real modal is not rendered
+      filterDropdown: <div />,
     },
     {
       title: 'Download',
