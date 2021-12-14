@@ -5,7 +5,6 @@ import {
   Table,
   Progress,
   ConfigProvider,
-  Select,
   DatePicker,
   Row,
   Col,
@@ -22,15 +21,13 @@ import ExportInvitation from '@/components/Exports/ExportInvitation';
 import moment from 'moment';
 import type { FilterDropdownProps } from 'antd/es/table/interface';
 
-const { RangePicker } = DatePicker;
-
 interface CustomRadioDropdownProps extends FilterDropdownProps {
   value: any;
   setValue: (value: any) => void;
 }
 
 const CustomRadioPopover = (props: CustomRadioDropdownProps) => {
-  const { value, setValue } = props;
+  const { confirm, filters, value, setValue } = props;
 
   const [selectedRadio, setSelectedRadio] = useState(value);
 
@@ -39,16 +36,15 @@ const CustomRadioPopover = (props: CustomRadioDropdownProps) => {
   };
 
   const renderRadios = () => {
-    const { filters } = props;
     if (!filters) {
       return null;
     }
 
     const radios = filters.map((filter: any) => {
       return (
-        <Radio.Button value={filter.value} key={filter.value}>
+        <Radio value={filter.value} key={filter.value}>
           {filter.text}
-        </Radio.Button>
+        </Radio>
       );
     });
 
@@ -61,15 +57,95 @@ const CustomRadioPopover = (props: CustomRadioDropdownProps) => {
 
   const onSubmit = () => {
     setValue(selectedRadio);
+    confirm({ closeDropdown: true });
+  };
+
+  const onCancel = () => {
+    setValue(value);
+    confirm({ closeDropdown: true });
   };
 
   return (
-    <div>
+    <div style={{ padding: 8 }}>
       <Space direction="vertical">
         {renderRadios()}
-        <Button type="primary" onClick={onSubmit}>
-          Ok
-        </Button>
+        <Row gutter={6}>
+          <Col>
+            <Button size="small" onClick={onCancel}>
+              Cancel
+            </Button>
+          </Col>
+          <Col>
+            <Button size="small" type="primary" onClick={onSubmit}>
+              Ok
+            </Button>{' '}
+          </Col>
+        </Row>
+      </Space>
+    </div>
+  );
+};
+
+const { RangePicker } = DatePicker;
+
+interface DatePickerDropdownProps extends FilterDropdownProps {
+  startDateValue: number;
+  endDateValue: number;
+  setStartDateValue: (value: number) => void;
+  setEndDateValue: (value: number) => void;
+  isOpen: boolean;
+  setIsOpen: (value: boolean) => void;
+}
+
+const DatePickerDropdown = (props: DatePickerDropdownProps) => {
+  const { startDateValue, endDateValue, setStartDateValue, setEndDateValue, confirm, setIsOpen } =
+    props;
+
+  // stores the start and end date values
+  // internally
+  const [startDate, setStartDate] = useState(startDateValue * 1000);
+  const [endDate, setEndDate] = useState(endDateValue * 1000);
+
+  const onDateChange = (date: any) => {
+    setStartDate(date[0].unix());
+    setEndDate(date[1].unix());
+    confirm({ closeDropdown: true });
+  };
+
+  const onCancel = () => {
+    setStartDate(startDateValue);
+    setEndDate(endDateValue);
+    confirm({ closeDropdown: true });
+    setIsOpen(false);
+  };
+
+  const onSubmit = () => {
+    setStartDateValue(startDate);
+    setEndDateValue(endDate);
+    confirm({ closeDropdown: true });
+    setIsOpen(false);
+  };
+
+  return (
+    <div style={{ padding: 8 }}>
+      <Space direction="vertical">
+        <RangePicker
+          allowClear={false}
+          defaultValue={[moment(startDate), moment(endDate)]}
+          onChange={onDateChange}
+        />
+        <Row gutter={6}>
+          <Col>
+            <Button size="small" onClick={onCancel}>
+              Cancel
+            </Button>
+          </Col>
+          <Col>
+            <Button size="small" type="primary" onClick={onSubmit}>
+              Ok
+            </Button>{' '}
+          </Col>
+        </Row>
       </Space>
     </div>
   );
@@ -81,6 +157,7 @@ const ExportsTable = () => {
     pageSize: 5,
   });
 
+  const [exportDatePickerIsOpen, setExportDatePickerIsOpen] = useState(false);
   const [exportStartDate, setExportStartDate] = useState((Date.now() - 31557600000) / 1000);
   const [exportEndDate, setExportEndDate] = useState(Date.now() / 1000);
   const [exportDateSort, setExportDateSort] = useState(1);
@@ -171,6 +248,19 @@ const ExportsTable = () => {
       },
       defaultSortOrder: exportDateSort === 1 ? 'ascend' : 'descend',
       sortDirections: ['descend', 'ascend', 'descend'],
+      filterDropdown: (props: FilterDropdownProps) => {
+        return (
+          <DatePickerDropdown
+            {...props}
+            startDateValue={exportStartDate}
+            endDateValue={exportEndDate}
+            setStartDateValue={setExportStartDate}
+            setEndDateValue={setExportEndDate}
+            isOpen={exportDatePickerIsOpen}
+            setIsOpen={setExportDatePickerIsOpen}
+          />
+        );
+      },
     },
     {
       title: 'Download',
@@ -257,38 +347,14 @@ const ExportsTable = () => {
   });
 
   return (
-    <React.Fragment>
-      <Row style={{ marginBottom: 12 }} gutter={16}>
-        <Col>
-          <Select
-            defaultValue={exportFilter.platform}
-            onChange={(value: string) => setExportPlatform(value)}
-            style={{ width: 120 }}
-          >
-            <Select.Option value="">All</Select.Option>
-            <Select.Option value="clips">Desktop</Select.Option>
-            <Select.Option value="mobile">Mobile</Select.Option>
-          </Select>
-        </Col>
-        <Col>
-          <RangePicker
-            onChange={(date: any) => {
-              setExportStartDate(date[0].unix());
-              setExportEndDate(date[1].unix());
-            }}
-            defaultValue={[moment.unix(exportFilter.startDate), moment.unix(exportFilter.endDate)]}
-          />
-        </Col>
-      </Row>
-      <ConfigProvider renderEmpty={() => <ExportInvitation />}>
-        <Table
-          columns={columns}
-          dataSource={dataSource}
-          // @ts-ignore
-          pagination={paginator}
-        />
-      </ConfigProvider>
-    </React.Fragment>
+    <ConfigProvider renderEmpty={() => <ExportInvitation />}>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        // @ts-ignore
+        pagination={paginator}
+      />
+    </ConfigProvider>
   );
 };
 
