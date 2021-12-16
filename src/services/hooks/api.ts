@@ -77,10 +77,29 @@ function useModerators() {
   };
 }
 
-function useVideos() {
+export interface VideoOptions {
+  after?: string;
+  before?: string;
+  first?: number;
+  language?: string;
+  period?: string;
+  sort?: string;
+  type?: string;
+}
+
+function useVideos(options: VideoOptions = {}) {
+  const { after, before, first, language, period, sort, type } = options;
+  const afterString = after ? `&after=${after}` : '';
+  const beforeString = before ? `&before=${before}` : '';
+  const firstString = first ? `&first=${first}` : '&first=100';
+  const languageString = language ? `&language=${language}` : '';
+  const periodString = period ? `&period=${period}` : '';
+  const sortString = sort ? `&sort=${sort}` : '';
+  const typeString = type ? `&type=${type}` : '&type=archive';
   const { data: userData, isError: isUseUserError } = useUser();
   const { data, error } = useSWR(
-    () => `https://api.twitch.tv/helix/videos?first=20&type=archive&user_id=${userData.id}`,
+    () =>
+      `https://api.twitch.tv/helix/videos?user_id=${userData.id}${afterString}${beforeString}${firstString}${languageString}${periodString}${sortString}${typeString}`,
     fetcher,
   );
   console.log({ error });
