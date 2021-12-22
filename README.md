@@ -2,11 +2,11 @@
 
 This project is initialized with [Ant Design Pro](https://pro.ant.design) and [Vercel](https://vercel.com).
 
-## Environment Setup
+## Setup
 
 You should have `node` 16 installed: `brew install node@16` or use a node version manager.
 
-1. Install `yarn` and `vercel`
+1. Install `yarn` and `vercel` globally
 
    ```sh
    npm i -g yarn vercel
@@ -15,10 +15,10 @@ You should have `node` 16 installed: `brew install node@16` or use a node versio
 2. Install dependencies
 
    ```sh
-   yarn --immutable
+   yarn install
    ```
 
-3. Link vercel project (must have vercel project connected to repo)
+3. Link vercel project (must have vercel project connected to repo for serverless functions)
 
    ```sh
    vercel link
@@ -33,7 +33,7 @@ You should have `node` 16 installed: `brew install node@16` or use a node versio
    vercel env pull
    ```
 
-## Start project
+## Development server
 
 ```sh
 vercel dev -l 8000
