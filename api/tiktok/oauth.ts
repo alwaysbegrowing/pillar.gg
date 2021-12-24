@@ -12,8 +12,7 @@ const REDIRECT_URI =
     : 'https://app.pillar.gg/api/tiktok/callback';
 
 const oauth = async (req: VercelRequest, res: VercelResponse) => {
-  const csrfState = Math.random().toString(36).substring(7);
-  // res.cookie('csrfState', csrfState, { maxAge: 60000 });
+  const { state } = req.query;
 
   let url = 'https://open-api.tiktok.com/platform/oauth/connect/';
 
@@ -21,7 +20,7 @@ const oauth = async (req: VercelRequest, res: VercelResponse) => {
   url += '&scope=' + SCOPE;
   url += '&response_type=code';
   url += '&redirect_uri=' + REDIRECT_URI;
-  url += '&state=' + csrfState;
+  url += '&state=' + state;
 
   res.redirect(url);
 };

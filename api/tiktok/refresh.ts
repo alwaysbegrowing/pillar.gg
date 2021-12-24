@@ -4,22 +4,40 @@ import getTwitchUserData from '../twitch/_getTwitchUserData';
 
 const connectToDatabase = require('../_connectToDatabase');
 
-const { TIKTOK_CLIENT_KEY, TIKTOK_CLIENT_SECRET } = process.env;
+const { TIKTOK_CLIENT_KEY } = process.env;
 
-const callback = async (req: VercelRequest, res: VercelResponse) => {
-  const { code, state } = req.query;
+const refresh = async (req: VercelRequest, res: VercelResponse) => {
+  const { state } = req.query;
 
   if (!state) return res.status(400).send(`Missing state parameter`);
 
   const { id: twitchId } = await getTwitchUserData(state);
 
-  if (!code) {
-    return res.status(400).send('Missing code');
+  const db = await connectToDatabase();
+
+  const users = db.collection('users');
+
+  const user = await users.findOne(
+    {
+      twitch_id: twitchId,
+    },
+    { projection: { tiktok: 1 } },
+  );
+
+  if (!user) {
+    return res.status(500).send('Failed to find user');
   }
 
-  const url = `https://open-api.tiktok.com/oauth/access_token/?client_key=${TIKTOK_CLIENT_KEY}&client_secret=${TIKTOK_CLIENT_SECRET}&grant_type=authorization_code&code=${code}&grant_type=authorization_code`;
+  const { tiktok } = user;
 
-  const response = await fetch(url, {
+  const { refresh_token } = tiktok;
+
+  let url_refresh_token = 'https://open-api.tiktok.com/oauth/refresh_token/';
+  url_refresh_token += '?client_key=' + TIKTOK_CLIENT_KEY;
+  url_refresh_token += '&grant_type=refresh_token';
+  url_refresh_token += '&refresh_token=' + refresh_token;
+
+  const response = await fetch(url_refresh_token, {
     method: 'POST',
   });
 
@@ -29,10 +47,6 @@ const callback = async (req: VercelRequest, res: VercelResponse) => {
 
   const data = await response.json();
 
-  const db = await connectToDatabase();
-
-  const users = db.collection('users');
-
   const { modifiedCount } = await users.updateOne(
     {
       twitch_id: twitchId,
@@ -40,7 +54,6 @@ const callback = async (req: VercelRequest, res: VercelResponse) => {
     {
       $set: {
         tiktok: data,
-        twitch_id: twitchId,
       },
     },
     { upsert: true },
@@ -57,4 +70,4 @@ const callback = async (req: VercelRequest, res: VercelResponse) => {
   return res.redirect('/AuthSuccess');
 };
 
-export default callback;
+export default refresh;
