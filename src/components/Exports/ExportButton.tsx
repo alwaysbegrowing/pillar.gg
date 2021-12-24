@@ -47,15 +47,12 @@ const startExport = async (
   );
 };
 
-const startYoutubeExport = async (
-  twitch_id: number,
-  videoId: string,
-  clips: any,
-  formatMessage: any,
-) => {
-  const resp = await fetch(`/api/youtube/isAuthValid?state=${twitch_id}`);
+const startYoutubeExport = async (videoId: string, clips: any, formatMessage: any) => {
+  // get the access token from local storage
+  const accessToken = localStorage.getItem('access_token');
+  const resp = await fetch(`/api/youtube/isAuthValid?state=${accessToken}`);
   if (resp.status === 401) {
-    window.open(`/api/youtube/callback?state=${twitch_id}`, '_blank');
+    window.open(`/api/youtube/callback?state=${accessToken}`, '_blank');
   }
   if (resp.status === 200) {
     startExport(videoId, clips, formatMessage, true);
@@ -99,7 +96,7 @@ const ExportButton = ({ clips, videoId, disabled }: any) => {
     if (data?.id) {
       sendHubspotEvent(data?.id, 'EXPORT_CLIP_EVENT', videoId);
     }
-    await startYoutubeExport(data.id, videoId, clips, formatMessage);
+    await startYoutubeExport(videoId, clips, formatMessage);
     setIsLoading(false);
   };
 
