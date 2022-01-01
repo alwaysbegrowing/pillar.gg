@@ -27,7 +27,7 @@ const callback = async (req: VercelRequest, res: VercelResponse) => {
     return res.status(400).send(`Error: ${response.statusText}`);
   }
 
-  const data = await response.json();
+  const { data } = await response.json();
 
   const db = await connectToDatabase();
 

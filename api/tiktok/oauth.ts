@@ -4,12 +4,13 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 // https://developers.tiktok.com/doc/login-kit-web
 
 const SCOPE = 'user.info.basic,share.sound.create,video.upload';
-const { TIKTOK_CLIENT_KEY, NODE_ENV } = process.env;
+// const { TIKTOK_CLIENT_KEY, NODE_ENV } = process.env;
 
-const REDIRECT_URI =
-  NODE_ENV === 'development'
-    ? 'http://localhost:8000/api/tiktok/callback'
-    : 'https://app.pillar.gg/api/tiktok/callback';
+const { TIKTOK_CLIENT_KEY } = process.env;
+
+// when developing locally
+// you will have to get the code from the browser
+const REDIRECT_URI = 'https://app.pillar.gg/api/tiktok/callback';
 
 const oauth = async (req: VercelRequest, res: VercelResponse) => {
   const { state } = req.query;
