@@ -24,12 +24,9 @@ You should have `node` 16 installed: `brew install node@16` or use a node versio
    vercel link
    ```
 
-4. Add a file `.env` for env vars
+4. Download the environment variables
 
    ```sh
-   > .env
-
-   # if you are part of the main vercel project
    vercel env pull
    ```
 
