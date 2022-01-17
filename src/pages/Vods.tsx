@@ -8,6 +8,7 @@ import SelectMod from '@/components/SelectMod';
 import LoginInvitation from '@/components/Login/LoginInvitation';
 
 import { isDebugMode } from '@/utils/utils';
+import StreamInvitation from '@/components/VodCard/StreamInvitation';
 
 const Vods = () => {
   const { data: videos, isLoading, isError } = useVideos();
@@ -18,6 +19,11 @@ const Vods = () => {
     }
     return 'error';
   }
+  if (videos == 0) return (
+    <PageContainer extra={isDebugMode() ? <SelectUser /> : <SelectMod />}>
+      <StreamInvitation />
+    </PageContainer>
+  )
   return (
     <PageContainer extra={isDebugMode() ? <SelectUser /> : <SelectMod />}>
       <List
