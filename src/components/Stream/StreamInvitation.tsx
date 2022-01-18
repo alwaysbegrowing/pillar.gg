@@ -1,5 +1,5 @@
 import React from 'react';
-import StreamWithTwitch, { TwitchIcon } from './StreamWithTwitch';
+import StreamWithTwitch, { TwitchIcon } from '../Stream/StreamWithTwitch';
 import { Result } from 'antd';
 
 const StreamInvitation = () => (

@@ -6,8 +6,8 @@ import Icon from '@ant-design/icons';
 export const TwitchIcon = (props: any) => <Icon component={TwitchSvg} {...props} />;
 
 const StreamWithTwitch = () => (
-  <Button icon={<TwitchIcon />} type="primary">
-    Stream with Twitch
+  <Button href="https://www.twitch.tv/" icon={<TwitchIcon />} type="primary">
+    Stream on Twitch
   </Button>
 );
 

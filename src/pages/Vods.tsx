@@ -6,9 +6,9 @@ import VodCard from '@/components/VodCard/VodCard';
 import SelectUser from '@/components/SelectUser';
 import SelectMod from '@/components/SelectMod';
 import LoginInvitation from '@/components/Login/LoginInvitation';
-
+import StreamInvitation from '@/components/Stream/StreamInvitation';
 import { isDebugMode } from '@/utils/utils';
-import StreamInvitation from '@/components/VodCard/StreamInvitation';
+
 
 const Vods = () => {
   const { data: videos, isLoading, isError } = useVideos();
