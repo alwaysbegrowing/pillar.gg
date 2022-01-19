@@ -6,7 +6,7 @@ import VodCard from '@/components/VodCard/VodCard';
 import SelectUser from '@/components/SelectUser';
 import SelectMod from '@/components/SelectMod';
 import LoginInvitation from '@/components/Login/LoginInvitation';
-
+import StreamInvitation from '@/components/Stream/StreamInvitation';
 import { isDebugMode } from '@/utils/utils';
 
 const Vods = () => {
@@ -18,6 +18,12 @@ const Vods = () => {
     }
     return 'error';
   }
+  if (videos == 0)
+    return (
+      <PageContainer extra={isDebugMode() ? <SelectUser /> : <SelectMod />}>
+        <StreamInvitation />
+      </PageContainer>
+    );
   return (
     <PageContainer extra={isDebugMode() ? <SelectUser /> : <SelectMod />}>
       <List
