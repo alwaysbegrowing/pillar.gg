@@ -6,9 +6,7 @@ const StreamInvitation = () => (
   <Result
     icon={<TwitchIcon />}
     title="Please stream with Twitch"
-    subTitle={
-      'The selected Twitch account currently has no videos'
-    }
+    subTitle={'The selected Twitch account currently has no videos'}
     extra={<StreamWithTwitch />}
   />
 );

@@ -9,7 +9,6 @@ import LoginInvitation from '@/components/Login/LoginInvitation';
 import StreamInvitation from '@/components/Stream/StreamInvitation';
 import { isDebugMode } from '@/utils/utils';
 
-
 const Vods = () => {
   const { data: videos, isLoading, isError } = useVideos();
   if (isLoading) return 'loading...';
@@ -19,11 +18,12 @@ const Vods = () => {
     }
     return 'error';
   }
-  if (videos == 0) return (
-    <PageContainer extra={isDebugMode() ? <SelectUser /> : <SelectMod />}>
-      <StreamInvitation />
-    </PageContainer>
-  )
+  if (videos == 0)
+    return (
+      <PageContainer extra={isDebugMode() ? <SelectUser /> : <SelectMod />}>
+        <StreamInvitation />
+      </PageContainer>
+    );
   return (
     <PageContainer extra={isDebugMode() ? <SelectUser /> : <SelectMod />}>
       <List
