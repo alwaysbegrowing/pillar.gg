@@ -26,7 +26,7 @@ const ProcessingButton = () => (
   </Button>
 );
 
-const NoClipsFound = () => <Button disabled={true}>No clips found for this VOD</Button>;
+const NoClipsFound = () => <Button disabled={true}>No clips found for this</Button>;
 
 const renderButton = (data: any, id: any) => {
   if (!data) return <ProcessingButton />;
