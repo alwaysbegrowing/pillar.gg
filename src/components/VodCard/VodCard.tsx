@@ -22,11 +22,11 @@ const ViewVideoButton = ({ id }: { id: number | string }) => (
 
 const ProcessingButton = () => (
   <Button loading={true}>
-    {useIntl().formatMessage({ id: 'component.VodCard.ProcessingButton'})}
+    {useIntl().formatMessage({ id: 'component.VodCard.ProcessingButton' })}
   </Button>
 );
 
-const NoClipsFound = () => <Button disabled={true}>No clips found for this</Button>;
+const NoClipsFound = () => <Button disabled={true}>No clips found for this VOD</Button>;
 
 const renderButton = (data: any, id: any) => {
   if (!data) return <ProcessingButton />;
