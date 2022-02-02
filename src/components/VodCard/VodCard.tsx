@@ -22,7 +22,7 @@ const ViewVideoButton = ({ id }: { id: number | string }) => (
 
 const ProcessingButton = () => (
   <Button loading={true}>
-    {useIntl().formatMessage({ id: 'component.VodCard.ProcessingButton' })}
+    {useIntl().formatMessage({ id: 'component.VodCard.ProcessingButton'})}
   </Button>
 );
 
