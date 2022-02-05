@@ -148,6 +148,21 @@ const ExportsTable = () => {
         );
       },
     },
+    {
+      title: 'Delete',
+      dataIndex: 'url',
+      key: 'url',
+      render: (url: any) => {
+        if (!url) {
+          return <Button loading disabled />;
+        }
+        return (
+          <Button href={url}>
+            <DownloadOutlined />
+          </Button>
+        );
+      },
+    },
   ];
 
   const exportFilter = {
