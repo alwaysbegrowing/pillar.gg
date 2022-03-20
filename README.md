@@ -56,3 +56,10 @@ vercel dev -l 8000
   ```sh
   yarn rebuild
   ```
+  
+  ---
+
+<center>
+<a href="https://vercel.com?utm_source=alwaysbegrowing&utm_campaign=oss"><img src="https://www.datocms-assets.com/31049/1618983297-powered-by-vercel.svg"/></a>
+</center>
+
