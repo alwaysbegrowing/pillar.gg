@@ -1,5 +1,5 @@
-# Pillar.gg
-
+# Pillar
+ 
 This project is initialized with [Ant Design Pro](https://pro.ant.design) and [Vercel](https://vercel.com).
 
 ## Environment Setup
